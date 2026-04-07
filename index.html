@@ -1,0 +1,3931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>心心小宝点餐小铺</title>
+    <!-- 预加载必要的库 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 移动端触摸反馈 */
+        button, .category-item, .food-item, .spec-item {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* 移动端按钮点击效果 */
+        @media (hover: none) {
+            button:active, .category-item:active, .food-item:active, .spec-item:active {
+                opacity: 0.7;
+                transform: scale(0.98);
+            }
+        }
+
+        /* 高级按钮效果 */
+        button, .category-item, .food-add, .spec-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 按钮悬停效果 */
+        button:hover, .category-item:hover, .food-add:hover, .spec-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 按钮点击效果 */
+        button:active, .category-item:active, .food-add:active, .spec-item:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 添加按钮的渐变效果 */
+        .add-food-btn {
+            background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-food-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .add-food-btn:hover::before {
+            left: 100%;
+        }
+
+        /* 查看购物车按钮的立体效果 */
+        .view-cart-btn {
+            background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            box-shadow: 0 6px 0 #34b9db, 0 8px 15px rgba(0,0,0,0.1);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .view-cart-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .view-cart-btn:hover::before {
+            left: 100%;
+        }
+
+        .view-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #34b9db, 0 12px 20px rgba(0,0,0,0.15);
+        }
+
+        .view-cart-btn:active {
+            box-shadow: 0 2px 0 #34b9db;
+            transform: translateY(4px);
+        }
+
+        /* 菜品添加按钮的效果 */
+        .food-add {
+            background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .food-add::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .food-add:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* 分类项的效果 */
+        .category-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .category-item:hover::before {
+            left: 100%;
+        }
+
+        /* 规格项的效果 */
+        .spec-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spec-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .spec-item:hover::before {
+            left: 100%;
+        }
+
+        /* 模态框按钮的效果 */
+        .modal-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+        }
+
+        .btn-confirm::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-confirm:hover::before {
+            left: 100%;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-cancel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-cancel:hover::before {
+            left: 100%;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 56px; /* 给固定的页面标题留空间 */
+        }
+
+        /* 顶部标题 - 固定 */
+        .page-header {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            color: #333;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.8s;
+        }
+
+        .page-header:hover::before {
+            left: 100%;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-icon {
+            font-size: 24px;
+            animation: bounce 2s infinite;
+            color: #ff6b81;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header-icon:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .header-icon:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            color: #333;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+
+
+        /* 问候语样式 */
+        .greeting {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            color: #333;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+            margin-top: 0;
+            margin-bottom: 0;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .greeting-text {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: fadeIn 1s ease-in-out;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 动态背景样式 */
+        .dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 200px;
+            height: 200px;
+            background: #b3e5fc;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            background: #ffcdd2;
+            top: 30%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            background: #c5cae9;
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 10s;
+        }
+
+        .shape-4 {
+            width: 180px;
+            height: 180px;
+            background: #c8e6c9;
+            bottom: 10%;
+            right: 5%;
+            animation-delay: 15s;
+        }
+
+        .shape-5 {
+            width: 120px;
+            height: 120px;
+            background: #f3e5f5;
+            top: 50%;
+            left: 40%;
+            animation-delay: 20s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(0) rotate(180deg);
+            }
+            75% {
+                transform: translateY(20px) rotate(270deg);
+            }
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* 布局调整：适配手机，核心区域固定顶部 */
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100vw;
+            margin: 0 auto;
+        }
+
+        /* 左侧分类栏 */
+        .category-sidebar {
+            width: 100%;
+            background-color: #fff;
+            padding: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 1;
+            margin-top: 0;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 0 10px;
+        }
+
+        .category-item {
+            padding: 10px;
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            border: 2px solid #e1f5fe;
+            color: #666;
+            transition: all 0.3s ease;
+            word-break: break-word;
+            white-space: normal;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .category-item.active {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            color: #333;
+            border-color: #81d4fa;
+            font-weight: bold;
+        }
+
+        /* 可滚动的顶部区域 - 手机端固定 */
+        .scrollable-top-area {
+            position: sticky;
+            top: 56px;
+            z-index: 998;
+            background-color: #f8f9fa;
+        }
+
+        /* 可滚动的菜品列表容器 */
+        .food-list-container {
+            width: 100%;
+            min-height: calc(100vh - 380px);
+        }
+
+        /* 右侧选品区 */
+        .food-main {
+            display: none;
+        }
+
+        /* 操作栏（添加/已选按钮）+ 搜索框 */
+        .fixed-actions {
+            position: relative;
+            width: 100%;
+            padding: 0 10px;
+            background-color: #f8f9fa;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .add-food-btn {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .add-food-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .view-cart-btn {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .view-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+            color: #333;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 搜索框 */
+        .search-box {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #e1f5fe;
+            border-radius: 25px;
+            font-size: 14px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #81d4fa;
+            box-shadow: 0 0 0 3px rgba(129, 212, 250, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #81d4fa;
+            transition: color 0.3s ease;
+        }
+
+        .search-input:focus + .search-icon {
+            color: #4fc3f7;
+        }
+
+        /* 菜品列表 - 可滚动，横排显示 */
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 10px 20px;
+            overflow-y: auto;
+            /* 平滑滚动 */
+            scroll-behavior: smooth;
+            /* 移动端滚动优化 */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 767px) {
+            .food-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .food-name-large {
+                height: 120px;
+                font-size: 20px;
+            }
+            
+            .header-title {
+                font-size: 18px;
+            }
+            
+            .category-item {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+        }
+
+        .food-item {
+            background-color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 2px solid #e1f5fe;
+        }
+
+        .food-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .food-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #b3e5fc, #c8e6c9, #81d4fa);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .food-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .food-name-large {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            color: #333;
+            text-align: center;
+            padding: 0 10px;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            border-bottom: 2px solid #e1f5fe;
+        }
+
+        .food-info {
+            padding: 10px;
+            flex: 1;
+        }
+
+        .food-category-tag {
+            font-size: 12px;
+            color: #ff6b81;
+            background-color: #ffebee;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        .food-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .food-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .food-add {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #333;
+            border: 2px solid #e8f5e8;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .food-add:hover {
+            background: linear-gradient(135deg, #a5d6a7 0%, #81c784 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .food-add:active {
+            transform: scale(0.9);
+        }
+
+        .food-delete {
+            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+            color: #333;
+            border: 2px solid #ffcdd2;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .food-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 0;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        /* 弹窗通用样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b81, #48dbfb, #54a0ff);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* 添加菜品弹窗 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .img-upload-area {
+            border: 1px dashed #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            color: #333;
+            border: 2px solid #e0f7fa;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #333;
+            border: 2px solid #c8e6c9;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-cancel:hover,
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 已选菜品弹窗 */
+        .selected-list {
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .selected-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .item-name {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .item-category-tag {
+            font-size: 12px;
+            color: #999;
+            margin-left: 5px;
+        }
+
+        .item-remark {
+            font-size: 12px;
+            color: #ff6b81;
+            margin-top: 2px;
+        }
+
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid #eee;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .quantity-num {
+            font-size: 14px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .delete-item-btn {
+            color: #ff6b81;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .selected-time {
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* 规格选择弹窗 */
+        .spec-modal {
+            z-index: 1001;
+        }
+
+        .spec-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .spec-item {
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .spec-item.active {
+            border-color: #ff6b81;
+            background-color: #ffebee;
+            color: #ff6b81;
+        }
+
+        /* 打印样式优化 - 确保预览界面美观 */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-template, #print-template * {
+                visibility: visible;
+            }
+            #print-template {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 20px;
+                font-family: "SimSun", "宋体", serif; /* 打印优先宋体，更清晰 */
+            }
+            .page-header, .modal, .loading-toast {
+                display: none !important;
+            }
+            /* 打印页面边距重置 */
+            @page {
+                margin: 1cm; /* 设置打印边距，适配打印机 */
+                size: A4; /* 默认为A4纸张 */
+            }
+        }
+
+        #print-template {
+            display: none;
+        }
+
+        .print-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .print-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .print-time {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .print-list {
+            margin: 10px 0;
+        }
+
+        .print-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 16px;
+        }
+
+        .print-item-name {
+            flex: 1;
+        }
+
+        .print-item-remark {
+            font-size: 14px;
+            color: #ff6b81;
+            margin-left: 10px;
+        }
+
+        .print-item-quantity {
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* 加载提示 */
+        .loading-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1002;
+            display: none;
+        }
+
+        /* 提示信息 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1003;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+
+        /* 浮屏小筛子样式 */
+        .floating-dice {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 999;
+            animation: bounce 2s infinite;
+            border: 3px solid #e1f5fe;
+        }
+
+        .floating-dice:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #81d4fa 0%, #4fc3f7 100%);
+        }
+
+        /* Toast提示样式 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid #e8f5e8;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* 随机点餐弹窗样式 */
+        .random-modal {
+            z-index: 2000;
+        }
+
+        .modal-content {
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .meal-type-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .meal-type-item {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .meal-type-item.active {
+            border-color: #ff6b81;
+            background-color: #ffebee;
+            color: #ff6b81;
+        }
+
+        .meal-config {
+            margin: 15px 0;
+        }
+
+        .config-item {
+            margin-bottom: 15px;
+        }
+
+        .config-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .config-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .config-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .config-btn.active {
+            border-color: #ff6b81;
+            background-color: #ffebee;
+            color: #ff6b81;
+        }
+
+        .random-result {
+            margin: 20px 0;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .result-food {
+            flex: 1;
+        }
+
+        .result-replace-btn {
+            background-color: #f8f8f8;
+            color: #ff6b81;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* 轮播图文字样式 */
+        .carousel-text {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .carousel-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .carousel-desc {
+            font-size: 16px;
+            animation: fadeIn 1s ease-in-out 0.3s both;
+        }
+
+        /* 彩虹文字样式 */
+        .rainbow-text {
+            background: linear-gradient(90deg, #ff6b81, #ff8e53, #f9ca24, #6ab04c, #48dbfb, #54a0ff, #9b59b6);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 3s ease-in-out infinite;
+            font-family: 'Arial Black', 'Microsoft YaHei', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        @keyframes rainbow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 筛选动画样式 */
+        .filtering-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b81;
+        }
+
+        .filtering-dots {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .filtering-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ff6b81;
+            animation: filtering 1.5s ease-in-out infinite;
+        }
+
+        .filtering-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .filtering-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes filtering {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        /* 口味选择样式 */
+        .taste-selector {
+            margin-top: 5px;
+        }
+
+        .taste-btn {
+            padding: 3px 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .taste-btn.active {
+            border-color: #ff6b81;
+            background-color: #ffebee;
+            color: #ff6b81;
+        }
+
+        /* 菜品详情页样式 */
+        .detail-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .detail-name-large {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+            border-radius: 8px;
+        }
+
+        .detail-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .detail-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-favorite-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ff6b81;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #fff;
+            color: #ff6b81;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .detail-favorite-btn.favorited {
+            background-color: #ffebee;
+            color: #ff6b81;
+        }
+
+        .detail-favorite-btn.favorited i {
+            color: #ff6b81;
+        }
+
+        /* 平板/电脑端适配 */
+        @media (min-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+            .carousel {
+                margin-top: 60px;
+                height: 300px;
+            }
+            .greeting {
+                padding: 20px;
+            }
+            .greeting-text {
+                font-size: 20px;
+            }
+            .category-sidebar {
+                width: 120px;
+                height: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            .category-list {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .fixed-actions {
+                left: 120px;
+                width: calc(100% - 120px);
+                padding-top: 0;
+            }
+            .scrollable-top-area {
+                display: flex;
+            }
+            .food-list-container {
+                margin-left: 120px;
+            }
+            .food-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 动态背景 -->
+    <div class="dynamic-bg">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+        <div class="bg-shape shape-4"></div>
+        <div class="bg-shape shape-5"></div>
+    </div>
+
+    <!-- 顶部标题 -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-icon"><i class="fas fa-utensils"></i></div>
+            <div class="header-title">心心小宝点餐小铺</div>
+            <div class="header-icon"><i class="fas fa-home"></i></div>
+        </div>
+    </div>
+
+
+
+    <!-- 可滚动的顶部区域 -->
+    <div class="scrollable-top-area">
+        <!-- 时间段问候语 -->
+        <div class="greeting">
+            <div class="greeting-text" id="greeting-text">早上好~宝宝，看看吃点什么</div>
+        </div>
+
+        <!-- 左侧分类栏（手机端顶部横向滚动） -->
+        <div class="category-sidebar">
+            <div class="category-list">
+                <div class="category-item" data-category="home-cooking">家常菜</div>
+                <div class="category-item" data-category="breakfast">早餐</div>
+                <div class="category-item" data-category="snacks">特色小吃</div>
+                <div class="category-item" data-category="staple">主食</div>
+                <div class="category-item" data-category="bbq">烧烤炸物</div>
+                <div class="category-item" data-category="drinks">饮品</div>
+                <div class="category-item" data-category="dessert">甜品点心</div>
+                <div class="category-item" data-category="fruits">水果</div>
+            </div>
+        </div>
+
+        <!-- 操作栏（添加/已选按钮 + 搜索框） -->
+        <div class="fixed-actions">
+            <div class="header">
+                <button class="add-food-btn">
+                    <i class="fas fa-utensils"></i> 添加菜品
+                </button>
+                <button class="view-cart-btn">
+                    <span class="cart-count">0</span>
+                    <i class="fas fa-heart"></i> 已选菜品
+                </button>
+            </div>
+
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="food-search-input" placeholder="搜索菜品名称...">
+            </div>
+        </div>
+    </div>
+
+    <!-- 可滚动的菜品列表 -->
+    <div class="food-list-container">
+        <div class="food-list" id="food-list-container"></div>
+    </div>
+
+    <!-- 添加菜品弹窗 -->
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="cancel-add-btn">&times;</span>
+            <div class="modal-title">添加新菜品</div>
+            <div class="form-group">
+                <label class="form-label">菜品名称</label>
+                <input type="text" class="form-input" id="food-name-input" placeholder="请输入菜品名称">
+            </div>
+            <div class="form-group">
+                <label class="form-label">菜品分类</label>
+                <select class="form-select" id="food-category-select">
+                    <option value="home-cooking">家常菜</option>
+                    <option value="breakfast">早餐</option>
+                    <option value="snacks">特色小吃</option>
+                    <option value="staple">主食</option>
+                    <option value="bbq">烧烤炸物</option>
+                    <option value="drinks">饮品</option>
+                    <option value="dessert">甜品点心</option>
+                    <option value="fruits">水果</option>
+                </select>
+            </div>
+            <div class="form-group" style="display: none;">
+                <label class="form-label">菜品图片</label>
+                <div class="img-upload-area" id="img-upload">
+                    <i class="fas fa-upload"></i> 点击上传图片
+                    <img src="" alt="预览图" class="preview-img" id="preview-img">
+                </div>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+            </div>
+            <div class="modal-btns">
+                <button class="modal-btn btn-cancel" id="cancel-add-btn-2">取消</button>
+                <button class="modal-btn btn-confirm" id="submit-food-btn">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规格选择弹窗 -->
+    <div class="modal spec-modal" id="spec-modal">
+        <div class="modal-content">
+            <div class="modal-title" id="spec-modal-title">选择规格</div>
+            <div class="spec-list" id="spec-list"></div>
+            <div class="form-group">
+                <label class="form-label">备注</label>
+                <input type="text" class="form-input" id="food-remark-input" placeholder="添加备注（可选）">
+            </div>
+            <div class="modal-btns">
+                <button class="modal-btn btn-cancel" id="cancel-spec-btn">取消</button>
+                <button class="modal-btn btn-confirm" id="confirm-spec-btn">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 已选菜品弹窗（简化按钮） -->
+    <div class="modal" id="selected-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-selected-btn">&times;</span>
+            <div class="modal-title">心心小宝点餐清单</div>
+            <div class="selected-time" id="selected-time"></div>
+            <div class="selected-list" id="selected-list"></div>
+            <div class="modal-btns">
+                <button class="modal-btn btn-cancel" id="close-selected-btn-2">关闭</button>
+                <button class="modal-btn btn-confirm" id="save-btn">保存到相册</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 菜品详情弹窗 -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-detail-btn">&times;</span>
+            <div class="modal-title">菜品详情</div>
+            <div class="detail-content" id="detail-content">
+                <img src="" alt="菜品图片" class="detail-img" id="detail-img">
+                <h3 class="detail-name" id="detail-name"></h3>
+                <span class="food-category-tag" id="detail-category"></span>
+                <p class="detail-description" id="detail-description"></p>
+                <div class="detail-actions">
+                    <button class="detail-add-btn modal-btn btn-confirm">加入购物车</button>
+                    <button class="detail-favorite-btn" id="detail-favorite-btn">
+                        <i class="far fa-heart"></i> 收藏
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 打印模板（隐藏） -->
+    <div id="print-template">
+        <div class="print-header">
+            <div class="print-title">心心小宝点餐清单</div>
+            <div class="print-time" id="print-time"></div>
+        </div>
+        <div class="print-list" id="print-list"></div>
+    </div>
+
+    <!-- 浮屏小筛子 -->
+    <div class="floating-dice" id="floating-dice">
+        <i class="fas fa-dice"></i>
+    </div>
+
+    <!-- 加载提示 -->
+    <div class="loading-toast" id="loading-toast">
+        <i class="fas fa-spinner fa-spin"></i> 处理中...
+    </div>
+
+    <!-- 随机筛选页面 -->
+    <div id="random-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f8f9fa; z-index: 9999; overflow-y: auto; min-height: 100vh;">
+
+        
+        <div style="background-color: #f8f9fa; min-height: 100%;">
+        
+        <!-- 筛选结果弹窗 -->
+        <div id="filter-result-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 10000;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 20px; font-weight: bold; color: #333;">筛选结果</h3>
+                <button id="close-result-modal" style="background: none; border: none; font-size: 24px; color: #999; cursor: pointer;">&times;</button>
+            </div>
+            <div id="result-modal-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
+            <button id="add-modal-all-to-cart" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <i class="fas fa-shopping-cart"></i> 全部加入购物车
+            </button>
+        </div>
+        <!-- 顶部导航栏 -->
+        <div class="random-header" style="background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; padding: 15px; text-align: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 1001; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            <button id="back-to-main" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">已经进入随机筛选系统</h2>
+        </div>
+        
+        <!-- 左侧导航栏 -->
+        <div class="random-sidebar" style="width: 100%; max-width: 80px; background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%); position: fixed; left: 0; top: 80px; bottom: 0; padding: 20px 0; box-shadow: 2px 0 8px rgba(0,0,0,0.1); z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <!-- 总筛选功能 -->
+            <div class="menu-item" data-type="all" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-utensils" style="font-size: 20px; color: #ff6b81;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">总筛选</div>
+            
+            <!-- 分类筛选 -->
+            <div class="menu-item" data-type="breakfast" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-coffee" style="font-size: 20px; color: #ff8e53;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">早餐</div>
+            
+            <div class="menu-item" data-type="home-cooking" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-home" style="font-size: 20px; color: #48dbfb;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">家常菜</div>
+            
+            <div class="menu-item" data-type="staple" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-bread-slice" style="font-size: 20px; color: #54a0ff;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">主食</div>
+            
+            <div class="menu-item" data-type="drinks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-glass-water" style="font-size: 20px; color: #48dbfb;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">饮品</div>
+            
+            <div class="menu-item" data-type="snacks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-cookie" style="font-size: 20px; color: #ff6b81;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">小吃</div>
+            
+            <div class="menu-item" data-type="bbq" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-fire" style="font-size: 20px; color: #ff8e53;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">烧烤</div>
+            
+            <div class="menu-item" data-type="dessert" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-birthday-cake" style="font-size: 20px; color: #ff6b81;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">甜品</div>
+            
+            <div class="menu-item" data-type="fruits" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                <i class="fas fa-apple-alt" style="font-size: 20px; color: #48dbfb;"></i>
+            </div>
+            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">水果</div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="random-content" style="margin-left: 80px; padding: 15px; margin-top: 80px;">
+            <!-- 响应式设计 -->
+            <style>
+                @media screen and (max-width: 768px) {
+                    .random-sidebar {
+                        width: 70px !important;
+                    }
+                    .random-content {
+                        margin-left: 70px !important;
+                        padding: 10px !important;
+                    }
+                    .meal-type-selector {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                    }
+                    .config-grid {
+                        grid-template-columns: 1fr !important;
+                    }
+                    .category-buttons {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                    }
+                    .result-item {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                    }
+                    .result-item button {
+                        margin-top: 10px !important;
+                        align-self: flex-end !important;
+                    }
+                }
+                @media screen and (max-width: 480px) {
+                    .random-header h2 {
+                        font-size: 16px !important;
+                    }
+                    .meal-type-item {
+                        padding: 10px !important;
+                    }
+                    .meal-type-item i {
+                        font-size: 20px !important;
+                    }
+                    .config-btn {
+                        padding: 8px !important;
+                        font-size: 12px !important;
+                    }
+                }
+            </style>
+            <!-- 餐别选择 -->
+            <div class="meal-type-section" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">选择餐别</h3>
+                <div class="meal-type-selector" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <div class="meal-type-item" data-type="breakfast" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #fff3e0; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-sun" style="font-size: 24px; color: #ff8e53;"></i>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333;">早餐</div>
+                    </div>
+                    <div class="meal-type-item" data-type="lunch" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #ffebee; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-utensils" style="font-size: 24px; color: #ff6b81;"></i>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333;">午饭</div>
+                    </div>
+                    <div class="meal-type-item" data-type="dinner" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #e3f2fd; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-moon" style="font-size: 24px; color: #54a0ff;"></i>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333;">晚饭</div>
+                    </div>
+                    <div class="meal-type-item" data-type="supper" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #f3e5f5; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-star" style="font-size: 24px; color: #ba68c8;"></i>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333;">宵夜</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 餐食配置 -->
+            <div class="meal-config-section" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">餐食配置</h3>
+                <div class="config-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="config-item">
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">几菜</label>
+                        <div class="config-buttons" style="display: flex; gap: 8px;">
+                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0菜</div>
+                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1菜</div>
+                            <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">2菜</div>
+                            <div class="config-btn" data-value="3" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">3菜</div>
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">几汤</label>
+                        <div class="config-buttons" style="display: flex; gap: 8px;">
+                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0汤</div>
+                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1汤</div>
+                            <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">2汤</div>
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">饮品</label>
+                        <div class="config-buttons" style="display: flex; gap: 8px;">
+                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0饮品</div>
+                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1饮品</div>
+                        </div>
+                    </div>
+                    <div class="config-item">
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">主食</label>
+                        <div class="config-buttons" style="display: flex; gap: 8px;">
+                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0主食</div>
+                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1主食</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 开始筛选按钮 -->
+            <button id="start-filter-btn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 16px rgba(0,0,0,0.2); margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <i class="fas fa-magic" style="font-size: 20px;"></i>
+                <span>开始筛选</span>
+            </button>
+            
+            <!-- 筛选结果 -->
+            <div id="filter-result" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">筛选结果</h3>
+                <div id="result-list" style="margin-bottom: 20px;"></div>
+                <button id="add-all-to-cart" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <i class="fas fa-shopping-cart"></i> 全部加入购物车
+                </button>
+            </div>
+            
+
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 自定义默认菜品列表 ==========
+        const defaultFoods = [
+            // 早餐
+            { id: 1, name: '豆浆', category: 'breakfast', img: 'https://picsum.photos/200/200?101' },
+            { id: 2, name: '油条', category: 'breakfast', img: 'https://picsum.photos/200/200?102' },
+            { id: 3, name: '鲜肉包', category: 'breakfast', img: 'https://picsum.photos/200/200?103' },
+            { id: 4, name: '青菜包', category: 'breakfast', img: 'https://picsum.photos/200/200?104' },
+            { id: 5, name: '香菇青菜包', category: 'breakfast', img: 'https://picsum.photos/200/200?105' },
+            { id: 6, name: '酱肉包', category: 'breakfast', img: 'https://picsum.photos/200/200?106' },
+            { id: 7, name: '豆沙包', category: 'breakfast', img: 'https://picsum.photos/200/200?107' },
+            { id: 8, name: '奶黄包', category: 'breakfast', img: 'https://picsum.photos/200/200?108' },
+            { id: 9, name: '烧麦', category: 'breakfast', img: 'https://picsum.photos/200/200?109' },
+            { id: 10, name: '蒸饺', category: 'breakfast', img: 'https://picsum.photos/200/200?110' },
+            { id: 11, name: '馄饨', category: 'breakfast', img: 'https://picsum.photos/200/200?111' },
+            { id: 12, name: '皮蛋瘦肉粥', category: 'breakfast', img: 'https://picsum.photos/200/200?112' },
+            { id: 13, name: '小米粥', category: 'breakfast', img: 'https://picsum.photos/200/200?113' },
+            { id: 14, name: '南瓜粥', category: 'breakfast', img: 'https://picsum.photos/200/200?114' },
+            { id: 15, name: '八宝粥', category: 'breakfast', img: 'https://picsum.photos/200/200?115' },
+            { id: 16, name: '茶叶蛋', category: 'breakfast', img: 'https://picsum.photos/200/200?116' },
+            { id: 17, name: '水煮蛋', category: 'breakfast', img: 'https://picsum.photos/200/200?117' },
+            { id: 18, name: '葱油饼', category: 'breakfast', img: 'https://picsum.photos/200/200?118' },
+            { id: 19, name: '手抓饼', category: 'breakfast', img: 'https://picsum.photos/200/200?119' },
+            { id: 20, name: '鸡蛋灌饼', category: 'breakfast', img: 'https://picsum.photos/200/200?120' },
+            { id: 21, name: '杂粮煎饼', category: 'breakfast', img: 'https://picsum.photos/200/200?121' },
+            { id: 22, name: '酱香饼', category: 'breakfast', img: 'https://picsum.photos/200/200?122' },
+            { id: 23, name: '千层饼', category: 'breakfast', img: 'https://picsum.photos/200/200?123' },
+            { id: 24, name: '豆腐脑', category: 'breakfast', img: 'https://picsum.photos/200/200?124' },
+            { id: 25, name: '胡辣汤', category: 'breakfast', img: 'https://picsum.photos/200/200?125' },
+            { id: 26, name: '蒸玉米', category: 'breakfast', img: 'https://picsum.photos/200/200?126' },
+            { id: 27, name: '蒸红薯', category: 'breakfast', img: 'https://picsum.photos/200/200?127' },
+            { id: 28, name: '花卷', category: 'breakfast', img: 'https://picsum.photos/200/200?128' },
+            { id: 29, name: '红糖馒头', category: 'breakfast', img: 'https://picsum.photos/200/200?129' },
+            { id: 30, name: '鲜肉馄饨', category: 'breakfast', img: 'https://picsum.photos/200/200?130' },
+            { id: 31, name: '香菇鸡肉粥', category: 'breakfast', img: 'https://picsum.photos/200/200?131' },
+            { id: 32, name: '牛肉粥', category: 'breakfast', img: 'https://picsum.photos/200/200?132' },
+            { id: 33, name: '青菜瘦肉粥', category: 'breakfast', img: 'https://picsum.photos/200/200?133' },
+            { id: 34, name: '煎饺', category: 'breakfast', img: 'https://picsum.photos/200/200?134' },
+            { id: 35, name: '锅贴', category: 'breakfast', img: 'https://picsum.photos/200/200?135' },
+            { id: 36, name: '馅饼', category: 'breakfast', img: 'https://picsum.photos/200/200?136' },
+            { id: 37, name: '麻团', category: 'breakfast', img: 'https://picsum.photos/200/200?137' },
+            { id: 38, name: '炸糖糕', category: 'breakfast', img: 'https://picsum.photos/200/200?138' },
+            { id: 39, name: '牛肉面', category: 'breakfast', img: 'https://picsum.photos/200/200?139' },
+            { id: 40, name: '热干面', category: 'breakfast', img: 'https://picsum.photos/200/200?140' },
+            { id: 41, name: '阳春面', category: 'breakfast', img: 'https://picsum.photos/200/200?141' },
+            { id: 42, name: '卤豆干', category: 'breakfast', img: 'https://picsum.photos/200/200?142' },
+            { id: 43, name: '卤海带', category: 'breakfast', img: 'https://picsum.photos/200/200?143' },
+            { id: 44, name: '馒头', category: 'breakfast', img: 'https://picsum.photos/200/200?144' },
+            
+            // 家常菜
+            { id: 16, name: '鱼香肉丝', category: 'home-cooking', img: 'https://picsum.photos/200/200?1' },
+            { id: 17, name: '宫保鸡丁', category: 'home-cooking', img: 'https://picsum.photos/200/200?2' },
+            { id: 18, name: '麻婆豆腐', category: 'home-cooking', img: 'https://picsum.photos/200/200?3' },
+            { id: 19, name: '水煮肉片', category: 'home-cooking', img: 'https://picsum.photos/200/200?4' },
+            { id: 20, name: '回锅肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?5' },
+            { id: 21, name: '青椒肉丝', category: 'home-cooking', img: 'https://picsum.photos/200/200?6' },
+            { id: 22, name: '土豆烧牛肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?7' },
+            { id: 23, name: '番茄炒蛋', category: 'home-cooking', img: 'https://picsum.photos/200/200?8' },
+            { id: 24, name: '酸辣土豆丝', category: 'home-cooking', img: 'https://picsum.photos/200/200?9' },
+            { id: 25, name: '红烧排骨', category: 'home-cooking', img: 'https://picsum.photos/200/200?10' },
+            { id: 26, name: '红烧肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?11' },
+            { id: 27, name: '地三鲜', category: 'home-cooking', img: 'https://picsum.photos/200/200?12' },
+            { id: 28, name: '干锅花菜', category: 'home-cooking', img: 'https://picsum.photos/200/200?13' },
+            { id: 29, name: '手撕包菜', category: 'home-cooking', img: 'https://picsum.photos/200/200?14' },
+            { id: 30, name: '香菇滑鸡', category: 'home-cooking', img: 'https://picsum.photos/200/200?15' },
+            { id: 31, name: '小炒黄牛肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?16' },
+            { id: 32, name: '蒜薹炒肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?17' },
+            { id: 33, name: '红烧茄子', category: 'home-cooking', img: 'https://picsum.photos/200/200?18' },
+            { id: 34, name: '农家小炒肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?19' },
+            { id: 35, name: '清炒时蔬', category: 'home-cooking', img: 'https://picsum.photos/200/200?20' },
+            { id: 36, name: '糖醋里脊', category: 'home-cooking', img: 'https://picsum.photos/200/200?21' },
+            { id: 37, name: '干锅土豆片', category: 'home-cooking', img: 'https://picsum.photos/200/200?22' },
+            { id: 38, name: '冬瓜排骨汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?23' },
+            { id: 39, name: '紫菜蛋花汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?24' },
+            { id: 40, name: '西红柿鸡蛋汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?25' },
+            { id: 41, name: '酸辣汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?26' },
+            { id: 42, name: '韭菜炒鸡蛋', category: 'home-cooking', img: 'https://picsum.photos/200/200?27' },
+            { id: 43, name: '木耳炒鸡蛋', category: 'home-cooking', img: 'https://picsum.photos/200/200?28' },
+            { id: 44, name: '红烧鱼块', category: 'home-cooking', img: 'https://picsum.photos/200/200?29' },
+            { id: 45, name: '啤酒鸭', category: 'home-cooking', img: 'https://picsum.photos/200/200?30' },
+            { id: 46, name: '辣子鸡', category: 'home-cooking', img: 'https://picsum.photos/200/200?31' },
+            { id: 47, name: '水煮鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?32' },
+            { id: 48, name: '干锅千叶豆腐', category: 'home-cooking', img: 'https://picsum.photos/200/200?33' },
+            { id: 49, name: '酸菜白肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?34' },
+            { id: 50, name: '梅菜扣肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?35' },
+            { id: 51, name: '粉蒸肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?36' },
+            { id: 52, name: '酱大骨', category: 'home-cooking', img: 'https://picsum.photos/200/200?37' },
+            { id: 53, name: '卤猪蹄', category: 'home-cooking', img: 'https://picsum.photos/200/200?38' },
+            { id: 54, name: '酸豆角炒肉末', category: 'home-cooking', img: 'https://picsum.photos/200/200?39' },
+            { id: 55, name: '泡椒鸡杂', category: 'home-cooking', img: 'https://picsum.photos/200/200?40' },
+            { id: 56, name: '爆炒腰花', category: 'home-cooking', img: 'https://picsum.photos/200/200?41' },
+            { id: 57, name: '香干炒肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?42' },
+            { id: 58, name: '千张结烧肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?43' },
+            { id: 59, name: '雪菜毛豆', category: 'home-cooking', img: 'https://picsum.photos/200/200?44' },
+            { id: 60, name: '萝卜烧牛腩', category: 'home-cooking', img: 'https://picsum.photos/200/200?45' },
+            { id: 61, name: '番茄炖牛腩', category: 'home-cooking', img: 'https://picsum.photos/200/200?46' },
+            { id: 62, name: '荷兰豆炒腊肠', category: 'home-cooking', img: 'https://picsum.photos/200/200?47' },
+            { id: 63, name: '莴笋炒肉', category: 'home-cooking', img: 'https://picsum.photos/200/200?48' },
+            { id: 64, name: '干煸豆角', category: 'home-cooking', img: 'https://picsum.photos/200/200?49' },
+            { id: 65, name: '蒜蓉娃娃菜', category: 'home-cooking', img: 'https://picsum.photos/200/200?50' },
+            { id: 66, name: '香菇青菜', category: 'home-cooking', img: 'https://picsum.photos/200/200?51' },
+            { id: 67, name: '丝瓜蛋汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?52' },
+            { id: 68, name: '青菜豆腐汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?53' },
+            
+            // 特色小吃
+            { id: 33, name: '酸辣粉', category: 'snacks', img: 'https://picsum.photos/200/200?18' },
+            { id: 34, name: '螺蛳粉', category: 'snacks', img: 'https://picsum.photos/200/200?19' },
+            { id: 35, name: '凉皮', category: 'snacks', img: 'https://picsum.photos/200/200?20' },
+            { id: 36, name: '凉面', category: 'snacks', img: 'https://picsum.photos/200/200?21' },
+            { id: 37, name: '狼牙土豆', category: 'snacks', img: 'https://picsum.photos/200/200?22' },
+            { id: 38, name: '锅巴土豆', category: 'snacks', img: 'https://picsum.photos/200/200?23' },
+            { id: 39, name: '肉夹馍', category: 'snacks', img: 'https://picsum.photos/200/200?24' },
+            { id: 40, name: '烤冷面', category: 'snacks', img: 'https://picsum.photos/200/200?25' },
+            { id: 41, name: '烤面筋', category: 'snacks', img: 'https://picsum.photos/200/200?26' },
+            { id: 42, name: '臭豆腐', category: 'snacks', img: 'https://picsum.photos/200/200?27' },
+            { id: 43, name: '章鱼小丸子', category: 'snacks', img: 'https://picsum.photos/200/200?28' },
+            { id: 44, name: '炸鸡排', category: 'snacks', img: 'https://picsum.photos/200/200?29' },
+            { id: 45, name: '鸡柳', category: 'snacks', img: 'https://picsum.photos/200/200?30' },
+            { id: 46, name: '盐酥鸡', category: 'snacks', img: 'https://picsum.photos/200/200?31' },
+            { id: 47, name: '轰炸大鱿鱼', category: 'snacks', img: 'https://picsum.photos/200/200?32' },
+            { id: 48, name: '卤鸡腿', category: 'snacks', img: 'https://picsum.photos/200/200?33' },
+            { id: 49, name: '卤鸡翅', category: 'snacks', img: 'https://picsum.photos/200/200?34' },
+            { id: 50, name: '卤鸡爪', category: 'snacks', img: 'https://picsum.photos/200/200?35' },
+            { id: 51, name: '卤蛋', category: 'snacks', img: 'https://picsum.photos/200/200?36' },
+            { id: 52, name: '卤豆干', category: 'snacks', img: 'https://picsum.photos/200/200?37' },
+            { id: 53, name: '关东煮', category: 'snacks', img: 'https://picsum.photos/200/200?38' },
+            { id: 54, name: '花甲粉', category: 'snacks', img: 'https://picsum.photos/200/200?39' },
+            { id: 55, name: '鸭血粉丝汤', category: 'snacks', img: 'https://picsum.photos/200/200?40' },
+            { id: 56, name: '淮南牛肉汤', category: 'snacks', img: 'https://picsum.photos/200/200?41' },
+            { id: 57, name: '过桥米线', category: 'snacks', img: 'https://picsum.photos/200/200?42' },
+            { id: 58, name: '砂锅土豆粉', category: 'snacks', img: 'https://picsum.photos/200/200?43' },
+            { id: 59, name: '红糖糍粑', category: 'snacks', img: 'https://picsum.photos/200/200?44' },
+            { id: 60, name: '小酥肉', category: 'snacks', img: 'https://picsum.photos/200/200?45' },
+            { id: 61, name: '粢饭团', category: 'snacks', img: 'https://picsum.photos/200/200?46' },
+            { id: 62, name: '糯米鸡', category: 'snacks', img: 'https://picsum.photos/200/200?47' },
+            { id: 63, name: '生煎包', category: 'snacks', img: 'https://picsum.photos/200/200?48' },
+            { id: 64, name: '擀面皮', category: 'snacks', img: 'https://picsum.photos/200/200?49' },
+            { id: 65, name: '米皮', category: 'snacks', img: 'https://picsum.photos/200/200?50' },
+            { id: 66, name: '冰粉', category: 'snacks', img: 'https://picsum.photos/200/200?51' },
+            { id: 67, name: '凉糕', category: 'snacks', img: 'https://picsum.photos/200/200?52' },
+            { id: 68, name: '驴肉火烧', category: 'snacks', img: 'https://picsum.photos/200/200?53' },
+            { id: 69, name: '卤煮火烧', category: 'snacks', img: 'https://picsum.photos/200/200?54' },
+            { id: 70, name: '炸香肠', category: 'snacks', img: 'https://picsum.photos/200/200?55' },
+            { id: 71, name: '炸年糕', category: 'snacks', img: 'https://picsum.photos/200/200?56' },
+            { id: 72, name: '卤鸭翅', category: 'snacks', img: 'https://picsum.photos/200/200?57' },
+            { id: 73, name: '卤鸭掌', category: 'snacks', img: 'https://picsum.photos/200/200?58' },
+            { id: 74, name: '卤藕片', category: 'snacks', img: 'https://picsum.photos/200/200?59' },
+            
+            // 饮品
+            { id: 54, name: '珍珠奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?39' },
+            { id: 55, name: '椰果奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?40' },
+            { id: 56, name: '布丁奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?41' },
+            { id: 57, name: '红豆奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?42' },
+            { id: 58, name: '仙草奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?43' },
+            { id: 59, name: '芋圆奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?44' },
+            { id: 60, name: '波霸奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?45' },
+            { id: 61, name: '烤奶', category: 'drinks', img: 'https://picsum.photos/200/200?46' },
+            { id: 62, name: '黑糖珍珠奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?47' },
+            { id: 63, name: '焦糖奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?48' },
+            { id: 64, name: '抹茶奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?49' },
+            { id: 65, name: '巧克力奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?50' },
+            { id: 66, name: '草莓奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?51' },
+            { id: 67, name: '芒果奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?52' },
+            { id: 68, name: '香芋奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?53' },
+            { id: 69, name: '蓝莓奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?54' },
+            { id: 70, name: '哈密瓜奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?55' },
+            { id: 71, name: '燕麦奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?56' },
+            { id: 72, name: '青稞奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?57' },
+            { id: 73, name: '茉莉奶绿', category: 'drinks', img: 'https://picsum.photos/200/200?58' },
+            { id: 74, name: '四季春奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?59' },
+            { id: 75, name: '乌龙奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?60' },
+            { id: 76, name: '红茶拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?61' },
+            { id: 77, name: '绿茶拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?62' },
+            { id: 78, name: '美式咖啡', category: 'drinks', img: 'https://picsum.photos/200/200?63' },
+            { id: 79, name: '拿铁咖啡', category: 'drinks', img: 'https://picsum.photos/200/200?64' },
+            { id: 80, name: '卡布奇诺', category: 'drinks', img: 'https://picsum.photos/200/200?65' },
+            { id: 81, name: '摩卡咖啡', category: 'drinks', img: 'https://picsum.photos/200/200?66' },
+            { id: 82, name: '焦糖玛奇朵', category: 'drinks', img: 'https://picsum.photos/200/200?67' },
+            { id: 83, name: '香草拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?68' },
+            { id: 84, name: '榛果拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?69' },
+            { id: 85, name: '抹茶拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?70' },
+            { id: 86, name: '冰美式', category: 'drinks', img: 'https://picsum.photos/200/200?71' },
+            { id: 87, name: '冰拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?72' },
+            { id: 88, name: '冷萃咖啡', category: 'drinks', img: 'https://picsum.photos/200/200?73' },
+            { id: 89, name: '浓缩咖啡', category: 'drinks', img: 'https://picsum.photos/200/200?74' },
+            { id: 90, name: '椰香拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?75' },
+            { id: 91, name: '燕麦拿铁', category: 'drinks', img: 'https://picsum.photos/200/200?76' },
+            { id: 92, name: '柠檬红茶', category: 'drinks', img: 'https://picsum.photos/200/200?77' },
+            { id: 93, name: '柠檬绿茶', category: 'drinks', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '金桔柠檬', category: 'drinks', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '百香果茶', category: 'drinks', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '蜂蜜柚子茶', category: 'drinks', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '蜜桃乌龙茶', category: 'drinks', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '葡萄果茶', category: 'drinks', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '草莓果茶', category: 'drinks', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '芒果果茶', category: 'drinks', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '奇异果果茶', category: 'drinks', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '酸梅汤', category: 'drinks', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '绿豆汤', category: 'drinks', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '冰糖雪梨', category: 'drinks', img: 'https://picsum.photos/200/200?89' },
+            { id: 105, name: '蜂蜜柠檬水', category: 'drinks', img: 'https://picsum.photos/200/200?90' },
+            { id: 106, name: '橙汁', category: 'drinks', img: 'https://picsum.photos/200/200?91' },
+            { id: 107, name: '芒果汁', category: 'drinks', img: 'https://picsum.photos/200/200?92' },
+            { id: 108, name: '西瓜汁', category: 'drinks', img: 'https://picsum.photos/200/200?93' },
+            { id: 109, name: '苹果汁', category: 'drinks', img: 'https://picsum.photos/200/200?94' },
+            { id: 110, name: '葡萄汁', category: 'drinks', img: 'https://picsum.photos/200/200?95' },
+            { id: 111, name: '可乐', category: 'drinks', img: 'https://picsum.photos/200/200?96' },
+            { id: 112, name: '雪碧', category: 'drinks', img: 'https://picsum.photos/200/200?97' },
+            { id: 113, name: '芬达', category: 'drinks', img: 'https://picsum.photos/200/200?98' },
+            { id: 114, name: '冰红茶', category: 'drinks', img: 'https://picsum.photos/200/200?99' },
+            { id: 115, name: '冰绿茶', category: 'drinks', img: 'https://picsum.photos/200/200?100' },
+            { id: 116, name: '乳酸菌饮品', category: 'drinks', img: 'https://picsum.photos/200/200?101' },
+            { id: 117, name: '杨枝甘露', category: 'drinks', img: 'https://picsum.photos/200/200?102' },
+            { id: 118, name: '椰汁', category: 'drinks', img: 'https://picsum.photos/200/200?103' },
+            { id: 119, name: '西米露', category: 'drinks', img: 'https://picsum.photos/200/200?104' },
+            { id: 120, name: '牛奶', category: 'drinks', img: 'https://picsum.photos/200/200?105' },
+            { id: 121, name: '酸奶', category: 'drinks', img: 'https://picsum.photos/200/200?106' },
+            { id: 122, name: '红枣牛奶', category: 'drinks', img: 'https://picsum.photos/200/200?107' },
+            { id: 123, name: '香蕉牛奶', category: 'drinks', img: 'https://picsum.photos/200/200?108' },
+            { id: 124, name: '草莓牛奶', category: 'drinks', img: 'https://picsum.photos/200/200?109' },
+            { id: 125, name: '可可牛奶', category: 'drinks', img: 'https://picsum.photos/200/200?110' },
+            { id: 126, name: '满杯红柚', category: 'drinks', img: 'https://picsum.photos/200/200?111' },
+            { id: 127, name: '满杯橙子', category: 'drinks', img: 'https://picsum.photos/200/200?112' },
+            { id: 128, name: '冰鲜柠檬水', category: 'drinks', img: 'https://picsum.photos/200/200?113' },
+            
+            // 主食
+            { id: 64, name: '白米饭', category: 'staple', img: 'https://picsum.photos/200/200?49' },
+            { id: 65, name: '杂粮饭', category: 'staple', img: 'https://picsum.photos/200/200?50' },
+            { id: 66, name: '蛋炒饭', category: 'staple', img: 'https://picsum.photos/200/200?51' },
+            { id: 67, name: '扬州炒饭', category: 'staple', img: 'https://picsum.photos/200/200?52' },
+            { id: 68, name: '酱油炒饭', category: 'staple', img: 'https://picsum.photos/200/200?53' },
+            { id: 69, name: '炒面', category: 'staple', img: 'https://picsum.photos/200/200?54' },
+            { id: 70, name: '炒米粉', category: 'staple', img: 'https://picsum.photos/200/200?55' },
+            { id: 71, name: '炒河粉', category: 'staple', img: 'https://picsum.photos/200/200?56' },
+            { id: 72, name: '牛肉面', category: 'staple', img: 'https://picsum.photos/200/200?57' },
+            { id: 73, name: '炸酱面', category: 'staple', img: 'https://picsum.photos/200/200?58' },
+            { id: 74, name: '担担面', category: 'staple', img: 'https://picsum.photos/200/200?59' },
+            { id: 75, name: '酸辣面', category: 'staple', img: 'https://picsum.photos/200/200?60' },
+            { id: 76, name: '盖浇饭', category: 'staple', img: 'https://picsum.photos/200/200?61' },
+            { id: 77, name: '卤肉饭', category: 'staple', img: 'https://picsum.photos/200/200?62' },
+            { id: 78, name: '咖喱鸡饭', category: 'staple', img: 'https://picsum.photos/200/200?63' },
+            { id: 79, name: '咖喱牛肉饭', category: 'staple', img: 'https://picsum.photos/200/200?64' },
+            { id: 80, name: '鱼香茄子饭', category: 'staple', img: 'https://picsum.photos/200/200?65' },
+            { id: 81, name: '宫保鸡丁饭', category: 'staple', img: 'https://picsum.photos/200/200?66' },
+            { id: 82, name: '水饺', category: 'staple', img: 'https://picsum.photos/200/200?67' },
+            { id: 83, name: '蒸饺', category: 'staple', img: 'https://picsum.photos/200/200?68' },
+            { id: 84, name: '馄饨面', category: 'staple', img: 'https://picsum.photos/200/200?69' },
+            { id: 85, name: '意面', category: 'staple', img: 'https://picsum.photos/200/200?70' },
+            { id: 86, name: '寿司', category: 'staple', img: 'https://picsum.photos/200/200?71' },
+            { id: 87, name: '饭团', category: 'staple', img: 'https://picsum.photos/200/200?72' },
+            { id: 88, name: '黑椒牛柳饭', category: 'staple', img: 'https://picsum.photos/200/200?73' },
+            { id: 89, name: '照烧鸡排饭', category: 'staple', img: 'https://picsum.photos/200/200?74' },
+            { id: 90, name: '奥尔良鸡腿饭', category: 'staple', img: 'https://picsum.photos/200/200?75' },
+            { id: 91, name: '韩式拌饭', category: 'staple', img: 'https://picsum.photos/200/200?76' },
+            { id: 92, name: '石锅拌饭', category: 'staple', img: 'https://picsum.photos/200/200?77' },
+            { id: 93, name: '杂酱面', category: 'staple', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '油泼面', category: 'staple', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '刀削面', category: 'staple', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '乌冬面', category: 'staple', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '猪肉白菜水饺', category: 'staple', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '猪肉韭菜水饺', category: 'staple', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '素三鲜水饺', category: 'staple', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '粽子', category: 'staple', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '火腿炒饭', category: 'staple', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '香肠炒饭', category: 'staple', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '西红柿蛋炒饭', category: 'staple', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '肉丝炒饭', category: 'staple', img: 'https://picsum.photos/200/200?89' },
+            
+            // 甜品点心
+            { id: 80, name: '蛋挞', category: 'dessert', img: 'https://picsum.photos/200/200?65' },
+            { id: 81, name: '蛋糕卷', category: 'dessert', img: 'https://picsum.photos/200/200?66' },
+            { id: 82, name: '提拉米苏', category: 'dessert', img: 'https://picsum.photos/200/200?67' },
+            { id: 83, name: '慕斯蛋糕', category: 'dessert', img: 'https://picsum.photos/200/200?68' },
+            { id: 84, name: '泡芙', category: 'dessert', img: 'https://picsum.photos/200/200?69' },
+            { id: 85, name: '肉松小贝', category: 'dessert', img: 'https://picsum.photos/200/200?70' },
+            { id: 86, name: '雪媚娘', category: 'dessert', img: 'https://picsum.photos/200/200?71' },
+            { id: 87, name: '麻薯', category: 'dessert', img: 'https://picsum.photos/200/200?72' },
+            { id: 88, name: '布丁', category: 'dessert', img: 'https://picsum.photos/200/200?73' },
+            { id: 89, name: '双皮奶', category: 'dessert', img: 'https://picsum.photos/200/200?74' },
+            { id: 90, name: '烧仙草', category: 'dessert', img: 'https://picsum.photos/200/200?75' },
+            { id: 91, name: '芋圆烧仙草', category: 'dessert', img: 'https://picsum.photos/200/200?76' },
+            { id: 92, name: '红豆沙', category: 'dessert', img: 'https://picsum.photos/200/200?77' },
+            { id: 93, name: '绿豆沙', category: 'dessert', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '桂花糕', category: 'dessert', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '绿豆糕', category: 'dessert', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '老婆饼', category: 'dessert', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '蛋黄酥', category: 'dessert', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '曲奇饼干', category: 'dessert', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '布朗尼', category: 'dessert', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '纸杯蛋糕', category: 'dessert', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '冰粉', category: 'dessert', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '凉糕', category: 'dessert', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '千层蛋糕', category: 'dessert', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '班戟', category: 'dessert', img: 'https://picsum.photos/200/200?89' },
+            { id: 105, name: '姜撞奶', category: 'dessert', img: 'https://picsum.photos/200/200?90' },
+            { id: 106, name: '银耳莲子羹', category: 'dessert', img: 'https://picsum.photos/200/200?91' },
+            { id: 107, name: '马蹄糕', category: 'dessert', img: 'https://picsum.photos/200/200?92' },
+            { id: 108, name: '糯米糍', category: 'dessert', img: 'https://picsum.photos/200/200?93' },
+            { id: 109, name: '鲜花饼', category: 'dessert', img: 'https://picsum.photos/200/200?94' },
+            { id: 110, name: '冰淇淋', category: 'dessert', img: 'https://picsum.photos/200/200?95' },
+            { id: 111, name: '圣代', category: 'dessert', img: 'https://picsum.photos/200/200?96' },
+            { id: 112, name: '奶昔', category: 'dessert', img: 'https://picsum.photos/200/200?97' },
+            { id: 113, name: '华夫饼', category: 'dessert', img: 'https://picsum.photos/200/200?98' },
+            { id: 114, name: '松饼', category: 'dessert', img: 'https://picsum.photos/200/200?99' },
+            
+            // 烧烤炸物
+            { id: 93, name: '烤羊肉串', category: 'bbq', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '烤牛肉串', category: 'bbq', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '烤鸡翅', category: 'bbq', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '烤鸡腿', category: 'bbq', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '烤五花肉', category: 'bbq', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '烤香肠', category: 'bbq', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '烤面筋', category: 'bbq', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '烤茄子', category: 'bbq', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '烤金针菇', category: 'bbq', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '烤韭菜', category: 'bbq', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '烤玉米', category: 'bbq', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '烤馒头片', category: 'bbq', img: 'https://picsum.photos/200/200?89' },
+            { id: 105, name: '炸鸡排', category: 'bbq', img: 'https://picsum.photos/200/200?90' },
+            { id: 106, name: '炸鸡腿', category: 'bbq', img: 'https://picsum.photos/200/200?91' },
+            { id: 107, name: '炸鸡翅', category: 'bbq', img: 'https://picsum.photos/200/200?92' },
+            { id: 108, name: '炸薯条', category: 'bbq', img: 'https://picsum.photos/200/200?93' },
+            { id: 109, name: '炸鸡柳', category: 'bbq', img: 'https://picsum.photos/200/200?94' },
+            { id: 110, name: '炸酥肉', category: 'bbq', img: 'https://picsum.photos/200/200?95' },
+            { id: 111, name: '炸藕合', category: 'bbq', img: 'https://picsum.photos/200/200?96' },
+            { id: 112, name: '炸茄子盒', category: 'bbq', img: 'https://picsum.photos/200/200?97' },
+            { id: 113, name: '炸年糕', category: 'bbq', img: 'https://picsum.photos/200/200?98' },
+            { id: 114, name: '炸火腿肠', category: 'bbq', img: 'https://picsum.photos/200/200?99' },
+            { id: 115, name: '盐酥鸡', category: 'bbq', img: 'https://picsum.photos/200/200?100' },
+            { id: 116, name: '上校鸡块', category: 'bbq', img: 'https://picsum.photos/200/200?101' },
+            { id: 117, name: '鸡米花', category: 'bbq', img: 'https://picsum.photos/200/200?102' },
+            { id: 118, name: '烤秋刀鱼', category: 'bbq', img: 'https://picsum.photos/200/200?103' },
+            { id: 119, name: '烤小黄鱼', category: 'bbq', img: 'https://picsum.photos/200/200?104' },
+            { id: 120, name: '烤鱿鱼', category: 'bbq', img: 'https://picsum.photos/200/200?105' },
+            { id: 121, name: '烤鱿鱼须', category: 'bbq', img: 'https://picsum.photos/200/200?106' },
+            { id: 122, name: '烤鸡胗', category: 'bbq', img: 'https://picsum.photos/200/200?107' },
+            { id: 123, name: '烤鸡心', category: 'bbq', img: 'https://picsum.photos/200/200?108' },
+            { id: 124, name: '烤鸭肠', category: 'bbq', img: 'https://picsum.photos/200/200?109' },
+            { id: 125, name: '烤土豆片', category: 'bbq', img: 'https://picsum.photos/200/200?110' },
+            { id: 126, name: '烤藕片', category: 'bbq', img: 'https://picsum.photos/200/200?111' },
+            { id: 127, name: '烤香菇', category: 'bbq', img: 'https://picsum.photos/200/200?112' },
+            { id: 128, name: '烤豆腐', category: 'bbq', img: 'https://picsum.photos/200/200?113' },
+            { id: 129, name: '炸蟹棒', category: 'bbq', img: 'https://picsum.photos/200/200?114' },
+            { id: 130, name: '炸鱼豆腐', category: 'bbq', img: 'https://picsum.photos/200/200?115' },
+            { id: 131, name: '炸甜不辣', category: 'bbq', img: 'https://picsum.photos/200/200?116' },
+            { id: 132, name: '炸春卷', category: 'bbq', img: 'https://picsum.photos/200/200?117' },
+            { id: 133, name: '轰炸大鱿鱼', category: 'bbq', img: 'https://picsum.photos/200/200?118' },
+            { id: 134, name: '烤青椒', category: 'bbq', img: 'https://picsum.photos/200/200?119' },
+            
+            // 水果
+            { id: 141, name: '西瓜', category: 'fruits', img: 'https://picsum.photos/200/200?141' },
+            { id: 142, name: '哈密瓜', category: 'fruits', img: 'https://picsum.photos/200/200?142' },
+            { id: 143, name: '苹果', category: 'fruits', img: 'https://picsum.photos/200/200?143' },
+            { id: 144, name: '香蕉', category: 'fruits', img: 'https://picsum.photos/200/200?144' },
+            { id: 145, name: '橙子', category: 'fruits', img: 'https://picsum.photos/200/200?145' },
+            { id: 146, name: '梨', category: 'fruits', img: 'https://picsum.photos/200/200?146' },
+            { id: 147, name: '葡萄', category: 'fruits', img: 'https://picsum.photos/200/200?147' },
+            { id: 148, name: '草莓', category: 'fruits', img: 'https://picsum.photos/200/200?148' },
+            { id: 149, name: '芒果', category: 'fruits', img: 'https://picsum.photos/200/200?149' },
+            { id: 150, name: '猕猴桃', category: 'fruits', img: 'https://picsum.photos/200/200?150' },
+            { id: 151, name: '火龙果', category: 'fruits', img: 'https://picsum.photos/200/200?151' },
+            { id: 152, name: '圣女果', category: 'fruits', img: 'https://picsum.photos/200/200?152' },
+            { id: 153, name: '蓝莓', category: 'fruits', img: 'https://picsum.photos/200/200?153' },
+            { id: 154, name: '榴莲', category: 'fruits', img: 'https://picsum.photos/200/200?154' },
+            { id: 155, name: '菠萝', category: 'fruits', img: 'https://picsum.photos/200/200?155' },
+            { id: 156, name: '凤梨', category: 'fruits', img: 'https://picsum.photos/200/200?156' },
+            { id: 157, name: '桃子', category: 'fruits', img: 'https://picsum.photos/200/200?157' },
+            { id: 158, name: '李子', category: 'fruits', img: 'https://picsum.photos/200/200?158' },
+            { id: 159, name: '柚子', category: 'fruits', img: 'https://picsum.photos/200/200?159' },
+            { id: 160, name: '橘子', category: 'fruits', img: 'https://picsum.photos/200/200?160' },
+            { id: 161, name: '柠檬', category: 'fruits', img: 'https://picsum.photos/200/200?161' },
+            { id: 162, name: '木瓜', category: 'fruits', img: 'https://picsum.photos/200/200?162' },
+            { id: 163, name: '山竹', category: 'fruits', img: 'https://picsum.photos/200/200?163' },
+            { id: 164, name: '荔枝', category: 'fruits', img: 'https://picsum.photos/200/200?164' },
+            { id: 165, name: '龙眼', category: 'fruits', img: 'https://picsum.photos/200/200?165' },
+            { id: 166, name: '樱桃', category: 'fruits', img: 'https://picsum.photos/200/200?166' },
+            { id: 167, name: '西梅', category: 'fruits', img: 'https://picsum.photos/200/200?167' },
+            { id: 168, name: '石榴', category: 'fruits', img: 'https://picsum.photos/200/200?168' },
+            { id: 169, name: '甘蔗', category: 'fruits', img: 'https://picsum.photos/200/200?169' },
+            { id: 170, name: '桑葚', category: 'fruits', img: 'https://picsum.photos/200/200?170' },
+            { id: 171, name: '枇杷', category: 'fruits', img: 'https://picsum.photos/200/200?171' },
+            { id: 172, name: '油桃', category: 'fruits', img: 'https://picsum.photos/200/200?172' },
+            { id: 173, name: '杏子', category: 'fruits', img: 'https://picsum.photos/200/200?173' },
+        ];
+
+        // ========== DOM元素获取 ==========
+        const foodNameInput = document.getElementById('food-name-input');
+        const foodCategorySelect = document.getElementById('food-category-select');
+        const submitFoodBtn = document.getElementById('submit-food-btn');
+        const selectedModal = document.getElementById('selected-modal');
+        const selectedList = document.getElementById('selected-list');
+        const selectedTime = document.getElementById('selected-time');
+        const closeSelectedBtn = document.getElementById('close-selected-btn');
+        const closeSelectedBtn2 = document.getElementById('close-selected-btn-2');
+        const printBtn = document.getElementById('print-btn');
+        const foodSearchInput = document.getElementById('food-search-input');
+        const loadingToast = document.getElementById('loading-toast');
+        const addModal = document.getElementById('add-modal');
+        const cancelAddBtn = document.getElementById('cancel-add-btn');
+        const cancelAddBtn2 = document.getElementById('cancel-add-btn-2');
+        const imgUpload = document.getElementById('img-upload');
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        const foodListContainer = document.getElementById('food-list-container');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const viewCartBtn = document.querySelector('.view-cart-btn');
+        const cartCount = document.querySelector('.cart-count');
+        const specModal = document.getElementById('spec-modal');
+        const specModalTitle = document.getElementById('spec-modal-title');
+        const specList = document.getElementById('spec-list');
+        const cancelSpecBtn = document.getElementById('cancel-spec-btn');
+        const confirmSpecBtn = document.getElementById('confirm-spec-btn');
+        const printTemplate = document.getElementById('print-template');
+        const printTime = document.getElementById('print-time');
+        const printList = document.getElementById('print-list');
+        const saveBtn = document.getElementById('save-btn');
+        const detailModal = document.getElementById('detail-modal');
+        const closeDetailBtn = document.getElementById('close-detail-btn');
+        const detailImg = document.getElementById('detail-img');
+        const detailName = document.getElementById('detail-name');
+        const detailCategory = document.getElementById('detail-category');
+        const detailDescription = document.getElementById('detail-description');
+        const detailAddBtn = document.querySelector('.detail-add-btn');
+        const detailFavoriteBtn = document.getElementById('detail-favorite-btn');
+
+        // ========== 全局变量 ==========
+        let allFoods = getFoodsFromStorage(); // 所有菜品
+        let cart = []; // 购物车
+        let currentImgFile = null; // 当前上传的图片
+        let currentCategory = 'home-cooking'; // 当前选中分类
+        let searchKeyword = ''; // 搜索关键词
+        let currentSelectingFood = null; // 当前正在选择规格的菜品
+        let selectedSpec = ''; // 选中的规格
+        let favorites = getFavoritesFromStorage(); // 收藏的菜品
+        let currentDetailFood = null; // 当前查看详情的菜品
+        let currentMealType = ''; // 当前选中的餐别
+        let mealConfig = { // 餐食配置
+            dishes: 2,
+            soups: 1,
+            drinks: 1,
+            staples: 1
+        };
+        let randomResult = []; // 随机生成的菜品结果
+
+        // 分类名称映射
+        const categoryNameMap = {
+            'home-cooking': '家常菜',
+            'breakfast': '早餐',
+            'snacks': '特色小吃',
+            'staple': '主食',
+            'bbq': '烧烤炸物',
+            'drinks': '饮品',
+            'dessert': '甜品点心',
+            'fruits': '水果'
+        };
+
+        // 菜品描述数据
+        const foodDescriptions = {
+            '包子': '松软可口，馅料丰富',
+            '油条': '外酥里嫩，早餐必备',
+            '豆浆': '营养丰富，口感醇厚',
+            '鸡蛋': '高蛋白，营养早餐',
+            '粥': '清淡养胃，多种口味',
+            '煎饼果子': '香脆可口，饱腹感强',
+            '小笼包': '皮薄馅多，汤汁鲜美',
+            '馄饨': '皮薄馅嫩，汤清味鲜',
+            '肠粉': '嫩滑爽口，口感丰富',
+            '三明治': '营养均衡，方便快捷',
+            '牛奶': '营养丰富，补钙佳品',
+            '面包': '松软可口，多种口味',
+            '麦片': '健康营养，早餐首选',
+            '酸奶': '益生菌丰富，助消化',
+            '水果': '新鲜多汁，补充维生素',
+            '红烧肉': '经典家常菜，肥而不腻，入口即化',
+            '鱼香肉丝': '酸甜可口，开胃下饭',
+            '酸菜鱼': '酸辣开胃，鱼肉鲜嫩',
+            '辣椒炒肉': '湖南特色，香辣过瘾',
+            '白切鸡': '广东名菜，皮滑肉嫩',
+            '红烧狮子头': '传统名菜，肉质鲜美',
+            '龙井虾仁': '杭州名菜，清香鲜嫩',
+            '佛跳墙': '福建名菜，营养丰富',
+            '回锅肉': '四川名菜，肥而不腻',
+            '水煮肉片': '四川名菜，麻辣鲜香',
+            '毛血旺': '重庆名菜，麻辣鲜香',
+            '剁椒鱼头': '湖南名菜，香辣可口',
+            '东坡肉': '杭州名菜，肥而不腻',
+            '肉末茄子': '家常菜，酱香浓郁',
+            '鸭血豆腐': '家常菜，营养丰富',
+            '临沂炒鸡': '山东名菜，鸡肉鲜嫩',
+            '可乐鸡翅': '家常菜，甜香可口',
+            '麻辣烫': '四川特色，麻辣鲜香',
+            '螺蛳粉': '广西特色，酸辣可口',
+            '酸辣粉': '重庆特色，酸辣开胃',
+            '虾饺': '广东点心，鲜美可口',
+            '馄饨': '传统小吃，皮薄馅大',
+            '肠粉': '广东特色，嫩滑可口',
+            '过桥米线': '云南特色，汤汁鲜美',
+            '卷面皮': '特色小吃，口感丰富',
+            '酱香饼': '特色小吃，酱香浓郁',
+            '水果捞': '健康甜品，清爽可口',
+            '麻辣香锅': '四川特色，麻辣鲜香',
+            '鱼粉': '特色小吃，汤汁鲜美',
+            '花甲米线': '特色小吃，鲜美可口',
+            '砂锅米线': '传统小吃，温暖舒适',
+            '鸭血粉丝汤': '南京特色，鲜美可口',
+            '小龙虾': '夏季特色，麻辣鲜香',
+            '肉蟹煲': '特色美食，鲜美可口',
+            '钵钵鸡': '四川特色，麻辣鲜香',
+            '口水鸡': '四川特色，香辣可口',
+            '福鼎肉片': '福建特色，嫩滑可口',
+            '捞汁小海鲜': '特色美食，鲜美可口',
+            '可乐': '经典碳酸饮料',
+            '雪碧': '清爽碳酸饮料',
+            '橙汁': '新鲜果汁',
+            '冰红茶': '清凉茶饮料',
+            '珍珠奶茶': '经典奶茶，口感丰富',
+            '西梅小铁': '特色饮品，酸甜可口',
+            '青提小铁': '特色饮品，清爽可口',
+            '矿泉水': '纯净饮用水',
+            '酸奶': '健康饮品，营养丰富',
+            '冬阴功汤': '泰国特色，酸辣可口',
+            '炸酱面': '北京特色，酱香浓郁',
+            '兰州拉面': '甘肃特色，面条劲道',
+            '热干面': '武汉特色，酱香浓郁',
+            '刀削面': '山西特色，面条劲道',
+            '龙虾': '海鲜美食，鲜美可口',
+            '螃蟹': '海鲜美食，鲜美可口',
+            '煲仔饭': '广东特色，饭香扑鼻',
+            '鳗鱼饭': '日式美食，鲜美可口',
+            '咖喱猪排饭': '日式美食，咖喱香浓',
+            '芒果糯米饭': '泰式美食，香甜可口',
+            '滑蛋饭': '港式美食，嫩滑可口',
+            '凉皮凉面': '传统小吃，清凉可口',
+            '河粉': '广东特色，口感顺滑',
+            '卷筒粉': '特色小吃，口感丰富',
+            '意面': '西式美食，口感丰富',
+            '糯米丸子': '传统美食，软糯可口',
+            '桃酥': '传统点心，酥脆可口',
+            '雪花酥': '特色点心，口感丰富',
+            '龙须酥': '传统点心，入口即化',
+            '蛋黄酥': '传统点心，酥香可口',
+            '鲜花饼': '云南特色，花香浓郁',
+            '雪糕': '夏季甜品，清凉可口',
+            '冰糖葫芦': '传统小吃，酸甜可口',
+            '圣代': '西式甜品，口感丰富',
+            '钵仔糕': '广东特色，Q弹可口',
+            '鸡蛋仔': '港式小吃，外酥里嫩',
+            '炸牛奶': '广东特色，外酥里嫩',
+            '四果汤': '福建特色，清凉可口',
+            '烤红薯': '传统小吃，香甜可口',
+            '羊肉串': '烧烤特色，肉质鲜嫩',
+            '烤鱿鱼': '烧烤特色，鲜美可口',
+            '炸鸡腿': '西式快餐，外酥里嫩',
+            '烧烤': '特色美食，香气扑鼻',
+            '牛排': '西式美食，肉质鲜嫩',
+            '烤鱼': '特色美食，鲜美可口',
+            '烤面筋': '烧烤特色，口感丰富',
+            '卢烤鸡架': '特色美食，香气扑鼻',
+            '锅巴土豆': '特色小吃，外酥里嫩',
+            '铁板鱿鱼': '街头小吃，香气扑鼻',
+            '脆皮五花肉': '特色美食，外酥里嫩',
+            '脆皮年糕': '街头小吃，外酥里嫩',
+            '炸淀粉肠': '街头小吃，香气扑鼻',
+            '臭豆腐': '传统小吃，闻起来臭吃起来香',
+            '烤冷面': '街头小吃，口感丰富',
+            '煎包': '传统小吃，外酥里嫩',
+            '烤翅': '烧烤特色，香气扑鼻',
+            '薯条': '西式快餐，外酥里嫩',
+            '鸡排': '西式快餐，外酥里嫩'
+        };
+
+        // 规格配置
+        const specConfig = {
+            // 辣度配置
+            'spicy': [
+                { value: 'normal', text: '正常口味' },
+                { value: 'no-spicy', text: '不辣' },
+                { value: 'mild-spicy', text: '微辣' },
+                { value: 'medium-spicy', text: '中辣' },
+                { value: 'hot-spicy', text: '爆辣' }
+            ],
+            // 饮品配置
+            'drink': [
+                { value: 'hot', text: '热' },
+                { value: 'ice', text: '冰' },
+                { value: '30-sugar', text: '三分糖' },
+                { value: '50-sugar', text: '五分糖' },
+                { value: '70-sugar', text: '七分糖' },
+                { value: 'no-sugar', text: '无糖' }
+            ]
+        };
+
+        // ========== 本地存储工具函数 ==========
+        function getFoodsFromStorage() {
+            const foods = localStorage.getItem('wifeFoodList');
+            return foods ? JSON.parse(foods) : defaultFoods;
+        }
+
+        function saveFoodsToStorage(foods) {
+            localStorage.setItem('wifeFoodList', JSON.stringify(foods));
+        }
+
+        function getFavoritesFromStorage() {
+            const favs = localStorage.getItem('wifeFoodFavorites');
+            return favs ? JSON.parse(favs) : [];
+        }
+
+        function saveFavoritesToStorage(favs) {
+            localStorage.setItem('wifeFoodFavorites', JSON.stringify(favs));
+        }
+
+        // ========== 工具函数 ==========
+        // 格式化日期时间
+        function formatDateTime() {
+            const now = new Date();
+            return now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 显示加载提示
+        function showLoading() {
+            loadingToast.style.display = 'block';
+        }
+
+        // 隐藏加载提示
+        function hideLoading() {
+            loadingToast.style.display = 'none';
+        }
+
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 添加动画
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // 打开菜品详情页
+        function openDetailModal(food) {
+            currentDetailFood = food;
+            detailImg.style.display = 'none';
+            if (!document.querySelector('.detail-name-large')) {
+                const nameLarge = document.createElement('div');
+                nameLarge.className = 'detail-name-large';
+                nameLarge.textContent = food.name;
+                detailContent.insertBefore(nameLarge, detailName);
+            } else {
+                document.querySelector('.detail-name-large').textContent = food.name;
+            }
+            detailName.textContent = food.name;
+            detailCategory.textContent = categoryNameMap[food.category] || '未分类';
+            detailDescription.textContent = foodDescriptions[food.name] || '暂无描述';
+            
+            // 检查是否已收藏
+            const isFavorited = favorites.includes(food.id.toString());
+            if (isFavorited) {
+                detailFavoriteBtn.classList.add('favorited');
+                detailFavoriteBtn.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+            } else {
+                detailFavoriteBtn.classList.remove('favorited');
+                detailFavoriteBtn.innerHTML = '<i class="far fa-heart"></i> 收藏';
+            }
+            
+            detailModal.classList.add('show');
+        }
+
+        // 切换收藏状态
+        function toggleFavorite(foodId) {
+            const index = favorites.indexOf(foodId.toString());
+            if (index > -1) {
+                // 取消收藏
+                favorites.splice(index, 1);
+                detailFavoriteBtn.classList.remove('favorited');
+                detailFavoriteBtn.innerHTML = '<i class="far fa-heart"></i> 收藏';
+                alert('已取消收藏');
+            } else {
+                // 添加收藏
+                favorites.push(foodId.toString());
+                detailFavoriteBtn.classList.add('favorited');
+                detailFavoriteBtn.innerHTML = '<i class="fas fa-heart"></i> 已收藏';
+                alert('收藏成功');
+            }
+            saveFavoritesToStorage(favorites);
+        }
+
+        // ========== 规格选择逻辑 ==========
+        // 打开规格选择弹窗
+        function openSpecModal(food) {
+            // 水果品类直接添加，不需要选择规格
+            if (food.category === 'fruits') {
+                addToCart(food, '正常口味');
+                showToast('已放入购物车里~');
+                return;
+            }
+            
+            currentSelectingFood = food;
+            selectedSpec = '';
+            specList.innerHTML = '';
+            
+            // 清空备注输入
+            document.getElementById('food-remark-input').value = '';
+            
+            // 根据品类选择规格类型
+            let specs = [];
+            if (['home-cooking', 'snacks', 'staple', 'bbq', 'breakfast'].includes(food.category)) {
+                specModalTitle.textContent = '选择规格';
+                specs = specConfig.spicy;
+            } else if (food.category === 'drinks') {
+                specModalTitle.textContent = '选择规格';
+                specs = specConfig.drink;
+            }
+
+            // 渲染规格选项
+            specs.forEach(spec => {
+                const specItem = document.createElement('div');
+                specItem.className = 'spec-item';
+                specItem.dataset.value = spec.value;
+                specItem.textContent = spec.text;
+                specItem.addEventListener('click', () => {
+                    document.querySelectorAll('.spec-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    specItem.classList.add('active');
+                    selectedSpec = spec.text;
+                });
+                specList.appendChild(specItem);
+            });
+
+            // 显示弹窗
+            specModal.classList.add('show');
+        }
+
+        // ========== 菜品操作逻辑 ==========
+        // 删除菜品
+        function deleteFood(foodId) {
+            if (!confirm('确定要删除这个菜品吗？')) return;
+            
+            allFoods = allFoods.filter(food => food.id !== parseInt(foodId));
+            saveFoodsToStorage(allFoods);
+            cart = cart.filter(item => item.id !== foodId);
+            
+            renderFoodList(currentCategory, searchKeyword);
+            updateCart();
+            renderSelectedList();
+            
+            alert('菜品删除成功～');
+        }
+
+        // 添加菜品到购物车
+        function addToCart(food, spec = '') {
+            const existingFood = cart.find(item => 
+                item.id === food.id && item.remark === spec
+            );
+            
+            if (existingFood) {
+                existingFood.quantity += 1;
+            } else {
+                cart.push({
+                    id: food.id,
+                    name: food.name,
+                    category: food.category,
+                    img: food.img,
+                    quantity: 1,
+                    remark: spec // 规格备注
+                });
+            }
+            
+            updateCart();
+            renderSelectedList();
+        }
+
+        // ========== 渲染函数 ==========
+        // 渲染菜品列表
+        function renderFoodList(category, keyword) {
+            let filteredFoods = [];
+            
+            if (keyword) {
+                filteredFoods = allFoods.filter(food => food.name.includes(keyword));
+                categoryItems.forEach(item => item.classList.remove('active'));
+            } else {
+                filteredFoods = allFoods.filter(food => food.category === category);
+                categoryItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.category === category);
+                });
+            }
+
+            let foodHtml = '';
+            if (filteredFoods.length === 0) {
+                foodHtml = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍽️</div>
+                        <div class="empty-text">暂无相关菜品哦～</div>
+                    </div>
+                `;
+            } else {
+                filteredFoods.forEach(food => {
+                    const categoryCn = categoryNameMap[food.category] || '未分类';
+                    const deleteBtnHtml = `
+                        <button class="food-delete" data-id="${food.id}">
+                            <i class="fas fa-trash-alt"></i> 删除
+                        </button>
+                    `;
+                    
+                    foodHtml += `
+                        <div class="food-item" data-id="${food.id}" data-name="${food.name}" 
+                             data-category="${food.category}" data-img="${food.img}">
+                            <div class="food-name-large">${food.name}</div>
+                            <div class="food-info">
+                                <span class="food-category-tag">${categoryCn}</span>
+                                <div class="food-name">${food.name}</div>
+                            </div>
+                            <div class="food-actions">
+                                <button class="food-add">+</button>
+                                ${deleteBtnHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            foodListContainer.innerHTML = foodHtml;
+            
+            // 绑定事件
+            bindAddCartEvent();
+            bindFoodDeleteEvent();
+        }
+
+        // 渲染已选菜品列表
+        function renderSelectedList() {
+            selectedTime.textContent = formatDateTime();
+            
+            if (cart.length === 0) {
+                selectedList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🛒</div>
+                        <div class="empty-text">暂无已选菜品～</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let selectedHtml = '';
+            cart.forEach((item, index) => {
+                const categoryCn = categoryNameMap[item.category] || '未分类';
+                // 显示规格备注
+                const remarkHtml = item.remark ? `<div class="item-remark">${item.remark}</div>` : '';
+                
+                selectedHtml += `
+                    <div class="selected-item" data-index="${index}">
+                        <div class="item-name">
+                            ${item.name}
+                            <span class="item-category-tag">${categoryCn}</span>
+                            ${remarkHtml}
+                        </div>
+                        <div class="item-quantity">
+                            <button class="quantity-btn minus-btn">-</button>
+                            <span class="quantity-num">${item.quantity}</span>
+                            <button class="quantity-btn plus-btn">+</button>
+                        </div>
+                        <div class="delete-item-btn">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                    </div>
+                `;
+            });
+            selectedList.innerHTML = selectedHtml;
+
+            bindQuantityEvents();
+            bindDeleteEvents();
+        }
+
+        // 渲染打印模板
+        function renderPrintTemplate() {
+            printTime.textContent = formatDateTime();
+            
+            let printHtml = '';
+            cart.forEach(item => {
+                const remarkHtml = item.remark ? `<span class="print-item-remark">(${item.remark})</span>` : '';
+                printHtml += `
+                    <div class="print-item">
+                        <div class="print-item-name">${item.name} ${remarkHtml}</div>
+                        <div class="print-item-quantity">× ${item.quantity}</div>
+                    </div>
+                `;
+            });
+            
+            printList.innerHTML = printHtml;
+        }
+
+        // ========== 事件绑定 ==========
+        // 更新购物车数量
+        function updateCart() {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalCount;
+        }
+
+        // 分类切换 - 核心修改：点击分类后菜品列表回到顶部
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                foodSearchInput.value = '';
+                searchKeyword = '';
+                currentCategory = item.dataset.category;
+                renderFoodList(currentCategory, searchKeyword);
+                // 核心修改：强制菜品列表滚动到顶部
+                foodListContainer.scrollTop = 0;
+            });
+        });
+
+        // 搜索框输入
+        foodSearchInput.addEventListener('input', (e) => {
+            searchKeyword = e.target.value.trim();
+            renderFoodList(currentCategory, searchKeyword);
+        });
+
+        // 绑定菜品删除事件
+        function bindFoodDeleteEvent() {
+            const deleteBtns = document.querySelectorAll('.food-delete');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const foodId = btn.dataset.id;
+                    deleteFood(foodId);
+                });
+            });
+        }
+
+        // 绑定添加购物车事件
+        function bindAddCartEvent() {
+            const foodAddBtns = document.querySelectorAll('.food-add');
+            foodAddBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const foodItem = btn.closest('.food-item');
+                    const food = {
+                        id: foodItem.dataset.id,
+                        name: foodItem.dataset.name,
+                        category: foodItem.dataset.category,
+                        img: foodItem.dataset.img
+                    };
+
+                    // 判断是否需要选择规格
+            if (['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast', 'fruits'].includes(food.category)) {
+                // 需要选择规格
+                openSpecModal(food);
+            } else {
+                // 甜品点心，直接添加
+                addToCart(food);
+            }
+                });
+            });
+
+            // 绑定菜品卡片点击事件（打开详情页）
+            const foodItems = document.querySelectorAll('.food-item');
+            foodItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const food = {
+                        id: item.dataset.id,
+                        name: item.dataset.name,
+                        category: item.dataset.category,
+                        img: item.dataset.img
+                    };
+                    openDetailModal(food);
+                });
+            });
+        }
+
+        // 数量修改事件
+        function bindQuantityEvents() {
+            const plusBtns = document.querySelectorAll('.plus-btn');
+            plusBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = btn.closest('.selected-item').dataset.index;
+                    cart[index].quantity += 1;
+                    updateCart();
+                    renderSelectedList();
+                });
+            });
+
+            const minusBtns = document.querySelectorAll('.minus-btn');
+            minusBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = btn.closest('.selected-item').dataset.index;
+                    if (cart[index].quantity > 1) {
+                        cart[index].quantity -= 1;
+                        updateCart();
+                        renderSelectedList();
+                    }
+                });
+            });
+        }
+
+        // 删除菜品事件
+        function bindDeleteEvents() {
+            const deleteBtns = document.querySelectorAll('.delete-item-btn');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = btn.closest('.selected-item').dataset.index;
+                    cart.splice(index, 1);
+                    updateCart();
+                    renderSelectedList();
+                });
+            });
+        }
+
+        // ========== 弹窗事件 ==========
+        // 添加菜品弹窗
+        document.querySelector('.add-food-btn').addEventListener('click', () => {
+            addModal.classList.add('show');
+            foodNameInput.value = '';
+            previewImg.style.display = 'none';
+            currentImgFile = null;
+        });
+
+        // 关闭添加弹窗
+        [cancelAddBtn, cancelAddBtn2].forEach(btn => {
+            btn.addEventListener('click', () => {
+                addModal.classList.remove('show');
+            });
+        });
+
+        // 图片上传
+        imgUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                currentImgFile = file;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    previewImg.src = event.target.result;
+                    previewImg.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 提交添加菜品
+        submitFoodBtn.addEventListener('click', () => {
+            const name = foodNameInput.value.trim();
+            const category = foodCategorySelect.value;
+            if (!name) {
+                alert('菜品名称不能为空哦～');
+                return;
+            }
+
+            const maxId = allFoods.length > 0 ? Math.max(...allFoods.map(f => parseInt(f.id))) : 100;
+            const newFood = {
+                id: maxId + 1,
+                name: name,
+                category: category,
+                img: '',
+                isDefault: false
+            };
+
+            allFoods.push(newFood);
+            saveFoodsToStorage(allFoods);
+            renderFoodList(currentCategory, searchKeyword);
+            addModal.classList.remove('show');
+            
+            // 显示添加成功提示
+            showToast('添加成功啦～老婆想吃的都安排😘');
+        });
+
+        // 规格弹窗事件
+        cancelSpecBtn.addEventListener('click', () => {
+            specModal.classList.remove('show');
+            currentSelectingFood = null;
+            selectedSpec = '';
+        });
+
+        confirmSpecBtn.addEventListener('click', () => {
+            if (!selectedSpec) {
+                alert('请选择规格后再确认～');
+                return;
+            }
+            
+            // 获取备注输入
+            const remarkInput = document.getElementById('food-remark-input');
+            const remark = remarkInput.value.trim();
+            
+            // 组合规格和备注
+            let fullRemark = selectedSpec;
+            if (remark) {
+                fullRemark += ` (${remark})`;
+            }
+            
+            addToCart(currentSelectingFood, fullRemark);
+            // 更新购物车和已选菜品列表
+            updateCart();
+            renderSelectedList();
+            specModal.classList.remove('show');
+            currentSelectingFood = null;
+            selectedSpec = '';
+            // 清空备注输入
+            remarkInput.value = '';
+        });
+
+        // 查看已选菜品
+        viewCartBtn.addEventListener('click', () => {
+            renderSelectedList();
+            selectedModal.classList.add('show');
+        });
+
+        // 关闭已选菜品弹窗
+        [closeSelectedBtn, closeSelectedBtn2].forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedModal.classList.remove('show');
+            });
+        });
+
+        // 详情页事件
+        closeDetailBtn.addEventListener('click', () => {
+            detailModal.classList.remove('show');
+        });
+
+        // 从详情页加入购物车
+        detailAddBtn.addEventListener('click', () => {
+            if (currentDetailFood) {
+                // 判断是否需要选择规格
+                if (['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast', 'fruits'].includes(currentDetailFood.category)) {
+                    // 需要选择规格
+                    openSpecModal(currentDetailFood);
+                    detailModal.classList.remove('show');
+                } else {
+                    // 甜品点心，直接添加
+                    addToCart(currentDetailFood);
+                    detailModal.classList.remove('show');
+                }
+            }
+        });
+
+        // 收藏功能
+        detailFavoriteBtn.addEventListener('click', () => {
+            if (currentDetailFood) {
+                toggleFavorite(currentDetailFood.id);
+            }
+        });
+
+        // 保存到相册功能
+        saveBtn.addEventListener('click', async () => {
+            if (cart.length === 0) {
+                alert('暂无已选菜品，无法保存～');
+                return;
+            }
+
+            showLoading();
+            
+            try {
+                // 渲染打印模板
+                renderPrintTemplate();
+                
+                // 延迟确保模板渲染完成
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // 检查html2canvas是否加载
+                if (typeof html2canvas === 'undefined') {
+                    // 动态加载html2canvas
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                    script.onload = async () => {
+                        await saveToAlbum();
+                    };
+                    script.onerror = () => {
+                        hideLoading();
+                        alert('加载必要的库失败，请稍后重试');
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    await saveToAlbum();
+                }
+            } catch (error) {
+                hideLoading();
+                alert('保存失败，请稍后重试');
+                console.error('保存失败:', error);
+            }
+        });
+
+        // 保存到相册的具体实现
+        async function saveToAlbum() {
+            try {
+                const printElement = document.getElementById('print-template');
+                printElement.style.display = 'block';
+                
+                // 使用html2canvas将打印模板转换为图片
+                const canvas = await html2canvas(printElement, {
+                    scale: 2, // 提高清晰度
+                    useCORS: true, // 允许跨域图片
+                    logging: false
+                });
+                
+                // 转换为图片URL
+                const imgData = canvas.toDataURL('image/png');
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = `点餐清单_${formatDateTime().replace(/[:/]/g, '-')}.png`;
+                link.click();
+                
+                // 关闭弹窗
+                selectedModal.classList.remove('show');
+                showToast('保存成功，请在相册中查看');
+            } catch (error) {
+                throw error;
+            } finally {
+                hideLoading();
+                document.getElementById('print-template').style.display = 'none';
+            }
+        }
+
+        // 点击弹窗外部关闭
+        addModal.addEventListener('click', (e) => {
+            if (e.target === addModal) cancelAddBtn.click();
+        });
+
+        selectedModal.addEventListener('click', (e) => {
+            if (e.target === selectedModal) closeSelectedBtn.click();
+        });
+
+        specModal.addEventListener('click', (e) => {
+            if (e.target === specModal) cancelSpecBtn.click();
+        });
+
+        detailModal.addEventListener('click', (e) => {
+            if (e.target === detailModal) closeDetailBtn.click();
+        });
+
+        // ========== 问候语逻辑 ==========
+        function updateGreeting() {
+            const greetingText = document.getElementById('greeting-text');
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = '';
+
+            if (hour >= 0 && hour < 5) {
+                greeting = '凌晨好~宝宝，看看吃点什么';
+            } else if (hour >= 5 && hour < 7) {
+                greeting = '清晨好~宝宝，看看吃点什么';
+            } else if (hour >= 7 && hour < 12) {
+                greeting = '上午好~宝宝，看看吃点什么';
+            } else if (hour >= 12 && hour < 14) {
+                greeting = '中午好~宝宝，看看吃点什么';
+            } else if (hour >= 14 && hour < 18) {
+                greeting = '下午好~宝宝，看看吃点什么';
+            } else if (hour >= 18 && hour < 24) {
+                greeting = '晚上好~宝宝，看看吃点什么';
+            }
+
+            greetingText.textContent = greeting;
+        }
+
+
+
+        // ========== 初始化 ========== 
+        window.onload = () => {
+            renderFoodList(currentCategory, searchKeyword);
+            updateCart();
+            updateGreeting(); // 初始化问候语
+            
+            // 解决移动端点击延迟
+            document.addEventListener('touchstart', () => {}, { passive: true });
+            
+            // 适配窗口大小变化
+            window.addEventListener('resize', () => {
+                renderFoodList(currentCategory, searchKeyword);
+            });
+
+            // 初始化时菜品列表回到顶部
+            foodListContainer.scrollTop = 0;
+        };
+
+        // ========== 随机点餐功能 ==========
+        // 浮屏小筛子拖动功能
+        const floatingDice = document.getElementById('floating-dice');
+        let isDragging = false;
+        let startX, startY, initialX, initialY;
+
+        floatingDice.addEventListener('mousedown', startDrag);
+        floatingDice.addEventListener('touchstart', startDrag, { passive: false });
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+            startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+            initialX = floatingDice.offsetLeft;
+            initialY = floatingDice.offsetTop;
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+            const currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+            
+            const dx = currentX - startX;
+            const dy = currentY - startY;
+            
+            const newX = initialX + dx;
+            const newY = initialY + dy;
+            
+            // 限制在屏幕范围内
+            const maxX = window.innerWidth - floatingDice.offsetWidth;
+            const maxY = window.innerHeight - floatingDice.offsetHeight;
+            
+            const boundedX = Math.max(0, Math.min(newX, maxX));
+            const boundedY = Math.max(0, Math.min(newY, maxY));
+            
+            floatingDice.style.left = boundedX + 'px';
+            floatingDice.style.top = boundedY + 'px';
+            floatingDice.style.right = 'auto';
+            floatingDice.style.bottom = 'auto';
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchend', stopDrag);
+        }
+
+        // 打开随机筛选页面
+        floatingDice.addEventListener('click', () => {
+            if (!isDragging) {
+                document.getElementById('random-screen').style.display = 'block';
+            }
+        });
+
+        // 返回主页面
+        document.getElementById('back-to-main').addEventListener('click', () => {
+            // 重置相关变量
+            currentSelectingFood = null;
+            selectedSpec = '';
+            // 关闭规格选择弹窗（如果打开）
+            specModal.classList.remove('show');
+            // 隐藏随机筛选页面
+            document.getElementById('random-screen').style.display = 'none';
+        });
+
+        // 餐别选择事件
+        document.querySelectorAll('.meal-type-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // 移除其他选项的active类
+                document.querySelectorAll('.meal-type-item').forEach(i => {
+                    i.style.borderColor = '#e1f5fe';
+                    i.style.background = '#f8f9fa';
+                });
+                // 添加当前选项的active类
+                item.style.borderColor = '#ff6b81';
+                item.style.background = '#ffebee';
+                
+                currentMealType = item.dataset.type;
+            });
+        });
+
+        // 餐食配置选择事件
+        document.querySelectorAll('.config-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除同组其他按钮的active类
+                const parent = btn.closest('.config-buttons');
+                parent.querySelectorAll('.config-btn').forEach(b => {
+                    b.style.borderColor = '#e1f5fe';
+                    b.style.background = '#f8f9fa';
+                });
+                // 添加当前按钮的active类
+                btn.style.borderColor = '#ff6b81';
+                btn.style.background = '#ffebee';
+                
+                // 更新配置
+                const configItem = btn.closest('.config-item');
+                const label = configItem.querySelector('label').textContent;
+                
+                if (label.includes('几菜')) {
+                    mealConfig.dishes = parseInt(btn.dataset.value);
+                } else if (label.includes('几汤')) {
+                    mealConfig.soups = parseInt(btn.dataset.value);
+                } else if (label.includes('饮品')) {
+                    mealConfig.drinks = parseInt(btn.dataset.value);
+                } else if (label.includes('主食')) {
+                    mealConfig.staples = parseInt(btn.dataset.value);
+                }
+            });
+        });
+
+        // 开始筛选
+        document.getElementById('start-filter-btn').addEventListener('click', () => {
+            if (!currentMealType) {
+                alert('请选择餐别');
+                return;
+            }
+            
+            // 显示加载动画
+            const resultList = document.getElementById('result-list');
+            resultList.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🎲</div>
+                    <div style="font-size: 18px; font-weight: bold; color: #ff6b81; margin-bottom: 20px;">正在筛选...</div>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff6b81; animation: bounce 1s infinite;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff8e53; animation: bounce 1s infinite 0.2s;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #48dbfb; animation: bounce 1s infinite 0.4s;"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('filter-result').style.display = 'block';
+            
+            // 3秒后生成结果
+            setTimeout(() => {
+                generateRandomMenu();
+            }, 3000);
+        });
+
+        // 生成随机菜单逻辑
+        function generateRandomMenu() {
+            randomResult = [];
+            
+            // 确保使用最新的菜品数据
+            allFoods = getFoodsFromStorage();
+            
+            if (currentMealType === 'breakfast') {
+                // 早餐逻辑
+                const breakfastFoods = allFoods.filter(food => food.category === 'breakfast');
+                if (breakfastFoods.length === 0) {
+                    alert('没有早餐菜品，请先添加');
+                    return;
+                }
+                
+                // 随机选择2-3种早餐
+                const count = Math.floor(Math.random() * 2) + 2;
+                const shuffled = breakfastFoods.sort(() => 0.5 - Math.random());
+                randomResult = shuffled.slice(0, count);
+            } else {
+                // 午餐/晚餐/宵夜逻辑
+                // 选择菜品
+                const dishFoods = allFoods.filter(food => food.category === 'home-cooking');
+                if (mealConfig.dishes > 0 && dishFoods.length === 0) {
+                    alert('没有菜品，请先添加');
+                    return;
+                }
+                
+                // 选择汤品
+                const soupFoods = allFoods.filter(food => ['home-cooking', 'snacks'].includes(food.category) && 
+                    (food.name.includes('汤') || food.name.includes('粥')));
+                if (mealConfig.soups > 0 && soupFoods.length === 0) {
+                    alert('没有汤品，请先添加');
+                    return;
+                }
+                
+                // 选择饮品
+                const drinkFoods = allFoods.filter(food => food.category === 'drinks');
+                if (mealConfig.drinks > 0 && drinkFoods.length === 0) {
+                    alert('没有饮品，请先添加');
+                    return;
+                }
+                
+                // 选择主食
+                const stapleFoods = allFoods.filter(food => food.category === 'staple');
+                if (mealConfig.staples > 0 && stapleFoods.length === 0) {
+                    alert('没有主食，请先添加');
+                    return;
+                }
+                
+                // 随机选择菜品
+                if (mealConfig.dishes > 0) {
+                    const shuffledDishes = dishFoods.sort(() => 0.5 - Math.random());
+                    randomResult = randomResult.concat(shuffledDishes.slice(0, mealConfig.dishes));
+                }
+                
+                // 随机选择汤品
+                if (mealConfig.soups > 0) {
+                    const shuffledSoups = soupFoods.sort(() => 0.5 - Math.random());
+                    randomResult = randomResult.concat(shuffledSoups.slice(0, mealConfig.soups));
+                }
+                
+                // 随机选择饮品
+                if (mealConfig.drinks > 0) {
+                    const shuffledDrinks = drinkFoods.sort(() => 0.5 - Math.random());
+                    randomResult = randomResult.concat(shuffledDrinks.slice(0, mealConfig.drinks));
+                }
+                
+                // 随机选择主食
+                if (mealConfig.staples > 0) {
+                    const shuffledStaples = stapleFoods.sort(() => 0.5 - Math.random());
+                    randomResult = randomResult.concat(shuffledStaples.slice(0, mealConfig.staples));
+                }
+            }
+            
+            // 显示结果
+            displayRandomResult();
+        }
+
+        // 显示随机结果
+        function displayRandomResult() {
+            const resultList = document.getElementById('result-modal-list');
+            resultList.innerHTML = '';
+            
+            randomResult.forEach((food, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.style.cssText = `
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 15px; 
+                    border-bottom: 1px solid #f5f5f5; 
+                    background: #f8f9fa; 
+                    border-radius: 10px; 
+                    margin-bottom: 10px;
+                `;
+                
+                // 生成口味选择按钮
+                let tasteButtons = '';
+                if (['home-cooking', 'snacks', 'staple', 'bbq', 'breakfast', 'fruits'].includes(food.category)) {
+                    tasteButtons = `
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 12px; color: #666; margin-right: 10px;">口味:</span>
+                            <span class="taste-btn" data-taste="正常口味" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">正常口味</span>
+                            <span class="taste-btn" data-taste="不辣" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">不辣</span>
+                            <span class="taste-btn" data-taste="微辣" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">微辣</span>
+                            <span class="taste-btn" data-taste="中辣" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">中辣</span>
+                            <span class="taste-btn" data-taste="爆辣" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">爆辣</span>
+                        </div>
+                    `;
+                } else if (food.category === 'drinks') {
+                    tasteButtons = `
+                        <div style="margin-top: 8px;">
+                            <span style="font-size: 12px; color: #666; margin-right: 10px;">糖分:</span>
+                            <span class="taste-btn" data-taste="无糖" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">无糖</span>
+                            <span class="taste-btn" data-taste="三分糖" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">三分糖</span>
+                            <span class="taste-btn" data-taste="五分糖" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">五分糖</span>
+                            <span class="taste-btn" data-taste="七分糖" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; margin-right: 8px; cursor: pointer; transition: all 0.3s ease;">七分糖</span>
+                            <span class="taste-btn" data-taste="全糖" data-index="${index}" style="padding: 4px 12px; border: 1px solid #e1f5fe; border-radius: 15px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">全糖</span>
+                        </div>
+                    `;
+                }
+                
+                resultItem.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-size: 16px; font-weight: 500; color: #333;">${food.name}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 2px;">${categoryNameMap[food.category] || '未分类'}</div>
+                        ${tasteButtons}
+                    </div>
+                    <button class="result-replace-btn" data-index="${index}" style="padding: 8px 16px; background: #f8f9fa; color: #ff6b81; border: 1px solid #ff6b81; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-sync-alt"></i> 替换
+                    </button>
+                `;
+                resultList.appendChild(resultItem);
+            });
+            
+            // 绑定替换按钮事件
+            document.querySelectorAll('.result-replace-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    replaceFood(index);
+                });
+            });
+            
+            // 绑定口味选择按钮事件
+            document.querySelectorAll('.taste-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    const taste = btn.dataset.taste;
+                    
+                    // 移除同组其他按钮的active类
+                    const parent = btn.parentElement;
+                    parent.querySelectorAll('.taste-btn').forEach(b => {
+                        b.style.borderColor = '#e1f5fe';
+                        b.style.background = 'transparent';
+                    });
+                    // 添加当前按钮的active类
+                    btn.style.borderColor = '#ff6b81';
+                    btn.style.background = '#ffebee';
+                    
+                    // 保存口味选择
+                    if (!randomResult[index].taste) {
+                        randomResult[index].taste = taste;
+                    } else {
+                        randomResult[index].taste = taste;
+                    }
+                });
+            });
+            
+            // 显示筛选结果弹窗
+            document.getElementById('filter-result-modal').style.display = 'block';
+        }
+
+        // 替换菜品
+        function replaceFood(index) {
+            const foodToReplace = randomResult[index];
+            const category = foodToReplace.category;
+            
+            // 获取同类别菜品
+            const sameCategoryFoods = allFoods.filter(food => food.category === category && food.id !== foodToReplace.id);
+            
+            if (sameCategoryFoods.length === 0) {
+                alert('没有可替换的菜品');
+                return;
+            }
+            
+            // 显示加载动画
+            const resultList = document.getElementById('result-modal-list');
+            const originalContent = resultList.innerHTML;
+            resultList.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
+                    <div style="font-size: 18px; font-weight: bold; color: #ff6b81; margin-bottom: 20px;">正在替换...</div>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff6b81; animation: bounce 1s infinite;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ff8e53; animation: bounce 1s infinite 0.2s;"></div>
+                        <div style="width: 10px; height: 10px; border-radius: 50%; background: #48dbfb; animation: bounce 1s infinite 0.4s;"></div>
+                    </div>
+                </div>
+            `;
+            
+            // 2秒后替换菜品
+            setTimeout(() => {
+                // 随机选择一个替换
+                const randomIndex = Math.floor(Math.random() * sameCategoryFoods.length);
+                randomResult[index] = sameCategoryFoods[randomIndex];
+                
+                // 重新显示结果
+                displayRandomResult();
+            }, 2000);
+        }
+
+        // 使用事件委托绑定全部加入购物车按钮和选口味按钮的点击事件
+        document.addEventListener('click', function(e) {
+            // 处理全部加入购物车按钮的点击事件
+            if (e.target.id === 'add-modal-all-to-cart' || e.target.closest('#add-modal-all-to-cart')) {
+                console.log('全部加入购物车按钮被点击');
+                console.log('randomResult:', randomResult);
+                
+                // 检查randomResult是否为空
+                if (randomResult.length === 0) {
+                    alert('请先进行筛选，生成菜品列表');
+                    return;
+                }
+                
+                // 验证所有菜品都选择了口味
+                for (let i = 0; i < randomResult.length; i++) {
+                    const food = randomResult[i];
+                    console.log('Food:', food);
+                    if (['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast', 'fruits'].includes(food.category)) {
+                        if (!food.taste) {
+                            alert('请为所有菜品选择口味');
+                            return;
+                        }
+                    }
+                }
+                
+                // 为每个菜品选择规格后加入购物车
+                let addedCount = 0;
+                
+                function addNextFood(index) {
+                    if (index >= randomResult.length) {
+                        // 所有菜品添加完成
+                        // 显示加入成功的提示
+                        const successToast = document.createElement('div');
+                        successToast.style.cssText = `
+                            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                            background: rgba(0,0,0,0.8); color: white; padding: 20px 30px;
+                            border-radius: 10px; font-size: 16px; font-weight: bold;
+                            z-index: 10001; text-align: center;
+                        `;
+                        successToast.textContent = '添加成功~';
+                        document.body.appendChild(successToast);
+                        
+                        // 3秒后消失
+                        setTimeout(() => {
+                            successToast.remove();
+                        }, 3000);
+                        
+                        updateCart();
+                        renderSelectedList();
+                        // 关闭筛选结果弹窗
+                        document.getElementById('filter-result-modal').style.display = 'none';
+                        // 关闭总筛选结果区域
+                        document.getElementById('filter-result').style.display = 'none';
+                        return;
+                    }
+                    
+                    const food = randomResult[index];
+                    
+                    // 判断是否需要选择规格
+                    if (food.category === 'fruits') {
+                        // 水果品类直接添加，不需要选择规格
+                        addToCart(food, food.taste || '正常口味');
+                        addNextFood(index + 1);
+                    } else if (['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast'].includes(food.category)) {
+                        // 保存当前索引
+                        const currentIndex = index;
+                        
+                        // 临时保存当前选择的菜品
+                        const tempSelectingFood = currentSelectingFood;
+                        currentSelectingFood = food;
+                        
+                        // 打开规格选择弹窗
+                        openSpecModal(food);
+                        
+                        // 重写确认按钮事件
+                        const originalConfirmHandler = confirmSpecBtn.onclick;
+                        const currentFood = food; // 保存当前菜品
+                        confirmSpecBtn.onclick = function() {
+                            if (!selectedSpec) {
+                                alert('请选择规格后再确认～');
+                                return;
+                            }
+                            
+                            // 获取备注输入
+                            const remarkInput = document.getElementById('food-remark-input');
+                            const remark = remarkInput.value.trim();
+                            
+                            // 组合规格、口味和备注
+                            let fullRemark = selectedSpec;
+                            if (currentFood.taste) {
+                                fullRemark += `, ${currentFood.taste}`;
+                            }
+                            if (remark) {
+                                fullRemark += ` (${remark})`;
+                            }
+                            
+                            addToCart(currentFood, fullRemark);
+                            // 手动更新购物车和已选菜品列表
+                            updateCart();
+                            renderSelectedList();
+                            specModal.classList.remove('show');
+                            currentSelectingFood = tempSelectingFood;
+                            selectedSpec = '';
+                            // 清空备注输入
+                            remarkInput.value = '';
+                            
+                            // 恢复原始确认按钮事件
+                            confirmSpecBtn.onclick = originalConfirmHandler;
+                            
+                            // 添加下一个菜品
+                            addNextFood(currentIndex + 1);
+                        };
+                    } else {
+                        // 直接添加
+                        addToCart(food);
+                        addNextFood(index + 1);
+                    }
+                }
+                
+                // 开始添加第一个菜品
+                addNextFood(0);
+            }
+            
+            // 处理选口味按钮的点击事件
+            if (e.target.id === 'select-taste-btn' || e.target.closest('#select-taste-btn')) {
+                console.log('选口味按钮被点击');
+                // 获取保存的菜品信息
+                const resultList = document.getElementById('result-list');
+                console.log('resultList:', resultList);
+                console.log('resultList.dataset:', resultList.dataset);
+                const foodId = parseInt(resultList.dataset.foodId);
+                const foodName = resultList.dataset.foodName;
+                const foodCategory = resultList.dataset.foodCategory;
+                const foodImg = resultList.dataset.foodImg;
+                
+                console.log('Food info:', { foodId, foodName, foodCategory, foodImg });
+                
+                if (foodId) {
+                    const food = {
+                        id: foodId,
+                        name: foodName,
+                        category: foodCategory,
+                        img: foodImg
+                    };
+                    
+                    // 判断是否需要选择口味
+                    if (['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast', 'fruits'].includes(food.category)) {
+                        // 打开规格选择弹窗
+                        openSpecModal(food);
+                    } else {
+                        // 这个不能选口味
+                        alert('这个不能选口味哦');
+                        // 直接添加到购物车
+                        addToCart(food);
+                        updateCart();
+                        renderSelectedList();
+                        // 显示加入成功的提示
+                        const successToast = document.createElement('div');
+                        successToast.style.cssText = `
+                            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                            background: rgba(0,0,0,0.8); color: white; padding: 20px 30px;
+                            border-radius: 10px; font-size: 16px; font-weight: bold;
+                            z-index: 10001; text-align: center;
+                        `;
+                        successToast.textContent = '添加成功~';
+                        document.body.appendChild(successToast);
+                        
+                        // 3秒后消失
+                        setTimeout(() => {
+                            successToast.remove();
+                        }, 3000);
+                    }
+                }
+            }
+            
+            // 处理加入购物车按钮的点击事件（旧版）
+            if (e.target.id === 'add-category-food' || e.target.closest('#add-category-food')) {
+                console.log('加入购物车按钮被点击');
+                // 获取按钮上的food-id属性
+                const foodId = parseInt(e.target.dataset.foodId || e.target.closest('#add-category-food').dataset.foodId);
+                console.log('Food ID:', foodId);
+                
+                if (foodId) {
+                    const food = allFoods.find(f => f.id === foodId);
+                    console.log('Food:', food);
+                    
+                    if (food) {
+                        // 打开规格选择弹窗
+                        openSpecModal(food);
+                    }
+                }
+            }
+        });
+
+        // 分类随机筛选
+        document.querySelectorAll('.category-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+                
+                // 获取该分类的菜品
+                const categoryFoods = allFoods.filter(food => food.category === category);
+                if (categoryFoods.length === 0) {
+                    alert(`没有${categoryNameMap[category]}类菜品，请先添加`);
+                    return;
+                }
+                
+                // 随机选择一个菜品
+                const randomIndex = Math.floor(Math.random() * categoryFoods.length);
+                const randomFood = categoryFoods[randomIndex];
+                
+                // 显示结果
+                const resultList = document.getElementById('result-list');
+                resultList.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+                        <div style="font-size: 24px; font-weight: bold; color: #ff6b81; margin-bottom: 10px;">${randomFood.name}</div>
+                        <div style="font-size: 14px; color: #666; margin-bottom: 30px;">${categoryNameMap[category]}</div>
+                        <button id="add-category-food" data-food-id="${randomFood.id}" style="padding: 12px 30px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <i class="fas fa-shopping-cart"></i> 加入购物车
+                        </button>
+                    </div>
+                `;
+                document.getElementById('filter-result').style.display = 'block';
+                
+                // 绑定加入购物车按钮事件
+                document.getElementById('add-category-food').addEventListener('click', () => {
+                    const foodId = parseInt(randomFood.id);
+                    const food = allFoods.find(f => f.id === foodId);
+                    
+                    if (food) {
+                        // 打开规格选择弹窗
+                        openSpecModal(food);
+                    }
+                });
+            });
+        });
+
+        // 关闭筛选结果弹窗
+        document.getElementById('close-result-modal').addEventListener('click', () => {
+            document.getElementById('filter-result-modal').style.display = 'none';
+        });
+
+        // 左侧导航栏点击事件
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // 移除其他选项的active类
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.style.transform = 'scale(1)';
+                    i.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                });
+                // 添加当前选项的active类
+                item.style.transform = 'scale(1.1)';
+                item.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                
+                // 执行筛选功能
+                const type = item.dataset.type;
+                if (type === 'all') {
+                    // 总筛选功能 - 显示餐别选择和配置
+                    document.querySelector('.meal-type-section').style.display = 'block';
+                    document.querySelector('.meal-config-section').style.display = 'block';
+                    document.getElementById('start-filter-btn').style.display = 'block';
+                    document.getElementById('filter-result').style.display = 'none';
+                    // 关闭筛选结果弹窗
+                    document.getElementById('filter-result-modal').style.display = 'none';
+                } else {
+                    // 分类筛选功能
+                    document.querySelector('.meal-type-section').style.display = 'none';
+                    document.querySelector('.meal-config-section').style.display = 'none';
+                    document.getElementById('start-filter-btn').style.display = 'none';
+                    
+                    // 执行分类筛选
+                    const category = type;
+                    
+                    // 获取该分类的菜品
+                    const categoryFoods = allFoods.filter(food => food.category === category);
+                    if (categoryFoods.length === 0) {
+                        alert(`没有${categoryNameMap[category]}类菜品，请先添加`);
+                        return;
+                    }
+                    
+                    // 显示开始筛选按钮
+                    const resultList = document.getElementById('result-list');
+                    resultList.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🎲</div>
+                            <div style="font-size: 20px; font-weight: bold; color: #ff6b81; margin-bottom: 30px;">${categoryNameMap[category]}随机筛选</div>
+                            <button id="start-category-filter" style="padding: 12px 30px; background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <i class="fas fa-magic"></i> 开始筛选
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('filter-result').style.display = 'block';
+                    
+                    // 绑定开始筛选按钮事件
+                    document.getElementById('start-category-filter').addEventListener('click', () => {
+                        // 显示筛选动画 - 滚动显示当前类别的所有菜品名字
+                        let animationInterval;
+                        let currentIndex = 0;
+                        
+                        resultList.innerHTML = `
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                                <div style="font-size: 48px; margin-bottom: 20px;">🎲</div>
+                                <div id="food-name-animation" style="font-size: 24px; font-weight: bold; color: #ff6b81; margin-bottom: 30px; min-height: 36px; text-align: center;">${categoryFoods[0].name}</div>
+                                <button id="stop-filter-btn" style="padding: 12px 30px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                    <i class="fas fa-stop"></i> 停止筛选
+                                </button>
+                            </div>
+                        `;
+                        
+                        // 开始滚动动画
+                        animationInterval = setInterval(() => {
+                            currentIndex = (currentIndex + 1) % categoryFoods.length;
+                            document.getElementById('food-name-animation').textContent = categoryFoods[currentIndex].name;
+                        }, 200);
+                        
+                        // 绑定停止筛选按钮事件
+                        document.getElementById('stop-filter-btn').addEventListener('click', () => {
+                            clearInterval(animationInterval);
+                            
+                            // 随机选择一个菜品
+                            const randomIndex = Math.floor(Math.random() * categoryFoods.length);
+                            const randomFood = categoryFoods[randomIndex];
+                            
+                            // 显示结果
+                            resultList.innerHTML = `
+                                <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                                    <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+                                    <div style="font-size: 24px; font-weight: bold; color: #ff6b81; margin-bottom: 10px;">${randomFood.name}</div>
+                                    <div style="font-size: 14px; color: #666; margin-bottom: 30px;">${categoryNameMap[category]}</div>
+                                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                                        <button id="select-taste-btn" data-food-id="${randomFood.id}" style="padding: 12px 30px; background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                            <i class="fas fa-cutlery"></i> 就这个，选口味
+                                        </button>
+                                        <button id="end-category-filter" style="padding: 12px 30px; background: #f8f9fa; color: #666; border: 1px solid #ddd; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                            <i class="fas fa-times"></i> 重新筛选
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // 为当前筛选结果保存菜品信息
+                            const resultList = document.getElementById('result-list');
+                            resultList.dataset.foodId = randomFood.id;
+                            resultList.dataset.foodName = randomFood.name;
+                            resultList.dataset.foodCategory = randomFood.category;
+                            resultList.dataset.foodImg = randomFood.img;
+                            
+                            // 绑定重新筛选按钮事件
+                            document.getElementById('end-category-filter').addEventListener('click', () => {
+                                document.getElementById('filter-result').style.display = 'none';
+                            });
+                        });
+                    });
+                }
+            });
+        });
+        
+        // ========== Toast提示函数 ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }  
+    </script>
+    
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+</body>
+</html>
