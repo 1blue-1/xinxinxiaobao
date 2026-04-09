@@ -34,6 +34,49 @@
                 transform: scale(0.98);
             }
         }
+        
+        /* 筛选动画 */
+        @keyframes filtering {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+        
+        /* 淡入动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .meal-config {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .meal-type-selector {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .config-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .config-buttons button {
+                flex: 1 1 calc(33.333% - 6px);
+            }
+        }
 
         /* 高级按钮效果 */
         button, .category-item, .food-add, .spec-item {
@@ -1698,78 +1741,70 @@
     </div>
 
     <!-- 随机筛选页面 -->
-    <div id="random-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #f8f9fa; z-index: 9999; overflow-y: auto; min-height: 100vh;">
-
-        
-        <div style="background-color: #f8f9fa; min-height: 100%;">
-        
-        <!-- 筛选结果弹窗 -->
-        <div id="filter-result-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 10000;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; font-size: 20px; font-weight: bold; color: #333;">筛选结果</h3>
-                <button id="close-result-modal" style="background: none; border: none; font-size: 24px; color: #999; cursor: pointer;">&times;</button>
-            </div>
-            <div id="result-modal-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
-            <button id="add-modal-all-to-cart" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <i class="fas fa-shopping-cart"></i> 全部加入购物车
-            </button>
-        </div>
+    <div id="random-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); z-index: 9999; overflow-y: auto; min-height: 100vh; -webkit-overflow-scrolling: touch;">
         <!-- 顶部导航栏 -->
-        <div class="random-header" style="background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; padding: 15px; text-align: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 1001; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-            <button id="back-to-main" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+        <div class="random-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; text-align: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 1001; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(10px);">
+            <button id="back-to-main" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; width: 36px; height: 36px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">已经进入随机筛选系统</h2>
+            <h2 style="margin: 0; font-size: 20px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.2); font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">🎲 智能点餐系统</h2>
         </div>
         
         <!-- 左侧导航栏 -->
-        <div class="random-sidebar" style="width: 100%; max-width: 80px; background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%); position: fixed; left: 0; top: 80px; bottom: 0; padding: 20px 0; box-shadow: 2px 0 8px rgba(0,0,0,0.1); z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div class="random-sidebar" style="width: 100%; max-width: 80px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); position: fixed; left: 0; top: 80px; bottom: 0; padding: 20px 0; box-shadow: 2px 0 8px rgba(0,0,0,0.1); z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <!-- 总筛选功能 -->
-            <div class="menu-item" data-type="all" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
-                <i class="fas fa-utensils" style="font-size: 20px; color: #ff6b81;"></i>
+            <div class="menu-item" data-type="all" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
+                <i class="fas fa-utensils" style="font-size: 20px; color: #667eea;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">总筛选</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">总筛选</div>
             
-            <!-- 分类筛选 -->
-            <div class="menu-item" data-type="breakfast" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 早餐筛选 -->
+            <div class="menu-item" data-type="breakfast" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-coffee" style="font-size: 20px; color: #ff8e53;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">早餐</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">早餐</div>
             
-            <div class="menu-item" data-type="home-cooking" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 家常菜筛选 -->
+            <div class="menu-item" data-type="home-cooking" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-home" style="font-size: 20px; color: #48dbfb;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">家常菜</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">家常菜</div>
             
-            <div class="menu-item" data-type="staple" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 主食筛选 -->
+            <div class="menu-item" data-type="staple" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-bread-slice" style="font-size: 20px; color: #54a0ff;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">主食</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">主食</div>
             
-            <div class="menu-item" data-type="drinks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 饮品筛选 -->
+            <div class="menu-item" data-type="drinks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-glass-water" style="font-size: 20px; color: #48dbfb;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">饮品</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">饮品</div>
             
-            <div class="menu-item" data-type="snacks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 小吃筛选 -->
+            <div class="menu-item" data-type="snacks" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-cookie" style="font-size: 20px; color: #ff6b81;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">小吃</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">小吃</div>
             
-            <div class="menu-item" data-type="bbq" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 烧烤筛选 -->
+            <div class="menu-item" data-type="bbq" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-fire" style="font-size: 20px; color: #ff8e53;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">烧烤</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">烧烤</div>
             
-            <div class="menu-item" data-type="dessert" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 甜品筛选 -->
+            <div class="menu-item" data-type="dessert" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-birthday-cake" style="font-size: 20px; color: #ff6b81;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">甜品</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">甜品</div>
             
-            <div class="menu-item" data-type="fruits" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <!-- 水果筛选 -->
+            <div class="menu-item" data-type="fruits" style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid #e1f5fe;">
                 <i class="fas fa-apple-alt" style="font-size: 20px; color: #48dbfb;"></i>
             </div>
-            <div style="font-size: 10px; color: white; text-align: center; font-weight: bold;">水果</div>
+            <div style="font-size: 10px; color: #333; text-align: center; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">水果</div>
         </div>
         
         <!-- 主内容区域 -->
@@ -1789,9 +1824,6 @@
                     }
                     .config-grid {
                         grid-template-columns: 1fr !important;
-                    }
-                    .category-buttons {
-                        grid-template-columns: repeat(2, 1fr) !important;
                     }
                     .result-item {
                         flex-direction: column !important;
@@ -1817,97 +1849,793 @@
                         font-size: 12px !important;
                     }
                 }
+                
+                /* 动画效果 */
+                @keyframes pulse {
+                    0% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(1.05);
+                    }
+                    100% {
+                        transform: scale(1);
+                    }
+                }
+                
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .meal-type-item:hover,
+                .config-btn:hover {
+                    animation: pulse 0.5s ease-in-out;
+                }
+                
+                .result-item {
+                    animation: slideIn 0.3s ease-out;
+                }
             </style>
+            
+            <!-- 欢迎卡片 -->
+            <div style="background: white; border-radius: 20px; padding: 25px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); margin-bottom: 20px; border: 2px solid #b3e5fc; animation: slideIn 0.5s ease-out;">
+                <div style="text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🍽️</div>
+                    <h3 style="margin: 0 0 10px; font-size: 20px; font-weight: bold; color: #48dbfb; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">纠结今天吃什么？</h3>
+                    <p style="margin: 0; font-size: 14px; color: #666;">随机搭配，轻松解决选择困难！</p>
+                </div>
+            </div>
+            
             <!-- 餐别选择 -->
-            <div class="meal-type-section" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">选择餐别</h3>
+            <div class="meal-type-section" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); border: 2px solid #e1f5fe; animation: slideIn 0.5s ease-out 0.1s both;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">🍱 选择餐别</h3>
                 <div class="meal-type-selector" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                    <div class="meal-type-item" data-type="breakfast" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #fff3e0; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="meal-type-item" data-type="breakfast" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                             <i class="fas fa-sun" style="font-size: 24px; color: #ff8e53;"></i>
                         </div>
-                        <div style="font-size: 14px; font-weight: 500; color: #333;">早餐</div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">早餐</div>
                     </div>
-                    <div class="meal-type-item" data-type="lunch" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #ffebee; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <i class="fas fa-utensils" style="font-size: 24px; color: #ff6b81;"></i>
+                    <div class="meal-type-item" data-type="lunch" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-utensils" style="font-size: 24px; color: #54a0ff;"></i>
                         </div>
-                        <div style="font-size: 14px; font-weight: 500; color: #333;">午饭</div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">午饭</div>
                     </div>
-                    <div class="meal-type-item" data-type="dinner" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #e3f2fd; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <i class="fas fa-moon" style="font-size: 24px; color: #54a0ff;"></i>
+                    <div class="meal-type-item" data-type="dinner" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-moon" style="font-size: 24px; color: #ba68c8;"></i>
                         </div>
-                        <div style="font-size: 14px; font-weight: 500; color: #333;">晚饭</div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">晚饭</div>
                     </div>
-                    <div class="meal-type-item" data-type="supper" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <div style="width: 50px; height: 50px; border-radius: 50%; background: #f3e5f5; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <i class="fas fa-star" style="font-size: 24px; color: #ba68c8;"></i>
+                    <div class="meal-type-item" data-type="supper" style="padding: 15px; border: 2px solid #e1f5fe; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="width: 50px; height: 50px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <i class="fas fa-star" style="font-size: 24px; color: #ff6b81;"></i>
                         </div>
-                        <div style="font-size: 14px; font-weight: 500; color: #333;">宵夜</div>
+                        <div style="font-size: 14px; font-weight: 500; color: #333; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">宵夜</div>
                     </div>
                 </div>
             </div>
             
             <!-- 餐食配置 -->
-            <div class="meal-config-section" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">餐食配置</h3>
+            <div class="meal-config-section" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); border: 2px solid #b3e5fc; animation: slideIn 0.5s ease-out 0.2s both;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #48dbfb; font-size: 18px; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">🍎 餐食配置</h3>
+                <div style="grid-column: 1 / -1; padding: 10px; background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%); border-radius: 10px; font-size: 12px; color: #0288d1; margin-bottom: 15px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                    <i class="fas fa-lightbulb"></i> 系统会根据餐别自动搭配营养均衡的餐食
+                </div>
                 <div class="config-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
                     <div class="config-item">
-                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">几菜</label>
-                        <div class="config-buttons" style="display: flex; gap: 8px;">
-                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0菜</div>
-                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1菜</div>
-                            <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">2菜</div>
-                            <div class="config-btn" data-value="3" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">3菜</div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">菜品数量</label>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="config-buttons" style="flex: 3; display: flex; gap: 6px;">
+                                <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">0</div>
+                                <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">1</div>
+                                <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">2</div>
+                                <div class="config-btn" data-value="3" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">3</div>
+                            </div>
+                            <input type="number" min="0" max="10" class="custom-config" data-type="food" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
                         </div>
                     </div>
                     <div class="config-item">
-                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">几汤</label>
-                        <div class="config-buttons" style="display: flex; gap: 8px;">
-                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0汤</div>
-                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1汤</div>
-                            <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">2汤</div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">汤品数量</label>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="config-buttons" style="flex: 3; display: flex; gap: 6px;">
+                                <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">0</div>
+                                <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">1</div>
+                                <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">2</div>
+                            </div>
+                            <input type="number" min="0" max="10" class="custom-config" data-type="soup" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
                         </div>
                     </div>
                     <div class="config-item">
-                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">饮品</label>
-                        <div class="config-buttons" style="display: flex; gap: 8px;">
-                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0饮品</div>
-                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1饮品</div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">主食数量</label>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="config-buttons" style="flex: 3; display: flex; gap: 6px;">
+                                <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">0</div>
+                                <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">1</div>
+                                <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">2</div>
+                            </div>
+                            <input type="number" min="0" max="10" class="custom-config" data-type="staple" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
                         </div>
                     </div>
                     <div class="config-item">
-                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500;">主食</label>
-                        <div class="config-buttons" style="display: flex; gap: 8px;">
-                            <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">0主食</div>
-                            <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #e1f5fe; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500;">1主食</div>
+                        <label style="display: block; margin-bottom: 8px; font-size: 14px; color: #666; font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">饮品数量</label>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="config-buttons" style="flex: 3; display: flex; gap: 6px;">
+                                <div class="config-btn" data-value="0" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">0</div>
+                                <div class="config-btn" data-value="1" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">1</div>
+                                <div class="config-btn" data-value="2" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: 500; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">2</div>
+                            </div>
+                            <input type="number" min="0" max="10" class="custom-config" data-type="drink" style="flex: 1; padding: 10px; border: 2px solid #b3e5fc; border-radius: 12px; text-align: center; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
                         </div>
                     </div>
                 </div>
             </div>
             
             <!-- 开始筛选按钮 -->
-            <button id="start-filter-btn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 16px rgba(0,0,0,0.2); margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <button id="start-filter-btn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #48dbfb 0%, #81d4fa 50%, #a5d6a7 100%); color: white; border: none; border-radius: 20px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 16px rgba(0,0,0,0.2); margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif; animation: slideIn 0.5s ease-out 0.3s both;">
                 <i class="fas fa-magic" style="font-size: 20px;"></i>
-                <span>开始筛选</span>
+                <span>开始智能搭配</span>
             </button>
             
             <!-- 筛选结果 -->
-            <div id="filter-result" style="background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none;">
-                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 18px; font-weight: bold;">筛选结果</h3>
+            <div id="filter-result" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); border: 2px solid #b3e5fc; display: none; animation: slideIn 0.5s ease-out;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #48dbfb; font-size: 18px; font-weight: bold; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">🎯 搭配结果</h3>
                 <div id="result-list" style="margin-bottom: 20px;"></div>
-                <button id="add-all-to-cart" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #48dbfb 0%, #54a0ff 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <i class="fas fa-shopping-cart"></i> 全部加入购物车
+                <button id="add-all-to-cart" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #48dbfb 0%, #81d4fa 50%, #a5d6a7 100%); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                    <i class="fas fa-shopping-cart"></i> 全部加入已选菜品
                 </button>
             </div>
-            
-
-        </div>
         </div>
     </div>
 
     <script>
+        // ========== 智能点餐系统 JavaScript ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // 全局变量
+            let selectedMealType = null;
+            let selectedFoodCount = 0;
+            let selectedSoupCount = 0;
+            let selectedDrinkCount = 0;
+            let selectedStapleCount = 0;
+            let randomResult = [];
+            
+            // 分类名称映射
+            const categoryNameMap = {
+                'home-cooking': '家常菜',
+                'breakfast': '早餐',
+                'snacks': '特色小吃',
+                'staple': '主食',
+                'bbq': '烧烤炸物',
+                'drinks': '饮品',
+                'dessert': '甜品点心',
+                'fruits': '水果'
+            };
+            
+            // 需要选择口味的分类
+            const categoriesWithTaste = ['home-cooking', 'snacks', 'staple', 'bbq', 'drinks', 'breakfast'];
+            // 不需要选择口味的分类
+            const categoriesWithoutTaste = ['fruits'];
+            
+            // 餐别选择
+            const mealTypeItems = document.querySelectorAll('.meal-type-item');
+            mealTypeItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    mealTypeItems.forEach(i => {
+                        i.style.borderColor = '#e1f5fe';
+                        i.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e0e0e0 100%)';
+                    });
+                    // 添加当前选中状态
+                    this.style.borderColor = '#667eea';
+                    this.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    this.style.color = 'white';
+                    // 保存选中的餐别
+                    selectedMealType = this.dataset.type;
+                });
+            });
+            
+            // 配置选择
+            const configBtns = document.querySelectorAll('.config-btn');
+            configBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除同组所有选中状态
+                    const parent = this.parentElement;
+                    const siblings = parent.querySelectorAll('.config-btn');
+                    siblings.forEach(s => {
+                        s.style.borderColor = '#b3e5fc';
+                        s.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%)';
+                    });
+                    // 添加当前选中状态
+                    this.style.borderColor = '#48dbfb';
+                    this.style.background = 'linear-gradient(135deg, #48dbfb 0%, #81d4fa 100%)';
+                    this.style.color = 'white';
+                    // 保存配置值
+                    const value = parseInt(this.dataset.value);
+                    if (this.parentElement.parentElement.querySelector('.config-label')?.textContent.includes('菜品数量') || 
+                        this.parentElement.parentElement.previousElementSibling?.textContent.includes('菜品数量')) {
+                        selectedFoodCount = value;
+                        // 更新输入框值
+                        const input = this.closest('.config-item').querySelector('.custom-config[data-type="food"]');
+                        if (input) input.value = value;
+                    } else if (this.parentElement.parentElement.querySelector('.config-label')?.textContent.includes('汤品数量') || 
+                               this.parentElement.parentElement.previousElementSibling?.textContent.includes('汤品数量')) {
+                        selectedSoupCount = value;
+                        // 更新输入框值
+                        const input = this.closest('.config-item').querySelector('.custom-config[data-type="soup"]');
+                        if (input) input.value = value;
+                    } else if (this.parentElement.parentElement.querySelector('.config-label')?.textContent.includes('饮品数量') || 
+                               this.parentElement.parentElement.previousElementSibling?.textContent.includes('饮品数量')) {
+                        selectedDrinkCount = value;
+                        // 更新输入框值
+                        const input = this.closest('.config-item').querySelector('.custom-config[data-type="drink"]');
+                        if (input) input.value = value;
+                    } else if (this.parentElement.parentElement.querySelector('.config-label')?.textContent.includes('主食数量') || 
+                               this.parentElement.parentElement.previousElementSibling?.textContent.includes('主食数量')) {
+                        selectedStapleCount = value;
+                        // 更新输入框值
+                        const input = this.closest('.config-item').querySelector('.custom-config[data-type="staple"]');
+                        if (input) input.value = value;
+                    }
+                });
+            });
+            
+            // 手动输入数量
+            const customConfigInputs = document.querySelectorAll('.custom-config');
+            customConfigInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const value = parseInt(this.value) || 0;
+                    if (value < 0) this.value = 0;
+                    if (value > 10) this.value = 10;
+                    
+                    const type = this.dataset.type;
+                    switch (type) {
+                        case 'food':
+                            selectedFoodCount = parseInt(this.value) || 0;
+                            break;
+                        case 'soup':
+                            selectedSoupCount = parseInt(this.value) || 0;
+                            break;
+                        case 'staple':
+                            selectedStapleCount = parseInt(this.value) || 0;
+                            break;
+                        case 'drink':
+                            selectedDrinkCount = parseInt(this.value) || 0;
+                            break;
+                    }
+                });
+            });
+            
+            // 左侧菜单点击事件
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const type = item.dataset.type;
+                    
+                    if (type === 'all') {
+                        // 总筛选
+                        document.querySelector('.meal-type-section').style.display = 'block';
+                        document.querySelector('.meal-config-section').style.display = 'block';
+                        document.getElementById('start-filter-btn').style.display = 'block';
+                        document.getElementById('filter-result').style.display = 'none';
+                    } else {
+                        // 分类筛选
+                        document.querySelector('.meal-type-section').style.display = 'none';
+                        document.querySelector('.meal-config-section').style.display = 'none';
+                        document.getElementById('start-filter-btn').style.display = 'none';
+                        
+                        // 执行分类筛选
+                        const category = type;
+                        showCategoryFilter(category);
+                    }
+                });
+            });
+            
+            // 开始筛选按钮点击事件
+            document.getElementById('start-filter-btn').addEventListener('click', function() {
+                if (!selectedMealType) {
+                    showToast('请选择餐别');
+                    return;
+                }
+                
+                // 显示加载动画
+                showLoading('正在智能搭配...');
+                
+                // 模拟筛选过程
+                setTimeout(() => {
+                    // 获取所有菜品
+                    const allFoods = getFoodsFromStorage();
+                    
+                    // 根据餐别筛选适合的菜品
+                    let breakfastFoods = [];
+                    let homeCookingFoods = [];
+                    let stapleFoods = [];
+                    let drinkFoods = [];
+                    let snackFoods = [];
+                    let bbqFoods = [];
+                    let dessertFoods = [];
+                    let fruitFoods = [];
+                    
+                    // 按类别分类菜品
+                    allFoods.forEach(food => {
+                        switch (food.category) {
+                            case 'breakfast':
+                                breakfastFoods.push(food);
+                                break;
+                            case 'home-cooking':
+                                homeCookingFoods.push(food);
+                                break;
+                            case 'staple':
+                                stapleFoods.push(food);
+                                break;
+                            case 'drinks':
+                                drinkFoods.push(food);
+                                break;
+                            case 'snacks':
+                                snackFoods.push(food);
+                                break;
+                            case 'bbq':
+                                bbqFoods.push(food);
+                                break;
+                            case 'dessert':
+                                dessertFoods.push(food);
+                                break;
+                            case 'fruits':
+                                fruitFoods.push(food);
+                                break;
+                        }
+                    });
+                    
+                    // 根据配置智能搭配菜品
+                    randomResult = [];
+                    
+                    // 检查各品类数量是否足够
+                    if (selectedFoodCount > 0) {
+                        // 菜品：根据餐别选择适合的类别
+                        let availableFoods = [];
+                        if (selectedMealType === 'breakfast') {
+                            availableFoods = [...breakfastFoods, ...fruitFoods];
+                        } else if (selectedMealType === 'lunch' || selectedMealType === 'dinner') {
+                            availableFoods = [...homeCookingFoods, ...dessertFoods, ...fruitFoods];
+                        } else if (selectedMealType === 'supper') {
+                            availableFoods = [...snackFoods, ...bbqFoods, ...dessertFoods];
+                        }
+                        
+                        if (availableFoods.length < selectedFoodCount) {
+                            hideLoading();
+                            showToast(`菜品数量不足，最多只能提供 ${availableFoods.length} 个菜品`);
+                            return;
+                        }
+                    }
+                    
+                    if (selectedSoupCount > 0) {
+                        // 汤品：假设家常菜中有汤品
+                        if (homeCookingFoods.length < selectedSoupCount) {
+                            hideLoading();
+                            showToast(`汤品数量不足，最多只能提供 ${homeCookingFoods.length} 个汤品`);
+                            return;
+                        }
+                    }
+                    
+                    if (selectedStapleCount > 0) {
+                        if (stapleFoods.length < selectedStapleCount) {
+                            hideLoading();
+                            showToast(`主食数量不足，最多只能提供 ${stapleFoods.length} 个主食`);
+                            return;
+                        }
+                    }
+                    
+                    if (selectedDrinkCount > 0) {
+                        if (drinkFoods.length < selectedDrinkCount) {
+                            hideLoading();
+                            showToast(`饮品数量不足，最多只能提供 ${drinkFoods.length} 个饮品`);
+                            return;
+                        }
+                    }
+                    
+                    // 随机选择菜品
+                    if (selectedFoodCount > 0) {
+                        let availableFoods = [];
+                        if (selectedMealType === 'breakfast') {
+                            availableFoods = [...breakfastFoods, ...fruitFoods];
+                        } else if (selectedMealType === 'lunch' || selectedMealType === 'dinner') {
+                            availableFoods = [...homeCookingFoods, ...dessertFoods, ...fruitFoods];
+                        } else if (selectedMealType === 'supper') {
+                            availableFoods = [...snackFoods, ...bbqFoods, ...dessertFoods];
+                        }
+                        
+                        const shuffledFoods = availableFoods.sort(() => 0.5 - Math.random());
+                        for (let i = 0; i < selectedFoodCount; i++) {
+                            randomResult.push(shuffledFoods[i]);
+                        }
+                    }
+                    
+                    // 随机选择汤品
+                    if (selectedSoupCount > 0) {
+                        const shuffledSoups = homeCookingFoods.sort(() => 0.5 - Math.random());
+                        for (let i = 0; i < selectedSoupCount; i++) {
+                            randomResult.push(shuffledSoups[i]);
+                        }
+                    }
+                    
+                    // 随机选择主食
+                    if (selectedStapleCount > 0) {
+                        const shuffledStaples = stapleFoods.sort(() => 0.5 - Math.random());
+                        for (let i = 0; i < selectedStapleCount; i++) {
+                            randomResult.push(shuffledStaples[i]);
+                        }
+                    }
+                    
+                    // 随机选择饮品
+                    if (selectedDrinkCount > 0) {
+                        const shuffledDrinks = drinkFoods.sort(() => 0.5 - Math.random());
+                        for (let i = 0; i < selectedDrinkCount; i++) {
+                            randomResult.push(shuffledDrinks[i]);
+                        }
+                    }
+                    
+                    if (randomResult.length === 0) {
+                        hideLoading();
+                        showToast('没有找到合适的菜品，请先添加菜品');
+                        return;
+                    }
+                    
+                    // 显示筛选结果
+                    displayFilterResult();
+                    
+                    // 隐藏加载动画
+                    hideLoading();
+                }, 1500);
+            });
+            
+            // 显示筛选结果
+            function displayFilterResult() {
+                const resultList = document.getElementById('result-list');
+                resultList.innerHTML = '';
+                
+                if (randomResult.length === 0) {
+                    resultList.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">没有找到合适的菜品</div>';
+                    return;
+                }
+                
+                randomResult.forEach((food, index) => {
+                    const foodItem = document.createElement('div');
+                    foodItem.className = 'result-item';
+                    foodItem.style.cssText = `
+                        display: flex; flex-direction: column; align-items: flex-start;
+                        padding: 15px; background: linear-gradient(135deg, #f8f9fa 0%, #e0e0e0 100%);
+                        border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        border: 2px solid #e1f5fe;
+                    `;
+                    
+                    // 检查是否需要选择口味
+                    const needsTaste = categoriesWithTaste.includes(food.category);
+                    const isFruit = categoriesWithoutTaste.includes(food.category);
+                    
+                    foodItem.innerHTML = `
+                        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 5px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${food.name}</div>
+                                <div style="font-size: 12px; color: #666; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${categoryNameMap[food.category] || '未分类'}</div>
+                            </div>
+                            <button class="replace-food-btn" data-index="${index}" style="
+                                padding: 6px 12px; background: linear-gradient(135deg, #48dbfb 0%, #81d4fa 100%);
+                                color: white; border: none; border-radius: 15px; font-size: 12px; font-weight: 500;
+                                cursor: pointer; transition: all 0.3s ease; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+                            ">
+                                <i class="fas fa-sync-alt"></i> 替换
+                            </button>
+                        </div>
+                        ${needsTaste ? `
+                            <div style="width: 100%; margin-bottom: 10px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #666; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${food.category === 'drinks' ? '选择糖分：' : '选择口味：'}</label>
+                                <select class="taste-select" data-index="${index}" style="
+                                    width: 100%; padding: 8px; border: 2px solid #b3e5fc; border-radius: 10px;
+                                    background: white; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+                                ">
+                                    <option value="">请选择</option>
+                                    ${food.category === 'drinks' ? `
+                                        <option value="无糖">无糖</option>
+                                        <option value="少糖">少糖</option>
+                                        <option value="正常糖">正常糖</option>
+                                        <option value="多糖">多糖</option>
+                                    ` : `
+                                        <option value="微辣">微辣</option>
+                                        <option value="中辣">中辣</option>
+                                        <option value="特辣">特辣</option>
+                                        <option value="不辣">不辣</option>
+                                    `}
+                                </select>
+                            </div>
+                        ` : ''}
+                        <button class="add-food-btn" data-index="${index}" style="
+                            align-self: flex-end; padding: 8px 16px; background: linear-gradient(135deg, #48dbfb 0%, #81d4fa 100%);
+                            color: white; border: none; border-radius: 20px; font-size: 12px; font-weight: 500;
+                            cursor: pointer; transition: all 0.3s ease; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+                        ">
+                            <i class="fas fa-plus"></i> 加入已选菜品
+                        </button>
+                    `;
+                    
+                    resultList.appendChild(foodItem);
+                });
+                
+                // 显示结果区域
+                document.getElementById('filter-result').style.display = 'block';
+                
+                // 绑定加入按钮事件
+                document.querySelectorAll('.add-food-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        const food = randomResult[index];
+                        const tasteSelect = document.querySelector(`.taste-select[data-index="${index}"]`);
+                        
+                        // 检查是否需要选择口味
+                        if (tasteSelect && !tasteSelect.value) {
+                            showToast('请选择口味');
+                            return;
+                        }
+                        
+                        // 添加口味信息
+                        const foodWithTaste = {...food};
+                        if (tasteSelect) {
+                            foodWithTaste.taste = tasteSelect.value;
+                        }
+                        
+                        addToCart(foodWithTaste);
+                        updateCart();
+                        renderSelectedList();
+                        showToast('菜品已加入已选菜品');
+                    });
+                });
+                
+                // 绑定替换按钮事件
+                document.querySelectorAll('.replace-food-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        const food = randomResult[index];
+                        
+                        // 显示加载动画
+                        showLoading('正在替换...');
+                        
+                        // 模拟替换过程
+                        setTimeout(() => {
+                            // 获取同类别菜品
+                            const allFoods = getFoodsFromStorage();
+                            const categoryFoods = allFoods.filter(f => f.category === food.category && f.id !== food.id);
+                            
+                            if (categoryFoods.length > 0) {
+                                // 随机选择一个新菜品
+                                const randomIndex = Math.floor(Math.random() * categoryFoods.length);
+                                const newFood = categoryFoods[randomIndex];
+                                
+                                // 替换菜品
+                                randomResult[index] = newFood;
+                                
+                                // 重新显示结果
+                                displayFilterResult();
+                            } else {
+                                showToast('没有更多同类别菜品');
+                            }
+                            
+                            // 隐藏加载动画
+                            hideLoading();
+                        }, 1000);
+                    });
+                });
+            }
+            
+            // 全部加入购物车按钮点击事件
+            document.getElementById('add-all-to-cart').addEventListener('click', function() {
+                if (randomResult.length === 0) {
+                    showToast('没有菜品可以添加');
+                    return;
+                }
+                
+                let allHaveTaste = true;
+                
+                // 检查所有需要选择口味的菜品是否都已选择
+                randomResult.forEach((food, index) => {
+                    if (categoriesWithTaste.includes(food.category)) {
+                        const tasteSelect = document.querySelector(`.taste-select[data-index="${index}"]`);
+                        if (!tasteSelect || !tasteSelect.value) {
+                            allHaveTaste = false;
+                        }
+                    }
+                });
+                
+                if (!allHaveTaste) {
+                    showToast('请为所有菜品选择口味');
+                    return;
+                }
+                
+                // 添加所有菜品到购物车
+                randomResult.forEach((food, index) => {
+                    const tasteSelect = document.querySelector(`.taste-select[data-index="${index}"]`);
+                    const foodWithTaste = {...food};
+                    if (tasteSelect) {
+                        foodWithTaste.taste = tasteSelect.value;
+                    }
+                    addToCart(foodWithTaste);
+                });
+                
+                updateCart();
+                renderSelectedList();
+                showToast('所有菜品已加入已选菜品');
+            });
+            
+            // 显示分类筛选
+            function showCategoryFilter(category) {
+                // 获取该分类的菜品
+                const allFoods = getFoodsFromStorage();
+                const categoryFoods = allFoods.filter(food => food.category === category);
+                
+                if (categoryFoods.length === 0) {
+                    showToast(`没有${categoryNameMap[category]}类菜品，请先添加`);
+                    return;
+                }
+                
+                // 显示开始筛选按钮
+                const resultList = document.getElementById('result-list');
+                resultList.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🎲</div>
+                        <div style="font-size: 20px; font-weight: bold; color: #667eea; margin-bottom: 30px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${categoryNameMap[category]}随机筛选</div>
+                        <button id="start-category-filter" style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                            <i class="fas fa-magic"></i> 开始筛选
+                        </button>
+                    </div>
+                `;
+                document.getElementById('filter-result').style.display = 'block';
+                
+                // 绑定开始筛选按钮事件
+                document.getElementById('start-category-filter').addEventListener('click', function() {
+                    // 显示加载动画
+                    showLoading('正在筛选...');
+                    
+                    // 显示动态筛选效果
+                    const loadingInterval = setInterval(() => {
+                        const randomFood = categoryFoods[Math.floor(Math.random() * categoryFoods.length)];
+                        resultList.innerHTML = `
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                                <div style="font-size: 48px; margin-bottom: 20px;">🎲</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #667eea; margin-bottom: 10px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${randomFood.name}</div>
+                                <div style="font-size: 16px; color: #666; margin-bottom: 30px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${categoryNameMap[randomFood.category]}</div>
+                                <button id="start-category-filter" style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                                    <i class="fas fa-magic"></i> 开始筛选
+                                </button>
+                            </div>
+                        `;
+                    }, 100);
+                    
+                    // 模拟筛选过程
+                    setTimeout(() => {
+                        clearInterval(loadingInterval);
+                        
+                        // 随机选择一个菜品
+                        const randomIndex = Math.floor(Math.random() * categoryFoods.length);
+                        const selectedFood = categoryFoods[randomIndex];
+                        
+                        // 检查是否需要选择口味
+                        const needsTaste = categoriesWithTaste.includes(selectedFood.category);
+                        const isFruit = categoriesWithoutTaste.includes(selectedFood.category);
+                        
+                        // 显示筛选结果
+                        resultList.innerHTML = `
+                            <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 0;">
+                                <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+                                <div style="font-size: 24px; font-weight: bold; color: #48dbfb; margin-bottom: 10px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${selectedFood.name}</div>
+                                <div style="font-size: 16px; color: #666; margin-bottom: 20px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${categoryNameMap[selectedFood.category]}</div>
+                                ${needsTaste ? `
+                                    <div style="width: 100%; max-width: 300px; margin-bottom: 20px;">
+                                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">${selectedFood.category === 'drinks' ? '选择糖分：' : '选择口味：'}</label>
+                                        <select id="category-taste-select" style="
+                                            width: 100%; padding: 10px; border: 2px solid #b3e5fc; border-radius: 10px;
+                                            background: white; font-size: 14px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+                                        ">
+                                            <option value="">请选择</option>
+                                            ${selectedFood.category === 'drinks' ? `
+                                                <option value="无糖">无糖</option>
+                                                <option value="少糖">少糖</option>
+                                                <option value="正常糖">正常糖</option>
+                                                <option value="多糖">多糖</option>
+                                            ` : `
+                                                <option value="微辣">微辣</option>
+                                                <option value="中辣">中辣</option>
+                                                <option value="特辣">特辣</option>
+                                                <option value="不辣">不辣</option>
+                                            `}
+                                        </select>
+                                    </div>
+                                ` : ''}
+                                <button id="add-category-food" data-food-id="${selectedFood.id}" style="padding: 12px 30px; background: linear-gradient(135deg, #48dbfb 0%, #81d4fa 100%); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                                    <i class="fas fa-plus"></i> 加入已选菜品
+                                </button>
+                            </div>
+                        `;
+                        
+                        // 绑定加入购物车按钮事件
+                        document.getElementById('add-category-food').addEventListener('click', function() {
+                            const foodId = parseInt(this.dataset.foodId);
+                            // 重新获取所有菜品，确保在事件处理函数中可用
+                            const allFoods = getFoodsFromStorage();
+                            const food = allFoods.find(f => f.id === foodId);
+                            
+                            if (food) {
+                                // 检查是否需要选择口味
+                                if (needsTaste) {
+                                    const tasteSelect = document.getElementById('category-taste-select');
+                                    if (tasteSelect && !tasteSelect.value) {
+                                        showToast('请选择口味');
+                                        return;
+                                    }
+                                    if (tasteSelect) {
+                                        food.taste = tasteSelect.value;
+                                    }
+                                }
+                                
+                                // 复制食物对象，避免修改原始数据
+                                const foodToAdd = {...food};
+                                
+                                addToCart(foodToAdd);
+                                updateCart();
+                                renderSelectedList();
+                                showToast('菜品已加入已选菜品');
+                            } else {
+                                showToast('未找到菜品信息');
+                            }
+                        });
+                        
+                        // 隐藏加载动画
+                        hideLoading();
+                    }, 2000);
+                });
+            }
+            
+            // 返回主页面按钮点击事件
+            document.getElementById('back-to-main').addEventListener('click', function() {
+                document.getElementById('random-screen').style.display = 'none';
+            });
+            
+            // 显示加载动画
+            function showLoading(text) {
+                const loadingToast = document.getElementById('loading-toast');
+                loadingToast.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text}`;
+                loadingToast.style.display = 'block';
+            }
+            
+            // 隐藏加载动画
+            function hideLoading() {
+                document.getElementById('loading-toast').style.display = 'none';
+            }
+            
+            // 显示提示信息
+            function showToast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 100);
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                }, 2000);
+            }
+        });
+        
         // ========== 自定义默认菜品列表 ==========
         const defaultFoods = [
             // 早餐
