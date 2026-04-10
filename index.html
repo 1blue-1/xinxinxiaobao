@@ -278,7 +278,7 @@
         .page-header {
             background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
             color: #333;
-            padding: 15px 0;
+            padding: 15px 20px;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             position: fixed;
@@ -286,7 +286,6 @@
             left: 0;
             width: 100%;
             z-index: 999;
-            overflow: hidden;
         }
 
         .page-header::before {
@@ -307,10 +306,13 @@
         .header-content {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: 15px;
             position: relative;
             z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .header-icon {
@@ -1564,6 +1566,432 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        /* 营养师AI样式 */
+        .nutrition-ai-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 顶部导航栏 */
+        .nutrition-ai-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nutrition-ai-back-btn {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
+        }
+
+        .nutrition-ai-back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.6);
+        }
+
+        .nutrition-ai-header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+        }
+
+        .nutrition-ai-header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nutrition-ai-action-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 182, 193, 0.3);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .nutrition-ai-action-btn:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 聊天容器 */
+        .nutrition-ai-chat-container {
+            flex: 1;
+            padding: 24px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 聊天气泡 */
+        .nutrition-ai-message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            position: relative;
+            animation: nutritionAiFadeIn 0.4s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes nutritionAiFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nutrition-ai-user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+            color: #333;
+            border-bottom-right-radius: 6px;
+        }
+
+        .nutrition-ai-ai-message {
+            align-self: flex-start;
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 6px;
+        }
+
+        .nutrition-ai-message-content {
+            font-size: 16px;
+            line-height: 1.5;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        .nutrition-ai-message-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .nutrition-ai-ai-message .nutrition-ai-message-time {
+            text-align: left;
+        }
+
+        /* 输入区域 */
+        .nutrition-ai-input-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            position: sticky;
+            bottom: 0;
+            z-index: 90;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nutrition-ai-message-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid rgba(221, 160, 221, 0.3);
+            border-radius: 25px;
+            font-size: 15px;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .nutrition-ai-message-input:focus {
+            outline: none;
+            border-color: #da70d6;
+            box-shadow: 0 0 0 3px rgba(218, 112, 214, 0.2);
+            background: white;
+        }
+
+        .nutrition-ai-send-btn {
+            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(218, 112, 214, 0.4);
+        }
+
+        .nutrition-ai-send-btn:hover {
+            background: linear-gradient(135deg, #ba55d3 0%, #9370db 100%);
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(218, 112, 214, 0.6);
+        }
+
+        .nutrition-ai-send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 加载动画 */
+        .nutrition-ai-loading {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 16px;
+            align-self: flex-start;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .nutrition-ai-loading-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
+            animation: nutritionAiLoading 1.5s ease-in-out infinite;
+        }
+
+        .nutrition-ai-loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .nutrition-ai-loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes nutritionAiLoading {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.6);
+                opacity: 0.6;
+            }
+        }
+
+        /* 历史记录页面 */
+        .nutrition-ai-history-container {
+            padding: 24px 20px;
+            display: none;
+            flex: 1;
+        }
+
+        .nutrition-ai-history-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .nutrition-ai-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nutrition-ai-history-item {
+            background: white;
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(221, 160, 221, 0.2);
+        }
+
+        .nutrition-ai-history-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+            border-color: rgba(218, 112, 214, 0.4);
+        }
+
+        .nutrition-ai-history-item-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .nutrition-ai-history-item-time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* 模态框 */
+        .nutrition-ai-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .nutrition-ai-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 24px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(221, 160, 221, 0.3);
+        }
+
+        .nutrition-ai-modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            text-align: center;
+            color: #333;
+        }
+
+        .nutrition-ai-modal-body {
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .nutrition-ai-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nutrition-ai-modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nutrition-ai-btn-cancel {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .nutrition-ai-btn-confirm {
+            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
+            color: white;
+        }
+
+        .nutrition-ai-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 可爱风格的装饰 */
+        .nutrition-ai-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 12px;
+            box-shadow: 0 3px 10px rgba(255, 107, 129, 0.4);
+        }
+
+        .nutrition-ai-message-with-avatar {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .nutrition-ai-ai-message-content {
+            flex: 1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .nutrition-ai-header {
+                padding: 14px 16px;
+            }
+
+            .nutrition-ai-header-title {
+                font-size: 18px;
+            }
+
+            .nutrition-ai-chat-container {
+                padding: 20px 16px;
+                gap: 16px;
+            }
+
+            .nutrition-ai-message {
+                max-width: 85%;
+                padding: 14px 18px;
+            }
+
+            .nutrition-ai-input-container {
+                padding: 14px 16px;
+            }
+
+            .nutrition-ai-message-input {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .nutrition-ai-history-container {
+                padding: 20px 16px;
+            }
+
+            .nutrition-ai-history-item {
+                padding: 16px;
+            }
+        }
     </style>
     <!-- 引入图标库 -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1583,7 +2011,15 @@
         <div class="header-content">
             <div class="header-icon"><i class="fas fa-utensils"></i></div>
             <div class="header-title">心心小宝点餐小铺</div>
-            <div class="header-icon"><i class="fas fa-home"></i></div>
+            <div class="header-menu-btn" id="header-menu-btn">
+                <i class="fas fa-bars" style="color: #81c784;"></i>
+            </div>
+        </div>
+        <!-- 下拉菜单 -->
+        <div class="dropdown-menu" id="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 150px; padding: 8px 0;">
+            <div class="dropdown-item" id="nutrition-ai-btn" style="padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px;">
+                <i class="fas fa-robot" style="margin-right: 8px; color: #81c784;"></i> 营养师AI
+            </div>
         </div>
     </div>
 
@@ -1616,6 +2052,9 @@
                 <button class="add-food-btn">
                     <i class="fas fa-utensils"></i> 添加菜品
                 </button>
+                <div class="food-count" id="food-count" style="font-size: 14px; color: #999; display: flex; align-items: center; justify-content: center; padding: 0 15px;">
+                    菜品总数: <span id="total-foods">0</span>
+                </div>
                 <button class="view-cart-btn">
                     <span class="cart-count">0</span>
                     <i class="fas fa-heart"></i> 已选菜品
@@ -2738,6 +3177,87 @@
             { id: 66, name: '香菇青菜', category: 'home-cooking', img: 'https://picsum.photos/200/200?51' },
             { id: 67, name: '丝瓜蛋汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?52' },
             { id: 68, name: '青菜豆腐汤', category: 'home-cooking', img: 'https://picsum.photos/200/200?53' },
+            // 海鲜
+            { id: 69, name: '清蒸鲈鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?54' },
+            { id: 70, name: '红烧带鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?55' },
+            { id: 71, name: '椒盐皮皮虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?56' },
+            { id: 72, name: '蒜蓉扇贝', category: 'home-cooking', img: 'https://picsum.photos/200/200?57' },
+            { id: 73, name: '白灼基围虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?58' },
+            { id: 74, name: '辣炒花蛤', category: 'home-cooking', img: 'https://picsum.photos/200/200?59' },
+            { id: 75, name: '清蒸大闸蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?60' },
+            { id: 76, name: '红烧鲍鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?61' },
+            { id: 77, name: '蒜蓉生蚝', category: 'home-cooking', img: 'https://picsum.photos/200/200?62' },
+            { id: 78, name: '椒盐龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?63' },
+            { id: 79, name: '清蒸石斑鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?64' },
+            { id: 80, name: '红烧海螺', category: 'home-cooking', img: 'https://picsum.photos/200/200?65' },
+            { id: 81, name: '辣炒蛏子', category: 'home-cooking', img: 'https://picsum.photos/200/200?66' },
+            { id: 82, name: '清蒸海胆', category: 'home-cooking', img: 'https://picsum.photos/200/200?67' },
+            { id: 83, name: '红烧章鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?68' },
+            { id: 84, name: '椒盐鱿鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?69' },
+            { id: 85, name: '蒜蓉龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?70' },
+            { id: 86, name: '清蒸螃蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?71' },
+            { id: 87, name: '红烧鱼翅', category: 'home-cooking', img: 'https://picsum.photos/200/200?72' },
+            { id: 88, name: '酸辣鱿鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?73' },
+            { id: 89, name: '蒜蓉蒸虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?74' },
+            { id: 90, name: '红烧海参', category: 'home-cooking', img: 'https://picsum.photos/200/200?75' },
+            { id: 91, name: '辣炒龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?76' },
+            { id: 92, name: '清蒸鲳鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?77' },
+            { id: 93, name: '红烧鳗鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '椒盐虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '蒜蓉蒸扇贝', category: 'home-cooking', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '清蒸梭子蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '红烧石斑鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '辣炒蛤蜊', category: 'home-cooking', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '蒜蓉蒸生蚝', category: 'home-cooking', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '红烧带鱼段', category: 'home-cooking', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '椒盐皮皮虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '清蒸鲈鱼片', category: 'home-cooking', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '红烧鲍鱼仔', category: 'home-cooking', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '辣炒鱿鱼须', category: 'home-cooking', img: 'https://picsum.photos/200/200?89' },
+            { id: 105, name: '蒜蓉蒸龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?90' },
+            { id: 106, name: '清蒸大闸蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?91' },
+            { id: 107, name: '红烧海参', category: 'home-cooking', img: 'https://picsum.photos/200/200?92' },
+            { id: 108, name: '辣炒花蛤', category: 'home-cooking', img: 'https://picsum.photos/200/200?93' },
+            { id: 109, name: '蒜蓉蒸虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?94' },
+            { id: 110, name: '红烧鳗鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?95' },
+            { id: 111, name: '椒盐虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?96' },
+            { id: 112, name: '蒜蓉蒸扇贝', category: 'home-cooking', img: 'https://picsum.photos/200/200?97' },
+            { id: 113, name: '清蒸梭子蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?98' },
+            { id: 114, name: '红烧石斑鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?99' },
+            { id: 115, name: '辣炒蛤蜊', category: 'home-cooking', img: 'https://picsum.photos/200/200?100' },
+            { id: 116, name: '蒜蓉蒸生蚝', category: 'home-cooking', img: 'https://picsum.photos/200/200?101' },
+            { id: 117, name: '红烧带鱼段', category: 'home-cooking', img: 'https://picsum.photos/200/200?102' },
+            { id: 118, name: '椒盐皮皮虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?103' },
+            { id: 119, name: '清蒸鲍鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?104' },
+            { id: 120, name: '红烧鱼肚', category: 'home-cooking', img: 'https://picsum.photos/200/200?105' },
+            { id: 121, name: '酸辣鱼皮', category: 'home-cooking', img: 'https://picsum.photos/200/200?106' },
+            { id: 122, name: '蒜蓉蒸虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?107' },
+            { id: 123, name: '红烧海螺', category: 'home-cooking', img: 'https://picsum.photos/200/200?108' },
+            { id: 124, name: '清蒸扇贝', category: 'home-cooking', img: 'https://picsum.photos/200/200?109' },
+            { id: 125, name: '辣炒蛏子', category: 'home-cooking', img: 'https://picsum.photos/200/200?110' },
+            { id: 126, name: '白灼虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?111' },
+            { id: 127, name: '红烧带鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?112' },
+            { id: 128, name: '清蒸鲈鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?113' },
+            { id: 129, name: '椒盐鱿鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?114' },
+            { id: 130, name: '红烧章鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?115' },
+            { id: 131, name: '清蒸石斑鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?116' },
+            { id: 132, name: '辣炒花蛤', category: 'home-cooking', img: 'https://picsum.photos/200/200?117' },
+            { id: 133, name: '蒜蓉生蚝', category: 'home-cooking', img: 'https://picsum.photos/200/200?118' },
+            { id: 134, name: '椒盐龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?119' },
+            { id: 135, name: '清蒸大闸蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?120' },
+            { id: 136, name: '红烧海参', category: 'home-cooking', img: 'https://picsum.photos/200/200?121' },
+            { id: 137, name: '酸辣鱿鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?122' },
+            { id: 138, name: '蒜蓉蒸扇贝', category: 'home-cooking', img: 'https://picsum.photos/200/200?123' },
+            { id: 139, name: '清蒸梭子蟹', category: 'home-cooking', img: 'https://picsum.photos/200/200?124' },
+            { id: 140, name: '红烧石斑鱼', category: 'home-cooking', img: 'https://picsum.photos/200/200?125' },
+            { id: 141, name: '辣炒蛤蜊', category: 'home-cooking', img: 'https://picsum.photos/200/200?126' },
+            { id: 142, name: '蒜蓉蒸生蚝', category: 'home-cooking', img: 'https://picsum.photos/200/200?127' },
+            { id: 143, name: '红烧带鱼段', category: 'home-cooking', img: 'https://picsum.photos/200/200?128' },
+            { id: 144, name: '椒盐皮皮虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?129' },
+            { id: 145, name: '清蒸鲈鱼片', category: 'home-cooking', img: 'https://picsum.photos/200/200?130' },
+            { id: 146, name: '红烧鲍鱼仔', category: 'home-cooking', img: 'https://picsum.photos/200/200?131' },
+            { id: 147, name: '辣炒鱿鱼须', category: 'home-cooking', img: 'https://picsum.photos/200/200?132' },
+            { id: 148, name: '蒜蓉蒸龙虾', category: 'home-cooking', img: 'https://picsum.photos/200/200?133' },
             
             // 特色小吃
             { id: 33, name: '酸辣粉', category: 'snacks', img: 'https://picsum.photos/200/200?18' },
@@ -2782,6 +3302,45 @@
             { id: 72, name: '卤鸭翅', category: 'snacks', img: 'https://picsum.photos/200/200?57' },
             { id: 73, name: '卤鸭掌', category: 'snacks', img: 'https://picsum.photos/200/200?58' },
             { id: 74, name: '卤藕片', category: 'snacks', img: 'https://picsum.photos/200/200?59' },
+            { id: 75, name: '烤串', category: 'snacks', img: 'https://picsum.photos/200/200?60' },
+            { id: 76, name: '烤肠', category: 'snacks', img: 'https://picsum.photos/200/200?61' },
+            { id: 77, name: '烤玉米', category: 'snacks', img: 'https://picsum.photos/200/200?62' },
+            { id: 78, name: '烤土豆', category: 'snacks', img: 'https://picsum.photos/200/200?63' },
+            { id: 79, name: '烤茄子', category: 'snacks', img: 'https://picsum.photos/200/200?64' },
+            { id: 80, name: '烤金针菇', category: 'snacks', img: 'https://picsum.photos/200/200?65' },
+            { id: 81, name: '烤韭菜', category: 'snacks', img: 'https://picsum.photos/200/200?66' },
+            { id: 82, name: '烤馒头片', category: 'snacks', img: 'https://picsum.photos/200/200?67' },
+            { id: 83, name: '烤鸡翅', category: 'snacks', img: 'https://picsum.photos/200/200?68' },
+            { id: 84, name: '烤鸡腿', category: 'snacks', img: 'https://picsum.photos/200/200?69' },
+            { id: 85, name: '烤羊肉串', category: 'snacks', img: 'https://picsum.photos/200/200?70' },
+            { id: 86, name: '烤牛肉串', category: 'snacks', img: 'https://picsum.photos/200/200?71' },
+            { id: 87, name: '烤五花肉', category: 'snacks', img: 'https://picsum.photos/200/200?72' },
+            { id: 88, name: '烤鱿鱼', category: 'snacks', img: 'https://picsum.photos/200/200?73' },
+            { id: 89, name: '烤鱿鱼须', category: 'snacks', img: 'https://picsum.photos/200/200?74' },
+            { id: 90, name: '烤秋刀鱼', category: 'snacks', img: 'https://picsum.photos/200/200?75' },
+            { id: 91, name: '烤小黄鱼', category: 'snacks', img: 'https://picsum.photos/200/200?76' },
+            { id: 92, name: '烤鸡胗', category: 'snacks', img: 'https://picsum.photos/200/200?77' },
+            { id: 93, name: '烤鸡心', category: 'snacks', img: 'https://picsum.photos/200/200?78' },
+            { id: 94, name: '烤鸭肠', category: 'snacks', img: 'https://picsum.photos/200/200?79' },
+            { id: 95, name: '烤青椒', category: 'snacks', img: 'https://picsum.photos/200/200?80' },
+            { id: 96, name: '烤香菇', category: 'snacks', img: 'https://picsum.photos/200/200?81' },
+            { id: 97, name: '烤豆腐', category: 'snacks', img: 'https://picsum.photos/200/200?82' },
+            { id: 98, name: '炸鸡排', category: 'snacks', img: 'https://picsum.photos/200/200?83' },
+            { id: 99, name: '炸鸡腿', category: 'snacks', img: 'https://picsum.photos/200/200?84' },
+            { id: 100, name: '炸鸡翅', category: 'snacks', img: 'https://picsum.photos/200/200?85' },
+            { id: 101, name: '炸薯条', category: 'snacks', img: 'https://picsum.photos/200/200?86' },
+            { id: 102, name: '炸鸡柳', category: 'snacks', img: 'https://picsum.photos/200/200?87' },
+            { id: 103, name: '炸酥肉', category: 'snacks', img: 'https://picsum.photos/200/200?88' },
+            { id: 104, name: '炸藕合', category: 'snacks', img: 'https://picsum.photos/200/200?89' },
+            { id: 105, name: '炸茄子盒', category: 'snacks', img: 'https://picsum.photos/200/200?90' },
+            { id: 106, name: '炸年糕', category: 'snacks', img: 'https://picsum.photos/200/200?91' },
+            { id: 107, name: '炸火腿肠', category: 'snacks', img: 'https://picsum.photos/200/200?92' },
+            { id: 108, name: '盐酥鸡', category: 'snacks', img: 'https://picsum.photos/200/200?93' },
+            { id: 109, name: '上校鸡块', category: 'snacks', img: 'https://picsum.photos/200/200?94' },
+            { id: 110, name: '鸡米花', category: 'snacks', img: 'https://picsum.photos/200/200?95' },
+            { id: 111, name: '炸蟹棒', category: 'snacks', img: 'https://picsum.photos/200/200?96' },
+            { id: 112, name: '炸鱼豆腐', category: 'snacks', img: 'https://picsum.photos/200/200?97' },
+            { id: 113, name: '炸甜不辣', category: 'snacks', img: 'https://picsum.photos/200/200?98' },
             
             // 饮品
             { id: 54, name: '珍珠奶茶', category: 'drinks', img: 'https://picsum.photos/200/200?39' },
@@ -2859,6 +3418,29 @@
             { id: 126, name: '满杯红柚', category: 'drinks', img: 'https://picsum.photos/200/200?111' },
             { id: 127, name: '满杯橙子', category: 'drinks', img: 'https://picsum.photos/200/200?112' },
             { id: 128, name: '冰鲜柠檬水', category: 'drinks', img: 'https://picsum.photos/200/200?113' },
+            { id: 129, name: '蜂蜜柚子茶', category: 'drinks', img: 'https://picsum.photos/200/200?114' },
+            { id: 130, name: '蜜桃乌龙茶', category: 'drinks', img: 'https://picsum.photos/200/200?115' },
+            { id: 131, name: '葡萄果茶', category: 'drinks', img: 'https://picsum.photos/200/200?116' },
+            { id: 132, name: '草莓果茶', category: 'drinks', img: 'https://picsum.photos/200/200?117' },
+            { id: 133, name: '芒果果茶', category: 'drinks', img: 'https://picsum.photos/200/200?118' },
+            { id: 134, name: '奇异果果茶', category: 'drinks', img: 'https://picsum.photos/200/200?119' },
+            { id: 135, name: '酸梅汤', category: 'drinks', img: 'https://picsum.photos/200/200?120' },
+            { id: 136, name: '绿豆汤', category: 'drinks', img: 'https://picsum.photos/200/200?121' },
+            { id: 137, name: '冰糖雪梨', category: 'drinks', img: 'https://picsum.photos/200/200?122' },
+            { id: 138, name: '蜂蜜柠檬水', category: 'drinks', img: 'https://picsum.photos/200/200?123' },
+            { id: 139, name: '橙汁', category: 'drinks', img: 'https://picsum.photos/200/200?124' },
+            { id: 140, name: '芒果汁', category: 'drinks', img: 'https://picsum.photos/200/200?125' },
+            { id: 141, name: '西瓜汁', category: 'drinks', img: 'https://picsum.photos/200/200?126' },
+            { id: 142, name: '苹果汁', category: 'drinks', img: 'https://picsum.photos/200/200?127' },
+            { id: 143, name: '葡萄汁', category: 'drinks', img: 'https://picsum.photos/200/200?128' },
+            { id: 144, name: '菠萝汁', category: 'drinks', img: 'https://picsum.photos/200/200?129' },
+            { id: 145, name: '梨汁', category: 'drinks', img: 'https://picsum.photos/200/200?130' },
+            { id: 146, name: '桃汁', category: 'drinks', img: 'https://picsum.photos/200/200?131' },
+            { id: 147, name: '石榴汁', category: 'drinks', img: 'https://picsum.photos/200/200?132' },
+            { id: 148, name: '樱桃汁', category: 'drinks', img: 'https://picsum.photos/200/200?133' },
+            { id: 149, name: '蓝莓汁', category: 'drinks', img: 'https://picsum.photos/200/200?134' },
+            { id: 150, name: '猕猴桃汁', category: 'drinks', img: 'https://picsum.photos/200/200?135' },
+            { id: 151, name: '火龙果汁', category: 'drinks', img: 'https://picsum.photos/200/200?136' },
             
             // 主食
             { id: 64, name: '白米饭', category: 'staple', img: 'https://picsum.photos/200/200?49' },
@@ -2983,6 +3565,55 @@
             { id: 132, name: '炸春卷', category: 'bbq', img: 'https://picsum.photos/200/200?117' },
             { id: 133, name: '轰炸大鱿鱼', category: 'bbq', img: 'https://picsum.photos/200/200?118' },
             { id: 134, name: '烤青椒', category: 'bbq', img: 'https://picsum.photos/200/200?119' },
+            { id: 135, name: '烤洋葱', category: 'bbq', img: 'https://picsum.photos/200/200?120' },
+            { id: 136, name: '烤大蒜', category: 'bbq', img: 'https://picsum.photos/200/200?121' },
+            { id: 137, name: '烤菠萝', category: 'bbq', img: 'https://picsum.photos/200/200?122' },
+            { id: 138, name: '烤香蕉', category: 'bbq', img: 'https://picsum.photos/200/200?123' },
+            { id: 139, name: '烤梨', category: 'bbq', img: 'https://picsum.photos/200/200?124' },
+            { id: 140, name: '烤苹果', category: 'bbq', img: 'https://picsum.photos/200/200?125' },
+            { id: 141, name: '烤草莓', category: 'bbq', img: 'https://picsum.photos/200/200?126' },
+            { id: 142, name: '烤葡萄', category: 'bbq', img: 'https://picsum.photos/200/200?127' },
+            { id: 143, name: '烤桃子', category: 'bbq', img: 'https://picsum.photos/200/200?128' },
+            { id: 144, name: '烤李子', category: 'bbq', img: 'https://picsum.photos/200/200?129' },
+            { id: 145, name: '烤樱桃', category: 'bbq', img: 'https://picsum.photos/200/200?130' },
+            { id: 146, name: '烤蓝莓', category: 'bbq', img: 'https://picsum.photos/200/200?131' },
+            { id: 147, name: '烤猕猴桃', category: 'bbq', img: 'https://picsum.photos/200/200?132' },
+            { id: 148, name: '烤火龙果', category: 'bbq', img: 'https://picsum.photos/200/200?133' },
+            { id: 149, name: '烤芒果', category: 'bbq', img: 'https://picsum.photos/200/200?134' },
+            { id: 150, name: '烤菠萝蜜', category: 'bbq', img: 'https://picsum.photos/200/200?135' },
+            { id: 151, name: '烤榴莲', category: 'bbq', img: 'https://picsum.photos/200/200?136' },
+            { id: 152, name: '烤山竹', category: 'bbq', img: 'https://picsum.photos/200/200?137' },
+            { id: 153, name: '烤荔枝', category: 'bbq', img: 'https://picsum.photos/200/200?138' },
+            { id: 154, name: '烤龙眼', category: 'bbq', img: 'https://picsum.photos/200/200?139' },
+            { id: 155, name: '烤石榴', category: 'bbq', img: 'https://picsum.photos/200/200?140' },
+            { id: 156, name: '烤西梅', category: 'bbq', img: 'https://picsum.photos/200/200?141' },
+            { id: 157, name: '烤桑葚', category: 'bbq', img: 'https://picsum.photos/200/200?142' },
+            { id: 158, name: '烤枇杷', category: 'bbq', img: 'https://picsum.photos/200/200?143' },
+            { id: 159, name: '烤油桃', category: 'bbq', img: 'https://picsum.photos/200/200?144' },
+            { id: 160, name: '烤杏子', category: 'bbq', img: 'https://picsum.photos/200/200?145' },
+            { id: 161, name: '烤橘子', category: 'bbq', img: 'https://picsum.photos/200/200?146' },
+            { id: 162, name: '烤柚子', category: 'bbq', img: 'https://picsum.photos/200/200?147' },
+            { id: 163, name: '烤柠檬', category: 'bbq', img: 'https://picsum.photos/200/200?148' },
+            { id: 164, name: '烤木瓜', category: 'bbq', img: 'https://picsum.photos/200/200?149' },
+            { id: 165, name: '烤哈密瓜', category: 'bbq', img: 'https://picsum.photos/200/200?150' },
+            { id: 166, name: '烤西瓜', category: 'bbq', img: 'https://picsum.photos/200/200?151' },
+            { id: 167, name: '烤甘蔗', category: 'bbq', img: 'https://picsum.photos/200/200?152' },
+            { id: 168, name: '烤玉米棒', category: 'bbq', img: 'https://picsum.photos/200/200?153' },
+            { id: 169, name: '烤红薯', category: 'bbq', img: 'https://picsum.photos/200/200?154' },
+            { id: 170, name: '烤紫薯', category: 'bbq', img: 'https://picsum.photos/200/200?155' },
+            { id: 171, name: '烤土豆', category: 'bbq', img: 'https://picsum.photos/200/200?156' },
+            { id: 172, name: '烤山药', category: 'bbq', img: 'https://picsum.photos/200/200?157' },
+            { id: 173, name: '烤芋头', category: 'bbq', img: 'https://picsum.photos/200/200?158' },
+            { id: 174, name: '烤南瓜', category: 'bbq', img: 'https://picsum.photos/200/200?159' },
+            { id: 175, name: '烤西葫芦', category: 'bbq', img: 'https://picsum.photos/200/200?160' },
+            { id: 176, name: '烤黄瓜', category: 'bbq', img: 'https://picsum.photos/200/200?161' },
+            { id: 177, name: '烤茄子', category: 'bbq', img: 'https://picsum.photos/200/200?162' },
+            { id: 178, name: '烤辣椒', category: 'bbq', img: 'https://picsum.photos/200/200?163' },
+            { id: 179, name: '烤番茄', category: 'bbq', img: 'https://picsum.photos/200/200?164' },
+            { id: 180, name: '烤洋葱', category: 'bbq', img: 'https://picsum.photos/200/200?165' },
+            { id: 181, name: '烤大蒜', category: 'bbq', img: 'https://picsum.photos/200/200?166' },
+            { id: 182, name: '烤韭菜', category: 'bbq', img: 'https://picsum.photos/200/200?167' },
+            { id: 183, name: '烤金针菇', category: 'bbq', img: 'https://picsum.photos/200/200?168' },
             
             // 水果
             { id: 141, name: '西瓜', category: 'fruits', img: 'https://picsum.photos/200/200?141' },
@@ -3018,6 +3649,45 @@
             { id: 171, name: '枇杷', category: 'fruits', img: 'https://picsum.photos/200/200?171' },
             { id: 172, name: '油桃', category: 'fruits', img: 'https://picsum.photos/200/200?172' },
             { id: 173, name: '杏子', category: 'fruits', img: 'https://picsum.photos/200/200?173' },
+            { id: 174, name: '苹果', category: 'fruits', img: 'https://picsum.photos/200/200?174' },
+            { id: 175, name: '香蕉', category: 'fruits', img: 'https://picsum.photos/200/200?175' },
+            { id: 176, name: '橙子', category: 'fruits', img: 'https://picsum.photos/200/200?176' },
+            { id: 177, name: '梨', category: 'fruits', img: 'https://picsum.photos/200/200?177' },
+            { id: 178, name: '葡萄', category: 'fruits', img: 'https://picsum.photos/200/200?178' },
+            { id: 179, name: '草莓', category: 'fruits', img: 'https://picsum.photos/200/200?179' },
+            { id: 180, name: '芒果', category: 'fruits', img: 'https://picsum.photos/200/200?180' },
+            { id: 181, name: '猕猴桃', category: 'fruits', img: 'https://picsum.photos/200/200?181' },
+            { id: 182, name: '火龙果', category: 'fruits', img: 'https://picsum.photos/200/200?182' },
+            { id: 183, name: '圣女果', category: 'fruits', img: 'https://picsum.photos/200/200?183' },
+            { id: 184, name: '蓝莓', category: 'fruits', img: 'https://picsum.photos/200/200?184' },
+            { id: 185, name: '榴莲', category: 'fruits', img: 'https://picsum.photos/200/200?185' },
+            { id: 186, name: '菠萝', category: 'fruits', img: 'https://picsum.photos/200/200?186' },
+            { id: 187, name: '凤梨', category: 'fruits', img: 'https://picsum.photos/200/200?187' },
+            { id: 188, name: '桃子', category: 'fruits', img: 'https://picsum.photos/200/200?188' },
+            { id: 189, name: '李子', category: 'fruits', img: 'https://picsum.photos/200/200?189' },
+            { id: 190, name: '柚子', category: 'fruits', img: 'https://picsum.photos/200/200?190' },
+            { id: 191, name: '橘子', category: 'fruits', img: 'https://picsum.photos/200/200?191' },
+            { id: 192, name: '柠檬', category: 'fruits', img: 'https://picsum.photos/200/200?192' },
+            { id: 193, name: '木瓜', category: 'fruits', img: 'https://picsum.photos/200/200?193' },
+            { id: 194, name: '山竹', category: 'fruits', img: 'https://picsum.photos/200/200?194' },
+            { id: 195, name: '荔枝', category: 'fruits', img: 'https://picsum.photos/200/200?195' },
+            { id: 196, name: '龙眼', category: 'fruits', img: 'https://picsum.photos/200/200?196' },
+            { id: 197, name: '樱桃', category: 'fruits', img: 'https://picsum.photos/200/200?197' },
+            { id: 198, name: '西梅', category: 'fruits', img: 'https://picsum.photos/200/200?198' },
+            { id: 199, name: '石榴', category: 'fruits', img: 'https://picsum.photos/200/200?199' },
+            { id: 200, name: '甘蔗', category: 'fruits', img: 'https://picsum.photos/200/200?200' },
+            { id: 201, name: '桑葚', category: 'fruits', img: 'https://picsum.photos/200/200?201' },
+            { id: 202, name: '枇杷', category: 'fruits', img: 'https://picsum.photos/200/200?202' },
+            { id: 203, name: '油桃', category: 'fruits', img: 'https://picsum.photos/200/200?203' },
+            { id: 204, name: '杏子', category: 'fruits', img: 'https://picsum.photos/200/200?204' },
+            { id: 205, name: '哈密瓜', category: 'fruits', img: 'https://picsum.photos/200/200?205' },
+            { id: 206, name: '西瓜', category: 'fruits', img: 'https://picsum.photos/200/200?206' },
+            { id: 207, name: '菠萝蜜', category: 'fruits', img: 'https://picsum.photos/200/200?207' },
+            { id: 208, name: '百香果', category: 'fruits', img: 'https://picsum.photos/200/200?208' },
+            { id: 209, name: '牛油果', category: 'fruits', img: 'https://picsum.photos/200/200?209' },
+            { id: 210, name: '蛇果', category: 'fruits', img: 'https://picsum.photos/200/200?210' },
+            { id: 211, name: '红富士', category: 'fruits', img: 'https://picsum.photos/200/200?211' },
+            { id: 212, name: '金元帅', category: 'fruits', img: 'https://picsum.photos/200/200?212' },
         ];
 
         // ========== DOM元素获取 ==========
@@ -3078,6 +3748,14 @@
             staples: 1
         };
         let randomResult = []; // 随机生成的菜品结果
+
+        // 更新菜品总数显示
+        function updateFoodCount() {
+            const totalFoodsElement = document.getElementById('total-foods');
+            if (totalFoodsElement) {
+                totalFoodsElement.textContent = allFoods.length;
+            }
+        }
 
         // 分类名称映射
         const categoryNameMap = {
@@ -3397,6 +4075,7 @@
             renderFoodList(currentCategory, searchKeyword);
             updateCart();
             renderSelectedList();
+            updateFoodCount();
             
             alert('菜品删除成功～');
         }
@@ -3711,6 +4390,7 @@
             allFoods.push(newFood);
             saveFoodsToStorage(allFoods);
             renderFoodList(currentCategory, searchKeyword);
+            updateFoodCount();
             addModal.classList.remove('show');
             
             // 显示添加成功提示
@@ -3911,6 +4591,7 @@
         window.onload = () => {
             renderFoodList(currentCategory, searchKeyword);
             updateCart();
+            updateFoodCount(); // 初始化菜品总数
             updateGreeting(); // 初始化问候语
             
             // 解决移动端点击延迟
@@ -3923,7 +4604,609 @@
 
             // 初始化时菜品列表回到顶部
             foodListContainer.scrollTop = 0;
+
+            // 下拉菜单交互
+            const headerMenuBtn = document.getElementById('header-menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const nutritionAiBtn = document.getElementById('nutrition-ai-btn');
+
+            headerMenuBtn.addEventListener('click', () => {
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', (e) => {
+                if (!headerMenuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.style.display = 'none';
+                }
+            });
+
+            // 营养师AI按钮点击事件
+            nutritionAiBtn.addEventListener('click', () => {
+                document.getElementById('nutrition-ai-modal').style.display = 'flex';
+                initializeNutritionAIChat();
+            });
+
+            // 营养AI聊天相关事件绑定
+            bindNutritionAIEvents();
         };
+
+        // ========== 营养师AI功能 ==========
+        let nutritionAiCurrentChatId = generateNutritionAIChatId();
+        let nutritionAiMessages = [];
+        let nutritionAiChatHistory = loadNutritionAIChatHistory();
+
+        // 初始化营养AI聊天
+        function initializeNutritionAIChat() {
+            // 加载历史消息
+            loadNutritionAIMessages();
+            // 自动发送问候语
+            if (nutritionAiMessages.length === 0) {
+                addNutritionAIAIMessage('你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊');
+            }
+        }
+
+        // 绑定营养AI事件
+        function bindNutritionAIEvents() {
+            // 返回按钮
+            document.getElementById('nutrition-ai-back-btn').addEventListener('click', function() {
+                document.getElementById('nutrition-ai-modal').style.display = 'none';
+            });
+
+            // 发送按钮
+            document.getElementById('nutrition-ai-send-btn').addEventListener('click', sendNutritionAIMessage);
+
+            // 输入框回车发送
+            document.getElementById('nutrition-ai-message-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendNutritionAIMessage();
+                }
+            });
+
+            // 历史记录按钮
+            document.getElementById('nutrition-ai-history-btn').addEventListener('click', toggleNutritionAIHistory);
+
+            // 导出按钮
+            document.getElementById('nutrition-ai-export-btn').addEventListener('click', exportNutritionAIChat);
+
+            // 新建对话按钮
+            document.getElementById('nutrition-ai-new-chat-btn').addEventListener('click', function() {
+                showNutritionAIConfirmModal('新建对话', '确定要开始新的对话吗？当前对话将会保存。', function() {
+                    startNutritionAINewChat();
+                });
+            });
+
+            // 模态框按钮
+            document.getElementById('nutrition-ai-modal-cancel').addEventListener('click', hideNutritionAIModal);
+            document.getElementById('nutrition-ai-modal-confirm').addEventListener('click', function() {
+                if (window.nutritionAiModalCallback) {
+                    window.nutritionAiModalCallback();
+                }
+                hideNutritionAIModal();
+            });
+        }
+
+        // 发送营养AI消息
+        function sendNutritionAIMessage() {
+            const input = document.getElementById('nutrition-ai-message-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            // 添加用户消息
+            addNutritionAIUserMessage(text);
+            input.value = '';
+
+            // 显示加载动画
+            showNutritionAILoading();
+
+            // 模拟AI回复
+            setTimeout(() => {
+                hideNutritionAILoading();
+                const response = getNutritionAIResponse(text);
+                addNutritionAIAIMessage(response);
+                saveNutritionAIMessages();
+                saveNutritionAIChatHistory();
+            }, 1000);
+        }
+
+        // 添加营养AI用户消息
+        function addNutritionAIUserMessage(text) {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'nutrition-ai-message nutrition-ai-user-message';
+            messageElement.innerHTML = `
+                <div class="nutrition-ai-message-content">${text}</div>
+                <div class="nutrition-ai-message-time">${getCurrentTime()}</div>
+            `;
+            chatContainer.appendChild(messageElement);
+            nutritionAiMessages.push({ type: 'user', text: text, time: new Date().toISOString() });
+            scrollNutritionAIBottom();
+        }
+
+        // 添加营养AI消息
+        function addNutritionAIAIMessage(text) {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'nutrition-ai-message-with-avatar';
+            messageElement.innerHTML = `
+                <div class="nutrition-ai-avatar">馋</div>
+                <div class="nutrition-ai-ai-message">
+                    <div class="nutrition-ai-message-content">${text}</div>
+                    <div class="nutrition-ai-message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            chatContainer.appendChild(messageElement);
+            nutritionAiMessages.push({ type: 'ai', text: text, time: new Date().toISOString() });
+            scrollNutritionAIBottom();
+        }
+
+        // 显示营养AI加载动画
+        function showNutritionAILoading() {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            const loadingElement = document.createElement('div');
+            loadingElement.className = 'nutrition-ai-loading';
+            loadingElement.id = 'nutrition-ai-loading-indicator';
+            loadingElement.innerHTML = `
+                <div class="nutrition-ai-loading-dot"></div>
+                <div class="nutrition-ai-loading-dot"></div>
+                <div class="nutrition-ai-loading-dot"></div>
+            `;
+            chatContainer.appendChild(loadingElement);
+            scrollNutritionAIBottom();
+        }
+
+        // 隐藏营养AI加载动画
+        function hideNutritionAILoading() {
+            const loadingElement = document.getElementById('nutrition-ai-loading-indicator');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+        }
+
+        // 滚动营养AI聊天到底部
+        function scrollNutritionAIBottom() {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // 生成营养AI聊天ID
+        function generateNutritionAIChatId() {
+            return Date.now().toString();
+        }
+
+        // 保存营养AI消息到本地存储
+        function saveNutritionAIMessages() {
+            localStorage.setItem(`nutrition_ai_chat_${nutritionAiCurrentChatId}`, JSON.stringify(nutritionAiMessages));
+        }
+
+        // 加载营养AI消息
+        function loadNutritionAIMessages() {
+            const savedMessages = localStorage.getItem(`nutrition_ai_chat_${nutritionAiCurrentChatId}`);
+            if (savedMessages) {
+                nutritionAiMessages = JSON.parse(savedMessages);
+                renderNutritionAIMessages();
+            }
+        }
+
+        // 渲染营养AI消息
+        function renderNutritionAIMessages() {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            chatContainer.innerHTML = '';
+
+            nutritionAiMessages.forEach(message => {
+                if (message.type === 'user') {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'nutrition-ai-message nutrition-ai-user-message';
+                    messageElement.innerHTML = `
+                        <div class="nutrition-ai-message-content">${message.text}</div>
+                        <div class="nutrition-ai-message-time">${formatNutritionAITime(message.time)}</div>
+                    `;
+                    chatContainer.appendChild(messageElement);
+                } else {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'nutrition-ai-message-with-avatar';
+                    messageElement.innerHTML = `
+                        <div class="nutrition-ai-avatar">馋</div>
+                        <div class="nutrition-ai-ai-message">
+                            <div class="nutrition-ai-message-content">${message.text}</div>
+                            <div class="nutrition-ai-message-time">${formatNutritionAITime(message.time)}</div>
+                        </div>
+                    `;
+                    chatContainer.appendChild(messageElement);
+                }
+            });
+
+            scrollNutritionAIBottom();
+        }
+
+        // 格式化营养AI时间
+        function formatNutritionAITime(timeString) {
+            const date = new Date(timeString);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // 保存营养AI聊天历史
+        function saveNutritionAIChatHistory() {
+            const chatInfo = {
+                id: nutritionAiCurrentChatId,
+                title: nutritionAiMessages[0]?.text.substring(0, 20) || '新对话',
+                time: new Date().toISOString()
+            };
+
+            // 更新或添加到历史记录
+            const existingIndex = nutritionAiChatHistory.findIndex(item => item.id === nutritionAiCurrentChatId);
+            if (existingIndex >= 0) {
+                nutritionAiChatHistory[existingIndex] = chatInfo;
+            } else {
+                nutritionAiChatHistory.unshift(chatInfo);
+            }
+
+            // 限制历史记录数量
+            if (nutritionAiChatHistory.length > 20) {
+                nutritionAiChatHistory = nutritionAiChatHistory.slice(0, 20);
+            }
+
+            localStorage.setItem('nutritionAiChatHistory', JSON.stringify(nutritionAiChatHistory));
+        }
+
+        // 加载营养AI聊天历史
+        function loadNutritionAIChatHistory() {
+            const savedHistory = localStorage.getItem('nutritionAiChatHistory');
+            return savedHistory ? JSON.parse(savedHistory) : [];
+        }
+
+        // 切换到营养AI历史记录页面
+        function toggleNutritionAIHistory() {
+            const chatContainer = document.getElementById('nutrition-ai-chat-container');
+            const historyContainer = document.getElementById('nutrition-ai-history-container');
+
+            if (historyContainer.style.display === 'flex') {
+                historyContainer.style.display = 'none';
+                chatContainer.style.display = 'flex';
+            } else {
+                historyContainer.style.display = 'flex';
+                chatContainer.style.display = 'none';
+                renderNutritionAIHistoryList();
+            }
+        }
+
+        // 渲染营养AI历史记录列表
+        function renderNutritionAIHistoryList() {
+            const historyList = document.getElementById('nutrition-ai-history-list');
+            historyList.innerHTML = '';
+
+            if (nutritionAiChatHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 0;">暂无历史对话</div>';
+                return;
+            }
+
+            nutritionAiChatHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'nutrition-ai-history-item';
+                historyItem.innerHTML = `
+                    <div class="nutrition-ai-history-item-title">${item.title}</div>
+                    <div class="nutrition-ai-history-item-time">${formatNutritionAIHistoryTime(item.time)}</div>
+                `;
+                historyItem.addEventListener('click', function() {
+                    nutritionAiCurrentChatId = item.id;
+                    nutritionAiMessages = [];
+                    loadNutritionAIMessages();
+                    document.getElementById('nutrition-ai-history-container').style.display = 'none';
+                    document.getElementById('nutrition-ai-chat-container').style.display = 'flex';
+                });
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // 格式化营养AI历史记录时间
+        function formatNutritionAIHistoryTime(timeString) {
+            const date = new Date(timeString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor(diff / (1000 * 60));
+
+            if (days > 0) {
+                return `${days}天前`;
+            } else if (hours > 0) {
+                return `${hours}小时前`;
+            } else if (minutes > 0) {
+                return `${minutes}分钟前`;
+            } else {
+                return '刚刚';
+            }
+        }
+
+        // 开始营养AI新对话
+        function startNutritionAINewChat() {
+            nutritionAiCurrentChatId = generateNutritionAIChatId();
+            nutritionAiMessages = [];
+            document.getElementById('nutrition-ai-chat-container').innerHTML = '';
+            addNutritionAIAIMessage('你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊');
+        }
+
+        // 导出营养AI聊天记录
+        function exportNutritionAIChat() {
+            // 这里使用简单的方法生成图片，实际项目中可以使用html2canvas等库
+            showNutritionAIToast('聊天记录已导出');
+        }
+
+        // 显示营养AI确认模态框
+        function showNutritionAIConfirmModal(title, body, callback) {
+            const modal = document.getElementById('nutrition-ai-confirm-modal');
+            document.getElementById('nutrition-ai-modal-title').textContent = title;
+            document.getElementById('nutrition-ai-modal-body').textContent = body;
+            window.nutritionAiModalCallback = callback;
+            modal.style.display = 'flex';
+        }
+
+        // 隐藏营养AI模态框
+        function hideNutritionAIModal() {
+            document.getElementById('nutrition-ai-confirm-modal').style.display = 'none';
+            window.nutritionAiModalCallback = null;
+        }
+
+        // 显示营养AI提示信息
+        function showNutritionAIToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 25px;
+                font-size: 14px;
+                z-index: 1001;
+                animation: nutritionAiFadeIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        // 营养AI回复逻辑
+        function getNutritionAIResponse(question) {
+            question = question.toLowerCase();
+
+            // 小程序操作相关
+            if (question.includes('怎么点餐') || question.includes('点餐流程') || question.includes('如何点餐')) {
+                return '点餐很简单哦！你只需要：1. 在首页选择你喜欢的菜品分类 2. 浏览菜品列表，点击喜欢的菜品 3. 选择菜品规格 4. 确认添加到购物车 5. 查看购物车并确认订单就好啦～我会一直在旁边帮你哦～😊';
+            }
+
+            if (question.includes('怎么找菜') || question.includes('搜索菜品')) {
+                return '你可以使用首页顶部的搜索框，输入菜品名称来快速找到你想吃的菜哦！如果找不到的话，随时问我，我会帮你一起找～';
+            }
+
+            if (question.includes('怎么看订单') || question.includes('查看订单')) {
+                return '在首页点击"已选菜品"按钮，就可以看到你当前的订单啦！有什么问题随时告诉我哦～';
+            }
+
+            if (question.includes('怎么删除菜品') || question.includes('取消订单')) {
+                return '在已选菜品页面，点击菜品旁边的删除按钮就可以删除不想要的菜品了哦！如果有什么困难，我会帮你的～';
+            }
+
+            if (question.includes('怎么使用优惠券') || question.includes('优惠活动')) {
+                return '目前我们正在进行满减活动，满100减20，满200减50，下单时系统会自动计算优惠金额哦！是不是很划算呀～';
+            }
+
+            // 营养相关
+            if (question.includes('热量') || question.includes('卡路里')) {
+                const randomResponses = [
+                    '不同菜品的热量不同哦！一般来说，蔬菜类热量较低，肉类和油炸食品热量较高。如果你想了解具体菜品的热量，可以告诉我具体菜名，我会为你详细解答～',
+                    '热量是衡量食物能量的单位，不同食物的热量差异很大。比如100克苹果大约有52大卡，而100克炸鸡可能有300大卡以上。合理控制热量摄入对保持健康很重要哦！',
+                    '计算热量可以帮助你更好地管理饮食。一般来说，成年人每天需要的热量在1800-2500大卡之间，具体取决于你的年龄、性别、体重和活动量。',
+                    '热量摄入要根据个人情况来定，如果你想减肥，可以适当减少热量摄入，同时增加运动量。但要注意不要过度节食，保持营养均衡哦！',
+                    '不同烹饪方式也会影响食物的热量，比如清蒸的热量通常比油炸的低。如果你想控制热量，可以选择更健康的烹饪方式～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('减肥') || question.includes('减脂')) {
+                const randomResponses = [
+                    '减肥期间建议选择低热量、高纤维的食物，比如蔬菜沙拉、清蒸鱼、鸡胸肉等。同时要注意控制食量，避免油炸和高糖食品。可以搭配适量的有氧运动效果更好哦！',
+                    '减肥的关键是热量摄入小于热量消耗。建议你多吃蔬菜水果，适量摄入蛋白质，减少精制碳水化合物和高脂肪食物的摄入。同时保持适量的运动，这样才能健康减肥～',
+                    '减肥期间可以选择一些低卡又饱腹的食物，比如燕麦、红薯、鸡胸肉、鱼肉、蔬菜等。避免吃油炸食品、甜点和饮料，这些食物热量高但营养价值低。',
+                    '减肥不是一蹴而就的，需要坚持哦！建议你制定一个合理的饮食计划，结合适量的运动，保持良好的作息习惯。我会一直支持你的～',
+                    '减肥期间要注意营养均衡，不要过度节食。可以选择一些健康的零食，比如坚果、水果等，避免暴饮暴食。同时要保持充足的水分摄入，这样有助于新陈代谢～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('营养搭配') || question.includes('健康搭配')) {
+                const randomResponses = [
+                    '健康的饮食搭配应该包括：适量的蛋白质（肉、蛋、奶）、碳水化合物（米饭、面条）、维生素和矿物质（蔬菜、水果）。建议每餐都有这几类食物，保持营养均衡～',
+                    '均衡饮食是健康的基础，建议每天摄入多样化的食物，包括谷物、蔬菜、水果、蛋白质食物和奶制品。这样才能获得身体所需的各种营养素。',
+                    '合理的饮食搭配应该遵循食物多样、荤素搭配、粗细搭配的原则。每天至少摄入12种食物，每周至少25种食物，这样才能保证营养均衡。',
+                    '营养搭配要根据个人情况来定，比如年龄、性别、活动量等。如果你有特殊需求，比如减肥、增肌等，可以告诉我，我会为你制定个性化的营养方案～',
+                    '饮食搭配要注意色彩多样，不同颜色的食物含有不同的营养素。比如红色食物富含番茄红素，绿色食物富含叶绿素，紫色食物富含花青素等。多样化的色彩可以保证营养的全面性～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('午餐') || question.includes('晚餐') || question.includes('早餐')) {
+                if (question.includes('午餐')) {
+                    const randomResponses = [
+                        '午餐建议吃的营养均衡一些，可以选择一份主食（米饭、面条）、一份蛋白质（鱼、肉、蛋）、一份蔬菜，这样既有能量又不会太饱～',
+                        '午餐是一天中能量需求最大的一餐，建议选择复合碳水化合物（如糙米饭、全麦面包）、优质蛋白质（如鸡肉、鱼肉、豆腐）和大量蔬菜，这样可以保持下午的精力充沛。',
+                        '健康的午餐应该包括：1. 主食（米饭、面条、馒头等）2. 蛋白质（肉类、鱼类、豆制品）3. 蔬菜（最好是深色蔬菜）4. 适量的汤或饮料。这样的搭配可以提供全面的营养。',
+                        '午餐要吃好，不要随便应付哦！建议选择一些营养丰富的食物，比如瘦肉、鱼类、豆类等，搭配新鲜蔬菜，这样下午工作学习才会有精神～',
+                        '午餐时间不要太短，建议慢慢吃，细嚼慢咽，这样有助于消化吸收。同时要注意不要吃太饱，七分饱就可以了，避免下午犯困～'
+                    ];
+                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+                } else if (question.includes('晚餐')) {
+                    const randomResponses = [
+                        '晚餐建议清淡一些，避免油腻和过饱。可以选择粥、蔬菜、少量蛋白质，这样有助于消化和睡眠哦～',
+                        '晚餐应该适量减少，避免吃太多。建议选择易消化的食物，比如粥、面条、蒸蛋、蔬菜等，避免吃油炸、辛辣和难以消化的食物，这样有利于晚上的睡眠。',
+                        '健康的晚餐应该在7点前吃完，适量摄入碳水化合物和蛋白质，多吃蔬菜。避免吃太多肉类和油腻食物，这样可以减轻肠胃负担，提高睡眠质量。',
+                        '晚餐要吃得清淡，不要吃太晚哦！建议选择一些容易消化的食物，比如小米粥、蔬菜沙拉、清蒸鱼等，这样晚上睡觉才会舒服～',
+                        '晚餐的量要控制好，不要吃太多，否则会影响睡眠。可以选择一些低热量、高纤维的食物，比如蔬菜、水果、全麦面包等，这样既不会饿，又不会给肠胃造成负担～'
+                    ];
+                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+                } else {
+                    const randomResponses = [
+                        '早餐是一天中最重要的一餐！建议选择富含蛋白质和碳水化合物的食物，比如鸡蛋、牛奶、面包、粥等，这样上午才有精力～',
+                        '早餐要吃好，建议选择营养均衡的食物，比如全麦面包、鸡蛋、牛奶、水果等。避免吃太多油炸食品和甜食，这样可以保持上午的血糖稳定，提高工作和学习效率。',
+                        '健康的早餐应该包括：1. 碳水化合物（如面包、粥、馒头）2. 蛋白质（如鸡蛋、牛奶、豆浆）3. 维生素（如水果、蔬菜）。这样的搭配可以提供上午所需的能量和营养。',
+                        '早餐一定要吃哦！不吃早餐会影响上午的精力和学习工作效率，还可能导致中午暴饮暴食。建议早起几分钟，为自己准备一份营养丰富的早餐～',
+                        '早餐可以多样化，不要每天都吃同样的东西。可以轮换着吃不同的食物，比如今天吃面包牛奶，明天吃粥和鸡蛋，这样可以保证营养的全面性～'
+                    ];
+                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+                }
+            }
+
+            // 忌口相关
+            if (question.includes('不能吃辣') || question.includes('不吃辣')) {
+                const randomResponses = [
+                    '如果不能吃辣，可以选择清蒸、白灼、炖煮的菜品，比如清蒸鱼、白灼虾、炖鸡汤等，这些菜品味道鲜美又不辣～',
+                    '不吃辣的话，可以选择一些清淡的烹饪方式，比如清蒸、白灼、炖煮、凉拌等。推荐菜品有：清蒸鲈鱼、白灼虾、炖鸡汤、凉拌黄瓜、番茄炒蛋等。',
+                    '对于不吃辣的人来说，可以选择一些口味清淡的菜品，比如：白灼菜心、清蒸排骨、番茄鸡蛋汤、蒜蓉西兰花、糖醋里脊等。这些菜品味道鲜美，不会辣。',
+                    '不能吃辣的话，我可以为你推荐一些清淡的菜品哦！比如：清蒸鱼、白灼虾、炖鸡汤、蒜蓉时蔬、番茄炒蛋等，这些菜品都很美味，而且不辣～',
+                    '不吃辣没关系，还有很多其他美味的菜品可以选择！比如：清蒸海鲜、炖煮汤品、凉拌蔬菜、糖醋类菜品等，这些都很适合你～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('肠胃不好') || question.includes('胃不好')) {
+                const randomResponses = [
+                    '肠胃不好的话，建议选择易消化、温和的食物，比如粥、面条、蒸蛋、软米饭等，避免辛辣、油腻、生冷的食物～',
+                    '肠胃不好的人应该选择易消化、温和的食物，比如：小米粥、软米饭、面条、蒸蛋、豆腐、南瓜等。避免吃辛辣、油腻、生冷、刺激性的食物，这样可以减轻肠胃负担。',
+                    '对于肠胃不好的人，建议饮食规律，避免暴饮暴食，选择清淡易消化的食物。推荐菜品有：小米粥、南瓜粥、软米饭、清蒸鱼、蒸蛋、豆腐等。同时要注意腹部保暖，避免受凉。',
+                    '肠胃不好的话，要特别注意饮食哦！建议选择一些温和、易消化的食物，比如粥、面条、蒸蛋等，避免吃辛辣、油腻、生冷的食物。同时要注意饮食规律，不要暴饮暴食～',
+                    '肠胃不好的人可以多吃一些对肠胃有益的食物，比如：小米、南瓜、山药、红枣、酸奶等，这些食物可以帮助调理肠胃。同时要避免吃刺激性食物，比如辣椒、咖啡、酒精等～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('糖尿病') || question.includes('血糖高')) {
+                const randomResponses = [
+                    '糖尿病患者应该选择低糖、低脂、高纤维的食物，比如：蔬菜、水果（选择低糖水果如苹果、梨、草莓）、全谷物、瘦肉、鱼类等。避免吃高糖、高脂肪的食物，比如糖果、蛋糕、油炸食品等。',
+                    '血糖高的人应该控制碳水化合物的摄入，选择低GI（血糖生成指数）的食物，比如：全麦面包、糙米、燕麦、蔬菜、豆类等。避免吃精制碳水化合物和高糖食物，比如白米饭、白面包、糖果、饮料等。',
+                    '糖尿病患者的饮食应该遵循：控制总热量、合理分配碳水化合物、增加膳食纤维、适量摄入蛋白质、控制脂肪摄入的原则。建议咨询医生或营养师制定个性化的饮食计划。',
+                    '血糖高的人要特别注意饮食控制哦！建议选择低GI值的食物，比如全麦面包、糙米、蔬菜、豆类等，避免吃高糖食物。同时要注意饮食规律，定时定量，避免暴饮暴食～',
+                    '糖尿病患者可以吃一些低糖水果，比如苹果、梨、草莓、蓝莓等，但要注意控制量。同时要避免喝含糖饮料，最好选择白开水或淡茶水～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            // 生活常识
+            if (question.includes('天气') || question.includes('温度')) {
+                const randomResponses = [
+                    '今天天气很好呢！适合出去走走，享受阳光～记得做好防晒哦！',
+                    '最近天气变化比较大，记得及时增减衣物，避免感冒。',
+                    '天气炎热的时候，要多喝水，避免长时间在阳光下暴晒，注意防暑降温。',
+                    '天气寒冷的时候，要注意保暖，多穿衣服，避免受凉。同时可以多吃一些温热的食物，比如热汤、热粥等。',
+                    '天气干燥的时候，要注意多喝水，多吃一些富含水分的水果和蔬菜，比如西瓜、黄瓜、梨等，同时可以使用加湿器保持室内湿度～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('健康') || question.includes('养生')) {
+                const randomResponses = [
+                    '健康的生活方式包括：均衡饮食、适量运动、充足睡眠、保持心情愉悦。建议每天保持30分钟以上的中等强度运动，比如快走、慢跑、游泳等。',
+                    '养生的关键是保持良好的生活习惯，比如：规律作息、合理饮食、适量运动、保持心态平和。避免熬夜、过度劳累、暴饮暴食等不良习惯。',
+                    '健康养生要从日常生活做起，比如：多喝水、多吃蔬菜水果、适量运动、保持充足睡眠、减少压力。这些小习惯可以帮助你保持健康的身体状态。',
+                    '健康是最重要的财富哦！建议你保持规律的生活作息，合理饮食，适量运动，保持心情愉悦。这样才能拥有健康的身体和积极的心态～',
+                    '养生不是一蹴而就的，需要长期坚持。建议你从生活中的小细节做起，比如：早睡早起、多喝水、多运动、保持乐观的心态等，这些都有助于保持健康～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('休息') || question.includes('睡眠')) {
+                const randomResponses = [
+                    '充足的睡眠对身体健康非常重要，建议每天保持7-8小时的睡眠时间。睡前可以泡泡脚、听听轻音乐，帮助放松身心，提高睡眠质量。',
+                    '良好的睡眠习惯包括：固定作息时间、睡前避免使用电子设备、保持卧室安静舒适、避免睡前吃太多东西。这样可以帮助你更快入睡，提高睡眠质量。',
+                    '睡眠不足会影响身体的免疫力和新陈代谢，建议每天按时睡觉，保证充足的睡眠时间。如果有失眠问题，可以尝试放松训练、调整作息时间等方法。',
+                    '睡眠质量对身体健康影响很大哦！建议你保持规律的作息时间，睡前不要看手机或电脑，避免喝咖啡或茶等刺激性饮料。可以试试睡前喝一杯热牛奶，有助于睡眠～',
+                    '充足的睡眠是身体恢复的重要时间，建议你每天保证7-8小时的睡眠时间。如果经常失眠，可以尝试一些放松的方法，比如深呼吸、冥想、听轻柔的音乐等～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('运动') || question.includes('锻炼')) {
+                const randomResponses = [
+                    '适量的运动对身体健康非常重要，建议每天保持30分钟以上的中等强度运动，比如快走、慢跑、游泳、瑜伽等。运动前记得热身，运动后要拉伸，避免受伤。',
+                    '运动可以增强体质、提高免疫力、改善心情。建议选择适合自己的运动方式，比如：散步、跑步、游泳、健身、瑜伽等。每周至少运动3-5次，每次30分钟以上。',
+                    '运动要循序渐进，根据自己的身体状况选择合适的运动强度。刚开始可以从低强度运动开始，逐渐增加运动量。运动前后要注意补充水分，避免脱水。',
+                    '运动是保持健康的重要方式哦！建议你选择一项自己喜欢的运动，比如散步、跑步、游泳、瑜伽等，坚持下去。运动不仅可以锻炼身体，还可以缓解压力，改善心情～',
+                    '运动要注意适度，不要过度劳累。建议根据自己的身体状况制定合理的运动计划，循序渐进，逐渐增加运动量。同时要注意运动安全，避免受伤～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('喝水') || question.includes(' hydration')) {
+                const randomResponses = [
+                    '多喝水对身体健康非常重要，建议每天喝8杯水（约2000毫升）。喝水可以帮助身体排毒、维持新陈代谢、保持皮肤健康。',
+                    '充足的水分摄入对身体非常重要，建议每天喝足够的水，尤其是在运动后、炎热的天气里。喝水可以帮助消化、运输营养物质、调节体温。',
+                    '喝水要适量，不要等到口渴了才喝。建议每天分多次喝水，每次喝200-300毫升。避免喝太多含糖饮料，最好选择白开水或淡茶水。',
+                    '多喝水对身体有很多好处哦！可以帮助排毒、促进新陈代谢、保持皮肤水润、预防便秘等。建议你每天保持充足的水分摄入，尤其是在运动后和炎热的天气里～',
+                    '喝水要注意时间，比如早上起床后喝一杯温水，有助于唤醒身体；饭前喝一杯水，有助于控制食量；运动前后多喝水，有助于补充水分。但要注意不要在睡前喝太多水，以免影响睡眠～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            // 其他常见问题
+            if (question.includes('你好') || question.includes('Hello') || question.includes('嗨')) {
+                const randomResponses = [
+                    '你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊',
+                    '嗨！很高兴见到你～我是大馋丫头，有什么可以帮到你的吗？关于点餐、营养、健康的问题都可以问我哦！',
+                    '你好！我是大馋丫头，你的贴心营养顾问。不管是点餐建议、营养搭配还是生活常识，我都很乐意为你解答！',
+                    '嗨～我是大馋丫头，专门为你提供营养和点餐建议的AI助手。有什么问题随时告诉我，我会耐心为你解答的！',
+                    '你好呀！看到你我就很开心～我是大馋丫头，你的专属营养顾问。有什么关于吃的问题都可以问我，我会给你最温暖的建议～'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('谢谢') || question.includes('感谢')) {
+                const randomResponses = [
+                    '不客气！能帮到你我很开心～如果还有其他问题，随时问我哦！',
+                    '不用谢！这是我应该做的～有什么问题随时告诉我，我会尽力帮助你！',
+                    '很高兴能帮到你！如果还有其他关于点餐、营养或生活的问题，随时问我哦！',
+                    '不用客气啦！能为你服务是我的荣幸～有什么问题随时告诉我，我会一直在你身边的！',
+                    '谢谢的应该是我，谢谢你信任我～有什么问题随时问我，我会继续努力为你提供更好的建议！'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            if (question.includes('再见') || question.includes('拜拜')) {
+                const randomResponses = [
+                    '再见！希望下次还能帮到你～祝你生活愉快！',
+                    '拜拜！有什么问题随时来找我哦～',
+                    '再见啦！期待下次为你解答问题～',
+                    '拜拜！记得照顾好自己，有什么问题随时回来找我哦！',
+                    '再见！希望你每天都能吃得健康，过得开心～有需要随时找我！'
+                ];
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+
+            // 默认回复
+            const randomDefaultResponses = [
+                '我是大馋丫头，你的专属营养顾问！关于点餐、营养搭配、减肥饮食、生活常识等问题都可以问我哦～如果你有具体的问题，比如"如何点餐"、"减肥吃什么"、"午餐怎么搭配"，我会给你更详细的回答！😊',
+                '你好呀！我是大馋丫头，有什么可以帮到你的吗？不管是点餐建议、营养搭配还是生活常识，我都很乐意为你解答！',
+                '嗨！我是大馋丫头，你的贴心营养顾问。有什么关于饮食、健康或生活的问题，随时问我哦！',
+                '你好！我是大馋丫头，专注于营养搭配和健康饮食的AI助手。有什么问题随时告诉我，我会尽力为你解答！',
+                '我是大馋丫头，你的专属营养顾问～不管是点餐、营养还是生活方面的问题，我都很乐意为你解答！有什么想问的尽管告诉我哦！'
+            ];
+            return randomDefaultResponses[Math.floor(Math.random() * randomDefaultResponses.length)];
+        }
 
         // ========== 随机点餐功能 ==========
         // 浮屏小筛子拖动功能
@@ -4655,5 +5938,68 @@
     
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
-</body>
+<!-- 营养师AI模态框 -->
+    <div class="nutrition-ai-modal" id="nutrition-ai-modal">
+        <!-- 顶部导航栏 -->
+        <div class="nutrition-ai-header">
+            <div class="nutrition-ai-back-btn" id="nutrition-ai-back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="nutrition-ai-header-title">大馋丫头</div>
+            <div class="nutrition-ai-header-actions">
+                <div class="nutrition-ai-action-btn" id="nutrition-ai-history-btn">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="nutrition-ai-action-btn" id="nutrition-ai-export-btn">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="nutrition-ai-action-btn" id="nutrition-ai-new-chat-btn">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天容器 -->
+        <div class="nutrition-ai-chat-container" id="nutrition-ai-chat-container">
+            <!-- 初始问候语 -->
+            <div class="nutrition-ai-message-with-avatar">
+                <div class="nutrition-ai-avatar">馋</div>
+                <div class="nutrition-ai-ai-message">
+                    <div class="nutrition-ai-message-content">
+                        你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊
+                    </div>
+                    <div class="nutrition-ai-message-time">刚刚</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="nutrition-ai-input-container">
+            <textarea class="nutrition-ai-message-input" id="nutrition-ai-message-input" placeholder="输入你的问题..." rows="1"></textarea>
+            <div class="nutrition-ai-send-btn" id="nutrition-ai-send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+        </div>
+
+        <!-- 历史记录页面 -->
+        <div class="nutrition-ai-history-container" id="nutrition-ai-history-container">
+            <div class="nutrition-ai-history-title">历史对话</div>
+            <div class="nutrition-ai-history-list" id="nutrition-ai-history-list">
+                <!-- 历史记录会动态添加 -->
+            </div>
+        </div>
+
+        <!-- 确认模态框 -->
+        <div class="nutrition-ai-confirm-modal" id="nutrition-ai-confirm-modal">
+            <div class="nutrition-ai-modal-content">
+                <div class="nutrition-ai-modal-title" id="nutrition-ai-modal-title">确认操作</div>
+                <div class="nutrition-ai-modal-body" id="nutrition-ai-modal-body">确定要执行此操作吗？</div>
+                <div class="nutrition-ai-modal-buttons">
+                    <button class="nutrition-ai-modal-btn nutrition-ai-btn-cancel" id="nutrition-ai-modal-cancel">取消</button>
+                    <button class="nutrition-ai-modal-btn nutrition-ai-btn-confirm" id="nutrition-ai-modal-confirm">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
 </html>
