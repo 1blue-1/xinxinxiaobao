@@ -276,16 +276,68 @@
 
         /* 顶部标题 - 固定 */
         .page-header {
-            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            background: linear-gradient(135deg, #b3e5fc 0%, #ffcdd2 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
             color: #333;
-            padding: 15px 20px;
-            text-align: center;
+            padding: 10px 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 999;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 粒子动态效果 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: rain 2s linear infinite;
+            box-shadow: 0 0 10px 2px rgba(173, 216, 230, 0.8);
+        }
+
+        @keyframes rain {
+            0% {
+                transform: translateY(-10px) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px) translateX(10px);
+                opacity: 0;
+            }
         }
 
         .page-header::before {
@@ -315,28 +367,40 @@
             width: 100%;
         }
 
-        .header-icon {
-            font-size: 24px;
-            animation: bounce 2s infinite;
-            color: #ff6b81;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        .header-text-container {
+            flex: 1;
+            text-align: center;
         }
 
-        .header-icon:nth-child(1) {
-            animation-delay: 0s;
-        }
 
-        .header-icon:nth-child(3) {
-            animation-delay: 0.5s;
-        }
 
         .header-title {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
             font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
             color: #333;
+            margin-bottom: 2px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #555;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            animation: slideIn 0.5s ease 0.2s both;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         @keyframes bounce {
@@ -498,14 +562,15 @@
         }
 
         .category-item {
-            padding: 10px;
+            padding: 6px;
             background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
             border-radius: 12px;
             cursor: pointer;
             text-align: center;
-            font-size: 14px;
+            font-size: 9px;
+            font-weight: bold;
             border: 2px solid #e1f5fe;
-            color: #666;
+            color: #555;
             transition: all 0.3s ease;
             word-break: break-word;
             white-space: normal;
@@ -583,25 +648,68 @@
         }
 
         .view-cart-btn {
-            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
-            color: #333;
+            background: linear-gradient(135deg, #b3e5fc 0%, #c8e6c9 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            color: white;
             border: none;
             padding: 8px 15px;
-            border-radius: 20px;
+            border-radius: 0;
             cursor: pointer;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 5px;
             position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(179, 229, 252, 0.4);
             font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
             transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .view-cart-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .view-cart-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #b3e5fc, #c8e6c9, #b3e5fc);
+            animation: lineMove 2s linear infinite;
+        }
+
+        @keyframes lineMove {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .view-cart-btn:hover::before {
+            left: 100%;
         }
 
         .view-cart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(179, 229, 252, 0.6);
+        }
+
+        .view-cart-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(179, 229, 252, 0.4);
         }
 
         .cart-count {
@@ -630,7 +738,7 @@
 
         .search-input {
             width: 100%;
-            padding: 12px 15px 12px 40px;
+            padding: 8px 15px 8px 40px;
             border: 2px solid #e1f5fe;
             border-radius: 25px;
             font-size: 14px;
@@ -689,8 +797,8 @@
             }
             
             .category-item {
-                font-size: 13px;
-                padding: 6px 12px;
+                font-size: 9px;
+                padding: 6px 8px;
             }
         }
 
@@ -1567,37 +1675,62 @@
             }
         }
 
-        /* 营养师AI样式 */
-        .nutrition-ai-modal {
+        /* 详细菜谱样式 */
+        .recipe-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e8 100%);
             z-index: 1000;
             display: none;
             flex-direction: column;
             overflow: hidden;
         }
 
+        /* 动态背景装饰 */
+        .recipe-modal::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(173, 216, 230, 0.1) 0%, rgba(240, 248, 255, 0.1) 70%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(10%, 10%) rotate(180deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
         /* 顶部导航栏 */
-        .nutrition-ai-header {
+        .recipe-header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(173, 216, 230, 0.3);
             padding: 16px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 15px rgba(173, 216, 230, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .nutrition-ai-back-btn {
-            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+        .recipe-back-btn {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
             border: none;
             border-radius: 50%;
             width: 40px;
@@ -1607,15 +1740,15 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
+            box-shadow: 0 3px 10px rgba(173, 216, 230, 0.4);
         }
 
-        .nutrition-ai-back-btn:hover {
+        .recipe-back-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.6);
+            box-shadow: 0 5px 15px rgba(173, 216, 230, 0.6);
         }
 
-        .nutrition-ai-header-title {
+        .recipe-header-title {
             font-size: 20px;
             font-weight: bold;
             color: #333;
@@ -1623,14 +1756,43 @@
             font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
         }
 
-        .nutrition-ai-header-actions {
-            display: flex;
-            gap: 12px;
+        .recipe-header-actions {
+            flex: 1;
+            max-width: 300px;
+            margin-left: 20px;
         }
 
-        .nutrition-ai-action-btn {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 182, 193, 0.3);
+        .recipe-search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .recipe-search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid rgba(173, 216, 230, 0.3);
+            border-radius: 25px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .recipe-search-input:focus {
+            outline: none;
+            border-color: #64b5f6;
+            box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.2);
+            background: white;
+        }
+
+        .recipe-search-btn {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            color: white;
+            border: none;
             border-radius: 50%;
             width: 36px;
             height: 36px;
@@ -1639,39 +1801,175 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(100, 181, 246, 0.3);
         }
 
-        .nutrition-ai-action-btn:hover {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            transform: scale(1.1);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .recipe-search-btn:hover {
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(100, 181, 246, 0.5);
         }
 
-        /* 聊天容器 */
-        .nutrition-ai-chat-container {
+        /* 菜谱列表容器 */
+        .recipe-list-container {
             flex: 1;
             padding: 24px 20px;
             overflow-y: auto;
+        }
+
+        .recipe-list {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
-        /* 聊天气泡 */
-        .nutrition-ai-message {
-            max-width: 80%;
-            padding: 16px 20px;
+        .recipe-item {
+            background: white;
             border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(173, 216, 230, 0.2);
             position: relative;
-            animation: nutritionAiFadeIn 0.4s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
 
-        @keyframes nutritionAiFadeIn {
+        .recipe-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+        }
+
+        .recipe-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            border-color: rgba(100, 181, 246, 0.4);
+        }
+
+        .recipe-item-content {
+            flex: 1;
+            margin-left: 16px;
+        }
+
+        .recipe-item-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+        }
+
+        .recipe-item-category {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .recipe-detail-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(100, 181, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+        }
+
+        .recipe-detail-btn i {
+            animation: pulse 2s infinite;
+        }
+
+        .recipe-detail-btn:hover {
+            background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(100, 181, 246, 0.5);
+        }
+
+        /* 菜谱详情容器 */
+        .recipe-detail-container {
+            flex: 1;
+            padding: 24px 20px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .recipe-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(173, 216, 230, 0.2);
+        }
+
+        .recipe-detail-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(173, 216, 230, 0.3);
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+        }
+
+        .recipe-detail-back:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(173, 216, 230, 0.5);
+        }
+
+        .recipe-detail-title-container {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(173, 216, 230, 0.2);
+        }
+
+        .recipe-detail-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .recipe-detail-category {
+            font-size: 16px;
+            color: #64b5f6;
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(15px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -1679,317 +1977,172 @@
             }
         }
 
-        .nutrition-ai-user-message {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
-            color: #333;
-            border-bottom-right-radius: 6px;
-        }
-
-        .nutrition-ai-ai-message {
-            align-self: flex-start;
+        .recipe-section {
             background: white;
-            color: #333;
-            border-bottom-left-radius: 6px;
-        }
-
-        .nutrition-ai-message-content {
-            font-size: 16px;
-            line-height: 1.5;
-            font-family: 'Microsoft YaHei', sans-serif;
-        }
-
-        .nutrition-ai-message-time {
-            font-size: 12px;
-            color: #999;
-            margin-top: 6px;
-            text-align: right;
-        }
-
-        .nutrition-ai-ai-message .nutrition-ai-message-time {
-            text-align: left;
-        }
-
-        /* 输入区域 */
-        .nutrition-ai-input-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 16px 20px;
-            display: flex;
-            align-items: flex-end;
-            gap: 12px;
-            position: sticky;
-            bottom: 0;
-            z-index: 90;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .nutrition-ai-message-input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 2px solid rgba(221, 160, 221, 0.3);
-            border-radius: 25px;
-            font-size: 15px;
-            resize: none;
-            max-height: 120px;
-            overflow-y: auto;
-            background: rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-        }
-
-        .nutrition-ai-message-input:focus {
-            outline: none;
-            border-color: #da70d6;
-            box-shadow: 0 0 0 3px rgba(218, 112, 214, 0.2);
-            background: white;
-        }
-
-        .nutrition-ai-send-btn {
-            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
-            color: white;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(218, 112, 214, 0.4);
-        }
-
-        .nutrition-ai-send-btn:hover {
-            background: linear-gradient(135deg, #ba55d3 0%, #9370db 100%);
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(218, 112, 214, 0.6);
-        }
-
-        .nutrition-ai-send-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* 加载动画 */
-        .nutrition-ai-loading {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            background: white;
-            border-radius: 16px;
-            align-self: flex-start;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .nutrition-ai-loading-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
-            animation: nutritionAiLoading 1.5s ease-in-out infinite;
-        }
-
-        .nutrition-ai-loading-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .nutrition-ai-loading-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes nutritionAiLoading {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.6);
-                opacity: 0.6;
-            }
-        }
-
-        /* 历史记录页面 */
-        .nutrition-ai-history-container {
-            padding: 24px 20px;
-            display: none;
-            flex: 1;
-        }
-
-        .nutrition-ai-history-title {
-            font-size: 20px;
-            font-weight: bold;
+            border-radius: 20px;
+            padding: 24px;
             margin-bottom: 24px;
-            text-align: center;
-            color: #333;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(173, 216, 230, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.5s ease;
         }
 
-        .nutrition-ai-history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .nutrition-ai-history-item {
-            background: white;
-            padding: 18px;
-            border-radius: 16px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(221, 160, 221, 0.2);
-        }
-
-        .nutrition-ai-history-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-            border-color: rgba(218, 112, 214, 0.4);
-        }
-
-        .nutrition-ai-history-item-title {
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .nutrition-ai-history-item-time {
-            font-size: 13px;
-            color: #999;
-        }
-
-        /* 模态框 */
-        .nutrition-ai-confirm-modal {
-            position: fixed;
+        .recipe-section::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
+            height: 4px;
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
         }
 
-        .nutrition-ai-modal-content {
-            background: white;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 400px;
-            padding: 24px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(221, 160, 221, 0.3);
-        }
-
-        .nutrition-ai-modal-title {
+        .recipe-section-title {
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 18px;
-            text-align: center;
             color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e3f2fd 100%);
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(173, 216, 230, 0.2);
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
         }
 
-        .nutrition-ai-modal-body {
-            margin-bottom: 24px;
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .recipe-section-content {
             font-size: 15px;
-            line-height: 1.5;
+            line-height: 1.7;
             color: #555;
         }
 
-        .nutrition-ai-modal-buttons {
-            display: flex;
-            gap: 12px;
+        .recipe-section-content ul {
+            padding-left: 24px;
         }
 
-        .nutrition-ai-modal-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
+        .recipe-section-content li {
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid #64b5f6;
+            position: relative;
         }
 
-        .nutrition-ai-btn-cancel {
-            background: #f5f5f5;
-            color: #333;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .nutrition-ai-btn-confirm {
-            background: linear-gradient(135deg, #da70d6 0%, #ba55d3 100%);
-            color: white;
-        }
-
-        .nutrition-ai-modal-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        .recipe-section-content li::before {
+            content: '🌟';
+            position: absolute;
+            left: -20px;
+            top: 2px;
+            color: #64b5f6;
         }
 
         /* 可爱风格的装饰 */
-        .nutrition-ai-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff6b81 0%, #ff8e53 100%);
+        .recipe-section-title i {
+            color: #64b5f6;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* 可爱的功能按钮 */
+        .recipe-function-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .recipe-function-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #90caf9 0%, #64b5f6 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(144, 202, 249, 0.3);
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            margin-right: 12px;
-            box-shadow: 0 3px 10px rgba(255, 107, 129, 0.4);
+            gap: 8px;
         }
 
-        .nutrition-ai-message-with-avatar {
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .nutrition-ai-ai-message-content {
-            flex: 1;
+        .recipe-function-btn:hover {
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(144, 202, 249, 0.5);
         }
 
         /* 响应式设计 */
         @media (max-width: 480px) {
-            .nutrition-ai-header {
+            .recipe-header {
                 padding: 14px 16px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
             }
 
-            .nutrition-ai-header-title {
+            .recipe-header-title {
                 font-size: 18px;
+                text-align: center;
             }
 
-            .nutrition-ai-chat-container {
-                padding: 20px 16px;
-                gap: 16px;
+            .recipe-header-actions {
+                margin-left: 0;
+                max-width: none;
             }
 
-            .nutrition-ai-message {
-                max-width: 85%;
-                padding: 14px 18px;
-            }
-
-            .nutrition-ai-input-container {
-                padding: 14px 16px;
-            }
-
-            .nutrition-ai-message-input {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
-
-            .nutrition-ai-history-container {
+            .recipe-list-container {
                 padding: 20px 16px;
             }
 
-            .nutrition-ai-history-item {
+            .recipe-item {
                 padding: 16px;
+            }
+
+            .recipe-detail-container {
+                padding: 20px 16px;
+            }
+
+            .recipe-detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .recipe-detail-title {
+                font-size: 20px;
+            }
+
+            .recipe-section {
+                padding: 20px;
             }
         }
     </style>
@@ -2006,31 +2159,27 @@
         <div class="bg-shape shape-5"></div>
     </div>
 
-    <!-- 顶部标题 -->
+    <!-- 顶部标题和问候语区域 -->
     <div class="page-header">
         <div class="header-content">
-            <div class="header-icon"><i class="fas fa-utensils"></i></div>
-            <div class="header-title">心心小宝点餐小铺</div>
-            <div class="header-menu-btn" id="header-menu-btn">
-                <i class="fas fa-bars" style="color: #81c784;"></i>
+            <div class="header-text-container">
+                <div class="header-title" style="animation: slideIn 0.5s ease;">心心小宝点餐小铺</div>
+                <div class="header-subtitle" id="greeting-text" style="animation: slideIn 0.5s ease 0.2s both;">早上好~宝宝，看看吃点什么</div>
+            </div>
+            <div class="header-menu-btn" id="header-menu-btn" style="cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 12px;">
+                <i class="fas fa-bars" id="menu-icon" style="color: #81c784; font-size: 24px; transition: all 0.3s ease;"></i>
             </div>
         </div>
         <!-- 下拉菜单 -->
-        <div class="dropdown-menu" id="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; min-width: 150px; padding: 8px 0;">
-            <div class="dropdown-item" id="nutrition-ai-btn" style="padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px;">
-                <i class="fas fa-robot" style="margin-right: 8px; color: #81c784;"></i> 营养师AI
+        <div class="dropdown-menu" id="dropdown-menu" style="display: none; position: fixed; top: 60px; right: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; min-width: 150px; padding: 8px 0; transform: translateY(-10px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(221, 160, 221, 0.2);">
+            <div class="dropdown-item" id="nutrition-ai-btn" style="padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px; display: flex; align-items: center; gap: 8px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                <i class="fas fa-utensils" style="font-size: 16px; color: #81c784; animation: pulse 2s infinite;"></i> 详细菜品
             </div>
         </div>
     </div>
 
-
-
     <!-- 可滚动的顶部区域 -->
     <div class="scrollable-top-area">
-        <!-- 时间段问候语 -->
-        <div class="greeting">
-            <div class="greeting-text" id="greeting-text">早上好~宝宝，看看吃点什么</div>
-        </div>
 
         <!-- 左侧分类栏（手机端顶部横向滚动） -->
         <div class="category-sidebar">
@@ -4587,12 +4736,44 @@
 
 
 
+        // 创建粒子动态效果
+        function createParticles() {
+            const header = document.querySelector('.page-header');
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'particles';
+            header.appendChild(particlesContainer);
+
+            // 创建20个粒子
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 让问候语每隔4秒动态动一次
+        function animateGreeting() {
+            const greeting = document.getElementById('greeting-text');
+            setInterval(() => {
+                greeting.style.animation = 'none';
+                setTimeout(() => {
+                    greeting.style.animation = 'slideIn 0.5s ease';
+                }, 10);
+            }, 4000);
+        }
+
         // ========== 初始化 ========== 
         window.onload = () => {
             renderFoodList(currentCategory, searchKeyword);
             updateCart();
             updateFoodCount(); // 初始化菜品总数
             updateGreeting(); // 初始化问候语
+            createParticles(); // 创建粒子动态效果
+            animateGreeting(); // 启动问候语动画
             
             // 解决移动端点击延迟
             document.addEventListener('touchstart', () => {}, { passive: true });
@@ -4609,603 +4790,576 @@
             const headerMenuBtn = document.getElementById('header-menu-btn');
             const dropdownMenu = document.getElementById('dropdown-menu');
             const nutritionAiBtn = document.getElementById('nutrition-ai-btn');
+            const menuIcon = document.getElementById('menu-icon');
 
             headerMenuBtn.addEventListener('click', () => {
-                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                    // 显示下拉菜单
+                    dropdownMenu.style.display = 'block';
+                    setTimeout(() => {
+                        dropdownMenu.style.transform = 'translateY(0)';
+                        dropdownMenu.style.opacity = '1';
+                    }, 10);
+                    // 切换图标为叉号
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-times');
+                } else {
+                    // 隐藏下拉菜单
+                    dropdownMenu.style.transform = 'translateY(-10px)';
+                    dropdownMenu.style.opacity = '0';
+                    setTimeout(() => {
+                        dropdownMenu.style.display = 'none';
+                    }, 300);
+                    // 切换图标为三条杠
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                }
             });
 
             // 点击其他地方关闭下拉菜单
             document.addEventListener('click', (e) => {
-                if (!headerMenuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.style.display = 'none';
+                if (!headerMenuBtn.contains(e.target) && !dropdownMenu.contains(e.target) && dropdownMenu.style.display === 'block') {
+                    dropdownMenu.style.transform = 'translateY(-10px)';
+                    dropdownMenu.style.opacity = '0';
+                    setTimeout(() => {
+                        dropdownMenu.style.display = 'none';
+                        // 切换图标为三条杠
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                    }, 300);
                 }
             });
 
-            // 营养师AI按钮点击事件
+            // 详细菜谱按钮点击事件
             nutritionAiBtn.addEventListener('click', () => {
-                document.getElementById('nutrition-ai-modal').style.display = 'flex';
-                initializeNutritionAIChat();
+                document.getElementById('recipe-modal').style.display = 'flex';
+                renderRecipeList();
             });
 
-            // 营养AI聊天相关事件绑定
-            bindNutritionAIEvents();
+            // 详细菜谱相关事件绑定
+            bindRecipeEvents();
         };
 
-        // ========== 营养师AI功能 ==========
-        let nutritionAiCurrentChatId = generateNutritionAIChatId();
-        let nutritionAiMessages = [];
-        let nutritionAiChatHistory = loadNutritionAIChatHistory();
-
-        // 初始化营养AI聊天
-        function initializeNutritionAIChat() {
-            // 加载历史消息
-            loadNutritionAIMessages();
-            // 自动发送问候语
-            if (nutritionAiMessages.length === 0) {
-                addNutritionAIAIMessage('你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊');
-            }
-        }
-
-        // 绑定营养AI事件
-        function bindNutritionAIEvents() {
+        // ========== 详细菜谱功能 ==========
+        
+        // 绑定菜谱事件
+        function bindRecipeEvents() {
             // 返回按钮
-            document.getElementById('nutrition-ai-back-btn').addEventListener('click', function() {
-                document.getElementById('nutrition-ai-modal').style.display = 'none';
+            document.getElementById('recipe-back-btn').addEventListener('click', function() {
+                document.getElementById('recipe-modal').style.display = 'none';
             });
 
-            // 发送按钮
-            document.getElementById('nutrition-ai-send-btn').addEventListener('click', sendNutritionAIMessage);
+            // 详情页面返回按钮
+            document.getElementById('recipe-detail-back').addEventListener('click', function() {
+                // 显示顶部导航栏和列表容器，隐藏详情容器
+                const recipeHeader = document.getElementById('recipe-header');
+                if (recipeHeader) {
+                    recipeHeader.style.display = 'flex';
+                }
+                document.getElementById('recipe-detail-container').style.display = 'none';
+                document.getElementById('recipe-list-container').style.display = 'block';
+            });
 
-            // 输入框回车发送
-            document.getElementById('nutrition-ai-message-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendNutritionAIMessage();
+            // 搜索按钮
+            document.getElementById('recipe-search-btn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('recipe-search-input').value.trim();
+                searchRecipes(searchTerm);
+            });
+
+            // 搜索输入框回车
+            document.getElementById('recipe-search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    searchRecipes(searchTerm);
                 }
             });
-
-            // 历史记录按钮
-            document.getElementById('nutrition-ai-history-btn').addEventListener('click', toggleNutritionAIHistory);
-
-            // 导出按钮
-            document.getElementById('nutrition-ai-export-btn').addEventListener('click', exportNutritionAIChat);
-
-            // 新建对话按钮
-            document.getElementById('nutrition-ai-new-chat-btn').addEventListener('click', function() {
-                showNutritionAIConfirmModal('新建对话', '确定要开始新的对话吗？当前对话将会保存。', function() {
-                    startNutritionAINewChat();
-                });
-            });
-
-            // 模态框按钮
-            document.getElementById('nutrition-ai-modal-cancel').addEventListener('click', hideNutritionAIModal);
-            document.getElementById('nutrition-ai-modal-confirm').addEventListener('click', function() {
-                if (window.nutritionAiModalCallback) {
-                    window.nutritionAiModalCallback();
-                }
-                hideNutritionAIModal();
-            });
         }
 
-        // 发送营养AI消息
-        function sendNutritionAIMessage() {
-            const input = document.getElementById('nutrition-ai-message-input');
-            const text = input.value.trim();
+        // 渲染菜谱列表
+        function renderRecipeList(foods = allFoods) {
+            const recipeList = document.getElementById('recipe-list');
+            recipeList.innerHTML = '';
 
-            if (!text) return;
-
-            // 添加用户消息
-            addNutritionAIUserMessage(text);
-            input.value = '';
-
-            // 显示加载动画
-            showNutritionAILoading();
-
-            // 模拟AI回复
-            setTimeout(() => {
-                hideNutritionAILoading();
-                const response = getNutritionAIResponse(text);
-                addNutritionAIAIMessage(response);
-                saveNutritionAIMessages();
-                saveNutritionAIChatHistory();
-            }, 1000);
-        }
-
-        // 添加营养AI用户消息
-        function addNutritionAIUserMessage(text) {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            const messageElement = document.createElement('div');
-            messageElement.className = 'nutrition-ai-message nutrition-ai-user-message';
-            messageElement.innerHTML = `
-                <div class="nutrition-ai-message-content">${text}</div>
-                <div class="nutrition-ai-message-time">${getCurrentTime()}</div>
-            `;
-            chatContainer.appendChild(messageElement);
-            nutritionAiMessages.push({ type: 'user', text: text, time: new Date().toISOString() });
-            scrollNutritionAIBottom();
-        }
-
-        // 添加营养AI消息
-        function addNutritionAIAIMessage(text) {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            const messageElement = document.createElement('div');
-            messageElement.className = 'nutrition-ai-message-with-avatar';
-            messageElement.innerHTML = `
-                <div class="nutrition-ai-avatar">馋</div>
-                <div class="nutrition-ai-ai-message">
-                    <div class="nutrition-ai-message-content">${text}</div>
-                    <div class="nutrition-ai-message-time">${getCurrentTime()}</div>
-                </div>
-            `;
-            chatContainer.appendChild(messageElement);
-            nutritionAiMessages.push({ type: 'ai', text: text, time: new Date().toISOString() });
-            scrollNutritionAIBottom();
-        }
-
-        // 显示营养AI加载动画
-        function showNutritionAILoading() {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            const loadingElement = document.createElement('div');
-            loadingElement.className = 'nutrition-ai-loading';
-            loadingElement.id = 'nutrition-ai-loading-indicator';
-            loadingElement.innerHTML = `
-                <div class="nutrition-ai-loading-dot"></div>
-                <div class="nutrition-ai-loading-dot"></div>
-                <div class="nutrition-ai-loading-dot"></div>
-            `;
-            chatContainer.appendChild(loadingElement);
-            scrollNutritionAIBottom();
-        }
-
-        // 隐藏营养AI加载动画
-        function hideNutritionAILoading() {
-            const loadingElement = document.getElementById('nutrition-ai-loading-indicator');
-            if (loadingElement) {
-                loadingElement.remove();
-            }
-        }
-
-        // 滚动营养AI聊天到底部
-        function scrollNutritionAIBottom() {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // 获取当前时间
-        function getCurrentTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-
-        // 生成营养AI聊天ID
-        function generateNutritionAIChatId() {
-            return Date.now().toString();
-        }
-
-        // 保存营养AI消息到本地存储
-        function saveNutritionAIMessages() {
-            localStorage.setItem(`nutrition_ai_chat_${nutritionAiCurrentChatId}`, JSON.stringify(nutritionAiMessages));
-        }
-
-        // 加载营养AI消息
-        function loadNutritionAIMessages() {
-            const savedMessages = localStorage.getItem(`nutrition_ai_chat_${nutritionAiCurrentChatId}`);
-            if (savedMessages) {
-                nutritionAiMessages = JSON.parse(savedMessages);
-                renderNutritionAIMessages();
-            }
-        }
-
-        // 渲染营养AI消息
-        function renderNutritionAIMessages() {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            chatContainer.innerHTML = '';
-
-            nutritionAiMessages.forEach(message => {
-                if (message.type === 'user') {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'nutrition-ai-message nutrition-ai-user-message';
-                    messageElement.innerHTML = `
-                        <div class="nutrition-ai-message-content">${message.text}</div>
-                        <div class="nutrition-ai-message-time">${formatNutritionAITime(message.time)}</div>
-                    `;
-                    chatContainer.appendChild(messageElement);
-                } else {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'nutrition-ai-message-with-avatar';
-                    messageElement.innerHTML = `
-                        <div class="nutrition-ai-avatar">馋</div>
-                        <div class="nutrition-ai-ai-message">
-                            <div class="nutrition-ai-message-content">${message.text}</div>
-                            <div class="nutrition-ai-message-time">${formatNutritionAITime(message.time)}</div>
-                        </div>
-                    `;
-                    chatContainer.appendChild(messageElement);
-                }
-            });
-
-            scrollNutritionAIBottom();
-        }
-
-        // 格式化营养AI时间
-        function formatNutritionAITime(timeString) {
-            const date = new Date(timeString);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-
-        // 保存营养AI聊天历史
-        function saveNutritionAIChatHistory() {
-            const chatInfo = {
-                id: nutritionAiCurrentChatId,
-                title: nutritionAiMessages[0]?.text.substring(0, 20) || '新对话',
-                time: new Date().toISOString()
-            };
-
-            // 更新或添加到历史记录
-            const existingIndex = nutritionAiChatHistory.findIndex(item => item.id === nutritionAiCurrentChatId);
-            if (existingIndex >= 0) {
-                nutritionAiChatHistory[existingIndex] = chatInfo;
-            } else {
-                nutritionAiChatHistory.unshift(chatInfo);
-            }
-
-            // 限制历史记录数量
-            if (nutritionAiChatHistory.length > 20) {
-                nutritionAiChatHistory = nutritionAiChatHistory.slice(0, 20);
-            }
-
-            localStorage.setItem('nutritionAiChatHistory', JSON.stringify(nutritionAiChatHistory));
-        }
-
-        // 加载营养AI聊天历史
-        function loadNutritionAIChatHistory() {
-            const savedHistory = localStorage.getItem('nutritionAiChatHistory');
-            return savedHistory ? JSON.parse(savedHistory) : [];
-        }
-
-        // 切换到营养AI历史记录页面
-        function toggleNutritionAIHistory() {
-            const chatContainer = document.getElementById('nutrition-ai-chat-container');
-            const historyContainer = document.getElementById('nutrition-ai-history-container');
-
-            if (historyContainer.style.display === 'flex') {
-                historyContainer.style.display = 'none';
-                chatContainer.style.display = 'flex';
-            } else {
-                historyContainer.style.display = 'flex';
-                chatContainer.style.display = 'none';
-                renderNutritionAIHistoryList();
-            }
-        }
-
-        // 渲染营养AI历史记录列表
-        function renderNutritionAIHistoryList() {
-            const historyList = document.getElementById('nutrition-ai-history-list');
-            historyList.innerHTML = '';
-
-            if (nutritionAiChatHistory.length === 0) {
-                historyList.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 0;">暂无历史对话</div>';
+            if (foods.length === 0) {
+                recipeList.innerHTML = '<div style="text-align: center; color: #999; padding: 40px 0;">没有找到相关菜品</div>';
                 return;
             }
 
-            nutritionAiChatHistory.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'nutrition-ai-history-item';
-                historyItem.innerHTML = `
-                    <div class="nutrition-ai-history-item-title">${item.title}</div>
-                    <div class="nutrition-ai-history-item-time">${formatNutritionAIHistoryTime(item.time)}</div>
+            foods.forEach(food => {
+                const recipeItem = document.createElement('div');
+                recipeItem.className = 'recipe-item';
+                recipeItem.innerHTML = `
+                    <div class="recipe-item-content">
+                        <h3 class="recipe-item-title">${food.name}</h3>
+                        <p class="recipe-item-category">${getCategoryName(food.category)}</p>
+                    </div>
+                    <button class="recipe-detail-btn" data-id="${food.id}">
+                        <i class="fas fa-cutlery"></i> 查看详细
+                    </button>
                 `;
-                historyItem.addEventListener('click', function() {
-                    nutritionAiCurrentChatId = item.id;
-                    nutritionAiMessages = [];
-                    loadNutritionAIMessages();
-                    document.getElementById('nutrition-ai-history-container').style.display = 'none';
-                    document.getElementById('nutrition-ai-chat-container').style.display = 'flex';
+                recipeList.appendChild(recipeItem);
+            });
+
+            // 添加查看详细按钮的点击事件
+            document.querySelectorAll('.recipe-detail-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const foodId = parseInt(this.dataset.id);
+                    showRecipeDetail(foodId);
                 });
-                historyList.appendChild(historyItem);
             });
         }
 
-        // 格式化营养AI历史记录时间
-        function formatNutritionAIHistoryTime(timeString) {
-            const date = new Date(timeString);
-            const now = new Date();
-            const diff = now - date;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor(diff / (1000 * 60));
-
-            if (days > 0) {
-                return `${days}天前`;
-            } else if (hours > 0) {
-                return `${hours}小时前`;
-            } else if (minutes > 0) {
-                return `${minutes}分钟前`;
-            } else {
-                return '刚刚';
+        // 搜索菜谱
+        function searchRecipes(searchTerm) {
+            if (!searchTerm) {
+                renderRecipeList();
+                return;
             }
+
+            const filteredFoods = allFoods.filter(food => 
+                food.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            renderRecipeList(filteredFoods);
         }
 
-        // 开始营养AI新对话
-        function startNutritionAINewChat() {
-            nutritionAiCurrentChatId = generateNutritionAIChatId();
-            nutritionAiMessages = [];
-            document.getElementById('nutrition-ai-chat-container').innerHTML = '';
-            addNutritionAIAIMessage('你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊');
+        // 获取分类名称
+        function getCategoryName(category) {
+            const categoryMap = {
+                'recommended': '推荐菜品',
+                'hot': '热门菜品',
+                'soup': '汤羹类',
+                'home-cooking': '家常菜品',
+                'fast-food': '快餐类',
+                'dessert': '甜品小吃',
+                'breakfast': '早餐',
+                'snacks': '特色小吃',
+                'staple': '主食',
+                'bbq': '烧烤炸物',
+                'drinks': '饮品',
+                'fruits': '水果'
+            };
+            return categoryMap[category] || category;
         }
 
-        // 导出营养AI聊天记录
-        function exportNutritionAIChat() {
-            // 这里使用简单的方法生成图片，实际项目中可以使用html2canvas等库
-            showNutritionAIToast('聊天记录已导出');
+        // 显示菜谱详情
+        function showRecipeDetail(foodId) {
+            const food = allFoods.find(f => f.id === foodId);
+            if (!food) return;
+
+            // 显示详情容器，隐藏列表容器和顶部导航栏
+            const recipeHeader = document.getElementById('recipe-header');
+            if (recipeHeader) {
+                recipeHeader.style.display = 'none';
+            }
+            document.getElementById('recipe-list-container').style.display = 'none';
+            document.getElementById('recipe-detail-container').style.display = 'block';
+
+            // 填充详情内容
+            document.getElementById('recipe-detail-title').textContent = food.name;
+            document.getElementById('recipe-detail-category').textContent = `分类：${getCategoryName(food.category)}`;
+
+            // 生成制作步骤内容
+            const steps = generateSteps(food.name);
+            document.getElementById('recipe-steps').innerHTML = `<ul>${steps.map((step, index) => `<li>${step}</li>`).join('')}</ul>`;
         }
 
-        // 显示营养AI确认模态框
-        function showNutritionAIConfirmModal(title, body, callback) {
-            const modal = document.getElementById('nutrition-ai-confirm-modal');
-            document.getElementById('nutrition-ai-modal-title').textContent = title;
-            document.getElementById('nutrition-ai-modal-body').textContent = body;
-            window.nutritionAiModalCallback = callback;
-            modal.style.display = 'flex';
-        }
+        // 生成食材准备
+        function generateIngredients(foodName) {
+            // 根据菜品名称生成相应的食材
+            const ingredientMap = {
+                '红烧肉': ['五花肉 500克', '生抽 2勺', '老抽 1勺', '料酒 1勺', '冰糖 适量'],
+                '宫保鸡丁': ['鸡胸肉 300克', '花生 100克', '青椒 1个', '红椒 1个', '蒜 2瓣'],
+                '鱼香肉丝': ['猪里脊肉 250克', '胡萝卜 1根', '青椒 1个', '木耳 适量', '葱 1根'],
+                '糖醋排骨': ['排骨 500克', '生姜 1块', '大蒜 2瓣', '料酒 1勺', '醋 2勺'],
+                '麻婆豆腐': ['豆腐 500克', '牛肉末 100克', '豆瓣酱 2勺', '花椒粉 适量', '葱 1根'],
+                '清蒸鱼': ['鱼 1条', '生姜 1块', '葱 2根', '料酒 1勺', '蒸鱼豉油 2勺'],
+                '水煮肉片': ['猪里脊肉 300克', '白菜 200克', '豆芽 100克', '干辣椒 10个', '花椒 适量'],
+                '可乐鸡翅': ['鸡翅 500克', '可乐 1罐', '生姜 1块', '大蒜 2瓣', '生抽 2勺'],
+                '酸辣土豆丝': ['土豆 2个', '辣椒 2个', '醋 2勺', '盐 适量', '葱 1根'],
+                '蒜蓉西兰花': ['西兰花 1颗', '大蒜 5瓣', '蚝油 1勺', '盐 适量', '食用油 适量'],
+                '西红柿炒蛋': ['西红柿 2个', '鸡蛋 2个', '盐 适量', '食用油 适量'],
+                '番茄炒蛋': ['番茄 2个', '鸡蛋 2个', '盐 适量', '食用油 适量']
+            };
 
-        // 隐藏营养AI模态框
-        function hideNutritionAIModal() {
-            document.getElementById('nutrition-ai-confirm-modal').style.display = 'none';
-            window.nutritionAiModalCallback = null;
-        }
-
-        // 显示营养AI提示信息
-        function showNutritionAIToast(message) {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0,0,0,0.8);
-                color: white;
-                padding: 15px 25px;
-                border-radius: 25px;
-                font-size: 14px;
-                z-index: 1001;
-                animation: nutritionAiFadeIn 0.3s ease;
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 2000);
-        }
-
-        // 营养AI回复逻辑
-        function getNutritionAIResponse(question) {
-            question = question.toLowerCase();
-
-            // 小程序操作相关
-            if (question.includes('怎么点餐') || question.includes('点餐流程') || question.includes('如何点餐')) {
-                return '点餐很简单哦！你只需要：1. 在首页选择你喜欢的菜品分类 2. 浏览菜品列表，点击喜欢的菜品 3. 选择菜品规格 4. 确认添加到购物车 5. 查看购物车并确认订单就好啦～我会一直在旁边帮你哦～😊';
-            }
-
-            if (question.includes('怎么找菜') || question.includes('搜索菜品')) {
-                return '你可以使用首页顶部的搜索框，输入菜品名称来快速找到你想吃的菜哦！如果找不到的话，随时问我，我会帮你一起找～';
-            }
-
-            if (question.includes('怎么看订单') || question.includes('查看订单')) {
-                return '在首页点击"已选菜品"按钮，就可以看到你当前的订单啦！有什么问题随时告诉我哦～';
-            }
-
-            if (question.includes('怎么删除菜品') || question.includes('取消订单')) {
-                return '在已选菜品页面，点击菜品旁边的删除按钮就可以删除不想要的菜品了哦！如果有什么困难，我会帮你的～';
-            }
-
-            if (question.includes('怎么使用优惠券') || question.includes('优惠活动')) {
-                return '目前我们正在进行满减活动，满100减20，满200减50，下单时系统会自动计算优惠金额哦！是不是很划算呀～';
-            }
-
-            // 营养相关
-            if (question.includes('热量') || question.includes('卡路里')) {
-                const randomResponses = [
-                    '不同菜品的热量不同哦！一般来说，蔬菜类热量较低，肉类和油炸食品热量较高。如果你想了解具体菜品的热量，可以告诉我具体菜名，我会为你详细解答～',
-                    '热量是衡量食物能量的单位，不同食物的热量差异很大。比如100克苹果大约有52大卡，而100克炸鸡可能有300大卡以上。合理控制热量摄入对保持健康很重要哦！',
-                    '计算热量可以帮助你更好地管理饮食。一般来说，成年人每天需要的热量在1800-2500大卡之间，具体取决于你的年龄、性别、体重和活动量。',
-                    '热量摄入要根据个人情况来定，如果你想减肥，可以适当减少热量摄入，同时增加运动量。但要注意不要过度节食，保持营养均衡哦！',
-                    '不同烹饪方式也会影响食物的热量，比如清蒸的热量通常比油炸的低。如果你想控制热量，可以选择更健康的烹饪方式～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('减肥') || question.includes('减脂')) {
-                const randomResponses = [
-                    '减肥期间建议选择低热量、高纤维的食物，比如蔬菜沙拉、清蒸鱼、鸡胸肉等。同时要注意控制食量，避免油炸和高糖食品。可以搭配适量的有氧运动效果更好哦！',
-                    '减肥的关键是热量摄入小于热量消耗。建议你多吃蔬菜水果，适量摄入蛋白质，减少精制碳水化合物和高脂肪食物的摄入。同时保持适量的运动，这样才能健康减肥～',
-                    '减肥期间可以选择一些低卡又饱腹的食物，比如燕麦、红薯、鸡胸肉、鱼肉、蔬菜等。避免吃油炸食品、甜点和饮料，这些食物热量高但营养价值低。',
-                    '减肥不是一蹴而就的，需要坚持哦！建议你制定一个合理的饮食计划，结合适量的运动，保持良好的作息习惯。我会一直支持你的～',
-                    '减肥期间要注意营养均衡，不要过度节食。可以选择一些健康的零食，比如坚果、水果等，避免暴饮暴食。同时要保持充足的水分摄入，这样有助于新陈代谢～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('营养搭配') || question.includes('健康搭配')) {
-                const randomResponses = [
-                    '健康的饮食搭配应该包括：适量的蛋白质（肉、蛋、奶）、碳水化合物（米饭、面条）、维生素和矿物质（蔬菜、水果）。建议每餐都有这几类食物，保持营养均衡～',
-                    '均衡饮食是健康的基础，建议每天摄入多样化的食物，包括谷物、蔬菜、水果、蛋白质食物和奶制品。这样才能获得身体所需的各种营养素。',
-                    '合理的饮食搭配应该遵循食物多样、荤素搭配、粗细搭配的原则。每天至少摄入12种食物，每周至少25种食物，这样才能保证营养均衡。',
-                    '营养搭配要根据个人情况来定，比如年龄、性别、活动量等。如果你有特殊需求，比如减肥、增肌等，可以告诉我，我会为你制定个性化的营养方案～',
-                    '饮食搭配要注意色彩多样，不同颜色的食物含有不同的营养素。比如红色食物富含番茄红素，绿色食物富含叶绿素，紫色食物富含花青素等。多样化的色彩可以保证营养的全面性～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('午餐') || question.includes('晚餐') || question.includes('早餐')) {
-                if (question.includes('午餐')) {
-                    const randomResponses = [
-                        '午餐建议吃的营养均衡一些，可以选择一份主食（米饭、面条）、一份蛋白质（鱼、肉、蛋）、一份蔬菜，这样既有能量又不会太饱～',
-                        '午餐是一天中能量需求最大的一餐，建议选择复合碳水化合物（如糙米饭、全麦面包）、优质蛋白质（如鸡肉、鱼肉、豆腐）和大量蔬菜，这样可以保持下午的精力充沛。',
-                        '健康的午餐应该包括：1. 主食（米饭、面条、馒头等）2. 蛋白质（肉类、鱼类、豆制品）3. 蔬菜（最好是深色蔬菜）4. 适量的汤或饮料。这样的搭配可以提供全面的营养。',
-                        '午餐要吃好，不要随便应付哦！建议选择一些营养丰富的食物，比如瘦肉、鱼类、豆类等，搭配新鲜蔬菜，这样下午工作学习才会有精神～',
-                        '午餐时间不要太短，建议慢慢吃，细嚼慢咽，这样有助于消化吸收。同时要注意不要吃太饱，七分饱就可以了，避免下午犯困～'
-                    ];
-                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-                } else if (question.includes('晚餐')) {
-                    const randomResponses = [
-                        '晚餐建议清淡一些，避免油腻和过饱。可以选择粥、蔬菜、少量蛋白质，这样有助于消化和睡眠哦～',
-                        '晚餐应该适量减少，避免吃太多。建议选择易消化的食物，比如粥、面条、蒸蛋、蔬菜等，避免吃油炸、辛辣和难以消化的食物，这样有利于晚上的睡眠。',
-                        '健康的晚餐应该在7点前吃完，适量摄入碳水化合物和蛋白质，多吃蔬菜。避免吃太多肉类和油腻食物，这样可以减轻肠胃负担，提高睡眠质量。',
-                        '晚餐要吃得清淡，不要吃太晚哦！建议选择一些容易消化的食物，比如小米粥、蔬菜沙拉、清蒸鱼等，这样晚上睡觉才会舒服～',
-                        '晚餐的量要控制好，不要吃太多，否则会影响睡眠。可以选择一些低热量、高纤维的食物，比如蔬菜、水果、全麦面包等，这样既不会饿，又不会给肠胃造成负担～'
-                    ];
-                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-                } else {
-                    const randomResponses = [
-                        '早餐是一天中最重要的一餐！建议选择富含蛋白质和碳水化合物的食物，比如鸡蛋、牛奶、面包、粥等，这样上午才有精力～',
-                        '早餐要吃好，建议选择营养均衡的食物，比如全麦面包、鸡蛋、牛奶、水果等。避免吃太多油炸食品和甜食，这样可以保持上午的血糖稳定，提高工作和学习效率。',
-                        '健康的早餐应该包括：1. 碳水化合物（如面包、粥、馒头）2. 蛋白质（如鸡蛋、牛奶、豆浆）3. 维生素（如水果、蔬菜）。这样的搭配可以提供上午所需的能量和营养。',
-                        '早餐一定要吃哦！不吃早餐会影响上午的精力和学习工作效率，还可能导致中午暴饮暴食。建议早起几分钟，为自己准备一份营养丰富的早餐～',
-                        '早餐可以多样化，不要每天都吃同样的东西。可以轮换着吃不同的食物，比如今天吃面包牛奶，明天吃粥和鸡蛋，这样可以保证营养的全面性～'
-                    ];
-                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-                }
-            }
-
-            // 忌口相关
-            if (question.includes('不能吃辣') || question.includes('不吃辣')) {
-                const randomResponses = [
-                    '如果不能吃辣，可以选择清蒸、白灼、炖煮的菜品，比如清蒸鱼、白灼虾、炖鸡汤等，这些菜品味道鲜美又不辣～',
-                    '不吃辣的话，可以选择一些清淡的烹饪方式，比如清蒸、白灼、炖煮、凉拌等。推荐菜品有：清蒸鲈鱼、白灼虾、炖鸡汤、凉拌黄瓜、番茄炒蛋等。',
-                    '对于不吃辣的人来说，可以选择一些口味清淡的菜品，比如：白灼菜心、清蒸排骨、番茄鸡蛋汤、蒜蓉西兰花、糖醋里脊等。这些菜品味道鲜美，不会辣。',
-                    '不能吃辣的话，我可以为你推荐一些清淡的菜品哦！比如：清蒸鱼、白灼虾、炖鸡汤、蒜蓉时蔬、番茄炒蛋等，这些菜品都很美味，而且不辣～',
-                    '不吃辣没关系，还有很多其他美味的菜品可以选择！比如：清蒸海鲜、炖煮汤品、凉拌蔬菜、糖醋类菜品等，这些都很适合你～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('肠胃不好') || question.includes('胃不好')) {
-                const randomResponses = [
-                    '肠胃不好的话，建议选择易消化、温和的食物，比如粥、面条、蒸蛋、软米饭等，避免辛辣、油腻、生冷的食物～',
-                    '肠胃不好的人应该选择易消化、温和的食物，比如：小米粥、软米饭、面条、蒸蛋、豆腐、南瓜等。避免吃辛辣、油腻、生冷、刺激性的食物，这样可以减轻肠胃负担。',
-                    '对于肠胃不好的人，建议饮食规律，避免暴饮暴食，选择清淡易消化的食物。推荐菜品有：小米粥、南瓜粥、软米饭、清蒸鱼、蒸蛋、豆腐等。同时要注意腹部保暖，避免受凉。',
-                    '肠胃不好的话，要特别注意饮食哦！建议选择一些温和、易消化的食物，比如粥、面条、蒸蛋等，避免吃辛辣、油腻、生冷的食物。同时要注意饮食规律，不要暴饮暴食～',
-                    '肠胃不好的人可以多吃一些对肠胃有益的食物，比如：小米、南瓜、山药、红枣、酸奶等，这些食物可以帮助调理肠胃。同时要避免吃刺激性食物，比如辣椒、咖啡、酒精等～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('糖尿病') || question.includes('血糖高')) {
-                const randomResponses = [
-                    '糖尿病患者应该选择低糖、低脂、高纤维的食物，比如：蔬菜、水果（选择低糖水果如苹果、梨、草莓）、全谷物、瘦肉、鱼类等。避免吃高糖、高脂肪的食物，比如糖果、蛋糕、油炸食品等。',
-                    '血糖高的人应该控制碳水化合物的摄入，选择低GI（血糖生成指数）的食物，比如：全麦面包、糙米、燕麦、蔬菜、豆类等。避免吃精制碳水化合物和高糖食物，比如白米饭、白面包、糖果、饮料等。',
-                    '糖尿病患者的饮食应该遵循：控制总热量、合理分配碳水化合物、增加膳食纤维、适量摄入蛋白质、控制脂肪摄入的原则。建议咨询医生或营养师制定个性化的饮食计划。',
-                    '血糖高的人要特别注意饮食控制哦！建议选择低GI值的食物，比如全麦面包、糙米、蔬菜、豆类等，避免吃高糖食物。同时要注意饮食规律，定时定量，避免暴饮暴食～',
-                    '糖尿病患者可以吃一些低糖水果，比如苹果、梨、草莓、蓝莓等，但要注意控制量。同时要避免喝含糖饮料，最好选择白开水或淡茶水～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            // 生活常识
-            if (question.includes('天气') || question.includes('温度')) {
-                const randomResponses = [
-                    '今天天气很好呢！适合出去走走，享受阳光～记得做好防晒哦！',
-                    '最近天气变化比较大，记得及时增减衣物，避免感冒。',
-                    '天气炎热的时候，要多喝水，避免长时间在阳光下暴晒，注意防暑降温。',
-                    '天气寒冷的时候，要注意保暖，多穿衣服，避免受凉。同时可以多吃一些温热的食物，比如热汤、热粥等。',
-                    '天气干燥的时候，要注意多喝水，多吃一些富含水分的水果和蔬菜，比如西瓜、黄瓜、梨等，同时可以使用加湿器保持室内湿度～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('健康') || question.includes('养生')) {
-                const randomResponses = [
-                    '健康的生活方式包括：均衡饮食、适量运动、充足睡眠、保持心情愉悦。建议每天保持30分钟以上的中等强度运动，比如快走、慢跑、游泳等。',
-                    '养生的关键是保持良好的生活习惯，比如：规律作息、合理饮食、适量运动、保持心态平和。避免熬夜、过度劳累、暴饮暴食等不良习惯。',
-                    '健康养生要从日常生活做起，比如：多喝水、多吃蔬菜水果、适量运动、保持充足睡眠、减少压力。这些小习惯可以帮助你保持健康的身体状态。',
-                    '健康是最重要的财富哦！建议你保持规律的生活作息，合理饮食，适量运动，保持心情愉悦。这样才能拥有健康的身体和积极的心态～',
-                    '养生不是一蹴而就的，需要长期坚持。建议你从生活中的小细节做起，比如：早睡早起、多喝水、多运动、保持乐观的心态等，这些都有助于保持健康～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('休息') || question.includes('睡眠')) {
-                const randomResponses = [
-                    '充足的睡眠对身体健康非常重要，建议每天保持7-8小时的睡眠时间。睡前可以泡泡脚、听听轻音乐，帮助放松身心，提高睡眠质量。',
-                    '良好的睡眠习惯包括：固定作息时间、睡前避免使用电子设备、保持卧室安静舒适、避免睡前吃太多东西。这样可以帮助你更快入睡，提高睡眠质量。',
-                    '睡眠不足会影响身体的免疫力和新陈代谢，建议每天按时睡觉，保证充足的睡眠时间。如果有失眠问题，可以尝试放松训练、调整作息时间等方法。',
-                    '睡眠质量对身体健康影响很大哦！建议你保持规律的作息时间，睡前不要看手机或电脑，避免喝咖啡或茶等刺激性饮料。可以试试睡前喝一杯热牛奶，有助于睡眠～',
-                    '充足的睡眠是身体恢复的重要时间，建议你每天保证7-8小时的睡眠时间。如果经常失眠，可以尝试一些放松的方法，比如深呼吸、冥想、听轻柔的音乐等～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('运动') || question.includes('锻炼')) {
-                const randomResponses = [
-                    '适量的运动对身体健康非常重要，建议每天保持30分钟以上的中等强度运动，比如快走、慢跑、游泳、瑜伽等。运动前记得热身，运动后要拉伸，避免受伤。',
-                    '运动可以增强体质、提高免疫力、改善心情。建议选择适合自己的运动方式，比如：散步、跑步、游泳、健身、瑜伽等。每周至少运动3-5次，每次30分钟以上。',
-                    '运动要循序渐进，根据自己的身体状况选择合适的运动强度。刚开始可以从低强度运动开始，逐渐增加运动量。运动前后要注意补充水分，避免脱水。',
-                    '运动是保持健康的重要方式哦！建议你选择一项自己喜欢的运动，比如散步、跑步、游泳、瑜伽等，坚持下去。运动不仅可以锻炼身体，还可以缓解压力，改善心情～',
-                    '运动要注意适度，不要过度劳累。建议根据自己的身体状况制定合理的运动计划，循序渐进，逐渐增加运动量。同时要注意运动安全，避免受伤～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('喝水') || question.includes(' hydration')) {
-                const randomResponses = [
-                    '多喝水对身体健康非常重要，建议每天喝8杯水（约2000毫升）。喝水可以帮助身体排毒、维持新陈代谢、保持皮肤健康。',
-                    '充足的水分摄入对身体非常重要，建议每天喝足够的水，尤其是在运动后、炎热的天气里。喝水可以帮助消化、运输营养物质、调节体温。',
-                    '喝水要适量，不要等到口渴了才喝。建议每天分多次喝水，每次喝200-300毫升。避免喝太多含糖饮料，最好选择白开水或淡茶水。',
-                    '多喝水对身体有很多好处哦！可以帮助排毒、促进新陈代谢、保持皮肤水润、预防便秘等。建议你每天保持充足的水分摄入，尤其是在运动后和炎热的天气里～',
-                    '喝水要注意时间，比如早上起床后喝一杯温水，有助于唤醒身体；饭前喝一杯水，有助于控制食量；运动前后多喝水，有助于补充水分。但要注意不要在睡前喝太多水，以免影响睡眠～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            // 其他常见问题
-            if (question.includes('你好') || question.includes('Hello') || question.includes('嗨')) {
-                const randomResponses = [
-                    '你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊',
-                    '嗨！很高兴见到你～我是大馋丫头，有什么可以帮到你的吗？关于点餐、营养、健康的问题都可以问我哦！',
-                    '你好！我是大馋丫头，你的贴心营养顾问。不管是点餐建议、营养搭配还是生活常识，我都很乐意为你解答！',
-                    '嗨～我是大馋丫头，专门为你提供营养和点餐建议的AI助手。有什么问题随时告诉我，我会耐心为你解答的！',
-                    '你好呀！看到你我就很开心～我是大馋丫头，你的专属营养顾问。有什么关于吃的问题都可以问我，我会给你最温暖的建议～'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('谢谢') || question.includes('感谢')) {
-                const randomResponses = [
-                    '不客气！能帮到你我很开心～如果还有其他问题，随时问我哦！',
-                    '不用谢！这是我应该做的～有什么问题随时告诉我，我会尽力帮助你！',
-                    '很高兴能帮到你！如果还有其他关于点餐、营养或生活的问题，随时问我哦！',
-                    '不用客气啦！能为你服务是我的荣幸～有什么问题随时告诉我，我会一直在你身边的！',
-                    '谢谢的应该是我，谢谢你信任我～有什么问题随时问我，我会继续努力为你提供更好的建议！'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            if (question.includes('再见') || question.includes('拜拜')) {
-                const randomResponses = [
-                    '再见！希望下次还能帮到你～祝你生活愉快！',
-                    '拜拜！有什么问题随时来找我哦～',
-                    '再见啦！期待下次为你解答问题～',
-                    '拜拜！记得照顾好自己，有什么问题随时回来找我哦！',
-                    '再见！希望你每天都能吃得健康，过得开心～有需要随时找我！'
-                ];
-                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
-            }
-
-            // 默认回复
-            const randomDefaultResponses = [
-                '我是大馋丫头，你的专属营养顾问！关于点餐、营养搭配、减肥饮食、生活常识等问题都可以问我哦～如果你有具体的问题，比如"如何点餐"、"减肥吃什么"、"午餐怎么搭配"，我会给你更详细的回答！😊',
-                '你好呀！我是大馋丫头，有什么可以帮到你的吗？不管是点餐建议、营养搭配还是生活常识，我都很乐意为你解答！',
-                '嗨！我是大馋丫头，你的贴心营养顾问。有什么关于饮食、健康或生活的问题，随时问我哦！',
-                '你好！我是大馋丫头，专注于营养搭配和健康饮食的AI助手。有什么问题随时告诉我，我会尽力为你解答！',
-                '我是大馋丫头，你的专属营养顾问～不管是点餐、营养还是生活方面的问题，我都很乐意为你解答！有什么想问的尽管告诉我哦！'
+            // 如果没有对应的食材，返回通用食材
+            return ingredientMap[foodName] || [
+                '主料 适量',
+                '辅料 适量',
+                '调味料 适量'
             ];
-            return randomDefaultResponses[Math.floor(Math.random() * randomDefaultResponses.length)];
+        }
+
+        // 生成食材挑选
+        function generateIngredientSelection(foodName) {
+            // 根据菜品名称生成相应的食材挑选建议
+            const selectionMap = {
+                '红烧肉': [
+                    '五花肉：选择肥瘦相间的三层五花肉，这样做出来的红烧肉口感最佳',
+                    '冰糖：选择单晶冰糖，容易融化，上色效果好',
+                    '料酒：选择优质料酒，去腥效果好'
+                ],
+                '宫保鸡丁': [
+                    '鸡胸肉：选择新鲜的鸡胸肉，肉质细嫩',
+                    '花生：选择颗粒饱满的花生，炸制后口感香脆',
+                    '青椒红椒：选择新鲜的辣椒，颜色鲜艳，口感脆嫩'
+                ],
+                '鱼香肉丝': [
+                    '猪里脊肉：选择新鲜的猪里脊肉，肉质细嫩',
+                    '胡萝卜：选择新鲜的胡萝卜，颜色鲜艳，口感脆嫩',
+                    '木耳：选择优质木耳，泡发后口感爽脆'
+                ],
+                '糖醋排骨': [
+                    '排骨：选择猪前排，肉质鲜嫩，骨头小',
+                    '醋：选择优质香醋，口感醇厚',
+                    '生姜：选择新鲜的生姜，去腥效果好'
+                ],
+                '麻婆豆腐': [
+                    '豆腐：选择嫩豆腐，口感细腻',
+                    '牛肉末：选择新鲜的牛肉末，口感鲜美',
+                    '豆瓣酱：选择优质豆瓣酱，味道正宗'
+                ],
+                '清蒸鱼': [
+                    '鱼：选择新鲜的鱼，眼睛明亮，鳃部鲜红',
+                    '生姜：选择新鲜的生姜，去腥效果好',
+                    '葱：选择新鲜的葱，香味浓郁'
+                ],
+                '水煮肉片': [
+                    '猪里脊肉：选择新鲜的猪里脊肉，肉质细嫩',
+                    '白菜：选择新鲜的白菜，口感脆嫩',
+                    '豆芽：选择新鲜的豆芽，口感爽脆'
+                ],
+                '可乐鸡翅': [
+                    '鸡翅：选择新鲜的鸡翅，肉质鲜嫩',
+                    '可乐：选择含糖量适中的可乐，口感更佳',
+                    '生姜：选择新鲜的生姜，去腥效果好'
+                ],
+                '酸辣土豆丝': [
+                    '土豆：选择新鲜的土豆，质地坚实',
+                    '辣椒：选择新鲜的辣椒，辣度适中',
+                    '醋：选择优质香醋，口感醇厚'
+                ],
+                '蒜蓉西兰花': [
+                    '西兰花：选择新鲜的西兰花，颜色翠绿',
+                    '大蒜：选择新鲜的大蒜，香味浓郁',
+                    '蚝油：选择优质蚝油，味道鲜美'
+                ],
+                '西红柿炒蛋': [
+                    '西红柿：选择成熟的西红柿，颜色鲜红，手感略软',
+                    '鸡蛋：选择新鲜的鸡蛋，蛋壳光滑，无裂纹',
+                    '盐：选择优质食盐，味道纯正'
+                ],
+                '番茄炒蛋': [
+                    '番茄：选择成熟的番茄，颜色鲜红，手感略软',
+                    '鸡蛋：选择新鲜的鸡蛋，蛋壳光滑，无裂纹',
+                    '盐：选择优质食盐，味道纯正'
+                ]
+            };
+
+            // 如果没有对应的挑选建议，返回通用建议
+            return selectionMap[foodName] || [
+                '选择新鲜的食材，外观完好，无异味',
+                '根据菜品需要选择合适的食材规格',
+                '购买时注意查看食材的保质期'
+            ];
+        }
+
+        // 生成制作步骤
+        function generateSteps(foodName) {
+            // 根据菜品名称生成相应的制作步骤
+            const stepsMap = {
+                '红烧肉': [
+                    '把五花肉洗干净，然后切成合适的块',
+                    '在锅里放些清水，把肉块放进去，烧开后把表面的浮沫撇掉',
+                    '把肉块捞出来，控干水分',
+                    '在锅里放少量油，放入冰糖，用小火慢慢炒到冰糖融化变成焦糖色',
+                    '把肉块放进去，翻炒均匀，让每块肉都裹上糖色',
+                    '加入生抽、老抽和料酒，翻炒均匀',
+                    '加些清水，没过肉块，烧开后转小火慢慢炖',
+                    '炖到肉变得软烂，然后开大火把汤汁收浓',
+                    '把做好的红烧肉盛到盘子里就可以了'
+                ],
+                '宫保鸡丁': [
+                    '把鸡胸肉洗干净，切成丁',
+                    '把青椒和红椒洗干净，切成丁',
+                    '把蒜剥好，切成末',
+                    '在锅里放些油，把花生放进去炸到酥脆，然后捞出来备用',
+                    '在锅里再放些油，把鸡丁放进去翻炒到变色',
+                    '加入蒜末、青椒丁和红椒丁，翻炒均匀',
+                    '根据自己的口味加入盐、糖、醋和生抽调味',
+                    '最后把炸好的花生放进去，翻炒均匀',
+                    '把做好的宫保鸡丁盛到盘子里就可以了'
+                ],
+                '鱼香肉丝': [
+                    '把猪里脊肉洗干净，切成丝',
+                    '把胡萝卜和青椒洗干净，切成丝',
+                    '把木耳泡发后，洗干净切成丝',
+                    '把葱洗干净，切成葱花',
+                    '在锅里放些油，把肉丝放进去翻炒到变色',
+                    '加入胡萝卜丝、青椒丝和木耳丝，翻炒均匀',
+                    '根据自己的口味加入盐、糖、醋和生抽调味',
+                    '最后把葱花放进去，翻炒均匀',
+                    '把做好的鱼香肉丝盛到盘子里就可以了'
+                ],
+                '糖醋排骨': [
+                    '把排骨洗干净，切成段',
+                    '在锅里放些清水，把排骨放进去，烧开后把表面的浮沫撇掉',
+                    '把排骨捞出来，控干水分',
+                    '在锅里放些油，把排骨放进去翻炒到表面金黄',
+                    '加入生姜和大蒜，翻炒均匀',
+                    '加些清水，没过排骨，烧开后转小火慢慢炖',
+                    '炖到排骨变得软烂，加入醋、糖和生抽调味',
+                    '开大火把汤汁收浓',
+                    '把做好的糖醋排骨盛到盘子里就可以了'
+                ],
+                '麻婆豆腐': [
+                    '把豆腐洗干净，切成小块',
+                    '在锅里放些清水，烧开后把豆腐放进去焯一下，然后捞出来备用',
+                    '把牛肉末准备好',
+                    '在锅里放些油，把牛肉末放进去翻炒到变色',
+                    '加入豆瓣酱和花椒粉，翻炒均匀',
+                    '加些清水，烧开后把豆腐放进去',
+                    '用小火慢慢炖，让豆腐入味',
+                    '根据自己的口味加入盐调味',
+                    '最后撒上葱花',
+                    '把做好的麻婆豆腐盛到盘子里就可以了'
+                ],
+                '清蒸鱼': [
+                    '把鱼洗干净，在鱼身两侧划几刀',
+                    '在鱼身上撒些盐和料酒，放上生姜片和葱段',
+                    '在锅里放些清水，烧开后把鱼放进去蒸',
+                    '蒸好后把鱼取出来，倒掉盘子里的汤汁',
+                    '在鱼身上淋上蒸鱼豉油',
+                    '在锅里放些油，烧热后淋在鱼身上',
+                    '把做好的清蒸鱼盛到盘子里就可以了'
+                ],
+                '水煮肉片': [
+                    '把猪里脊肉洗干净，切成薄片',
+                    '把白菜和豆芽洗干净',
+                    '在锅里放些清水，烧开后把白菜和豆芽放进去焯一下，然后捞出来铺在碗底',
+                    '在锅里放些油，放入干辣椒和花椒炒香',
+                    '加些清水，烧开后把肉片放进去',
+                    '肉片煮熟后，连汤一起倒在碗里',
+                    '最后撒上葱花',
+                    '把做好的水煮肉片盛到碗里就可以了'
+                ],
+                '可乐鸡翅': [
+                    '把鸡翅洗干净，在鸡翅上划几刀',
+                    '在锅里放些油，把鸡翅放进去煎到两面金黄',
+                    '加入生姜和大蒜，翻炒均匀',
+                    '倒入可乐，没过鸡翅',
+                    '烧开后转小火慢慢炖',
+                    '炖到鸡翅变得软烂，开大火把汤汁收浓',
+                    '把做好的可乐鸡翅盛到盘子里就可以了'
+                ],
+                '酸辣土豆丝': [
+                    '把土豆洗干净，切成丝',
+                    '把土豆丝放在清水中浸泡，去除淀粉',
+                    '把辣椒洗干净，切成丝',
+                    '把葱洗干净，切成葱花',
+                    '在锅里放些油，放入辣椒丝爆香',
+                    '把土豆丝放进去，翻炒均匀',
+                    '加入醋和盐调味，翻炒均匀',
+                    '最后把葱花放进去，翻炒均匀',
+                    '把做好的酸辣土豆丝盛到盘子里就可以了'
+                ],
+                '蒜蓉西兰花': [
+                    '把西兰花洗干净，切成小朵',
+                    '在锅里放些清水，烧开后把西兰花放进去焯一下，然后捞出来备用',
+                    '把大蒜剥好，切成末',
+                    '在锅里放些油，放入蒜末爆香',
+                    '把西兰花放进去，翻炒均匀',
+                    '加入蚝油和盐调味，翻炒均匀',
+                    '把做好的蒜蓉西兰花盛到盘子里就可以了'
+                ],
+                '西红柿炒蛋': [
+                    '拿两个番茄，洗干净，切成小块',
+                    '拿鸡蛋，打进碗里，用筷子搅散',
+                    '开火，锅烧热，倒油',
+                    '油热后把鸡蛋倒进去，炒到凝固',
+                    '盛出来备用',
+                    '再倒一点油，放番茄炒出汁',
+                    '把鸡蛋倒回去，一起翻炒',
+                    '加盐，翻炒均匀',
+                    '关火装盘'
+                ],
+                '番茄炒蛋': [
+                    '拿两个番茄，洗干净，切成小块',
+                    '拿鸡蛋，打进碗里，用筷子搅散',
+                    '开火，锅烧热，倒油',
+                    '油热后把鸡蛋倒进去，炒到凝固',
+                    '盛出来备用',
+                    '再倒一点油，放番茄炒出汁',
+                    '把鸡蛋倒回去，一起翻炒',
+                    '加盐，翻炒均匀',
+                    '关火装盘'
+                ],
+                '青椒肉丝': [
+                    '把猪里脊肉洗干净，切成丝',
+                    '把青椒洗干净，切成丝',
+                    '把葱洗干净，切成葱花',
+                    '在锅里放些油，把肉丝放进去翻炒到变色',
+                    '加入青椒丝，翻炒均匀',
+                    '根据自己的口味加入盐和生抽调味',
+                    '最后把葱花放进去，翻炒均匀',
+                    '把做好的青椒肉丝盛到盘子里就可以了'
+                ],
+                '土豆烧牛肉': [
+                    '把牛肉洗干净，切成块',
+                    '把土豆洗干净，切成块',
+                    '在锅里放些清水，把牛肉放进去，烧开后把表面的浮沫撇掉',
+                    '把牛肉捞出来，控干水分',
+                    '在锅里放些油，放入牛肉块翻炒',
+                    '加入生姜和大蒜，翻炒均匀',
+                    '加入适量清水，烧开后转小火慢慢炖',
+                    '炖到牛肉快熟时，把土豆放进去',
+                    '继续炖到土豆和牛肉都熟透',
+                    '根据自己的口味加入盐和生抽调味',
+                    '把做好的土豆烧牛肉盛到盘子里就可以了'
+                ],
+                '洋葱炒蛋': [
+                    '把洋葱洗干净，切成丝',
+                    '把鸡蛋打散，加入少许盐',
+                    '在锅里放些油，加热后倒入蛋液',
+                    '蛋液凝固后，用铲子炒散，盛出来备用',
+                    '在锅里再放些油，放入洋葱丝翻炒',
+                    '加入适量盐调味，继续翻炒',
+                    '把炒好的鸡蛋放进去，翻炒均匀',
+                    '把做好的洋葱炒蛋盛到盘子里就可以了'
+                ],
+                '清炒时蔬': [
+                    '把蔬菜洗干净，切成合适的大小',
+                    '在锅里放些油，加热后放入蔬菜翻炒',
+                    '加入适量盐调味，继续翻炒',
+                    '翻炒到蔬菜熟透',
+                    '把做好的清炒时蔬盛到盘子里就可以了'
+                ],
+                '红烧鱼': [
+                    '把鱼洗干净，在鱼身两侧划几刀',
+                    '在锅里放些油，把鱼放进去煎到两面金黄',
+                    '加入生姜、大蒜和料酒，翻炒均匀',
+                    '加入适量清水，烧开后转小火慢慢炖',
+                    '炖到鱼熟透，加入生抽、老抽和糖调味',
+                    '开大火把汤汁收浓',
+                    '把做好的红烧鱼盛到盘子里就可以了'
+                ],
+                '蒜蓉粉丝蒸扇贝': [
+                    '把扇贝洗干净，去除内脏',
+                    '把粉丝泡软',
+                    '把大蒜剥好，切成末',
+                    '在扇贝上放上粉丝和蒜末',
+                    '在锅里放些清水，烧开后把扇贝放进去蒸',
+                    '蒸好后取出，淋上生抽',
+                    '在锅里放些油，烧热后淋在扇贝上',
+                    '把做好的蒜蓉粉丝蒸扇贝盛到盘子里就可以了'
+                ],
+                '白灼虾': [
+                    '把虾洗干净，去除虾线',
+                    '在锅里放些清水，加入生姜和料酒，烧开',
+                    '把虾放进去煮到变色',
+                    '把虾捞出来，控干水分',
+                    '准备一些蘸料，比如酱油和芥末',
+                    '把做好的白灼虾盛到盘子里就可以了'
+                ],
+                '葱油拌面': [
+                    '把面条煮熟，捞出来过凉水',
+                    '把葱洗干净，切成葱花',
+                    '在锅里放些油，加热后放入葱花爆香',
+                    '加入生抽和糖，翻炒均匀',
+                    '把做好的葱油浇在面条上，搅拌均匀',
+                    '把做好的葱油拌面盛到碗里就可以了'
+                ],
+                '蛋炒饭': [
+                    '把鸡蛋打散，加入少许盐',
+                    '把米饭准备好',
+                    '在锅里放些油，加热后倒入蛋液',
+                    '蛋液凝固后，用铲子炒散',
+                    '把米饭放进去，翻炒均匀',
+                    '加入适量盐调味，继续翻炒',
+                    '把做好的蛋炒饭盛到碗里就可以了'
+                ],
+                '紫菜蛋花汤': [
+                    '把紫菜泡软，洗干净',
+                    '把鸡蛋打散',
+                    '在锅里放些清水，烧开后放入紫菜',
+                    '再次烧开后，慢慢倒入蛋液，边倒边搅拌',
+                    '加入适量盐和香油调味',
+                    '把做好的紫菜蛋花汤盛到碗里就可以了'
+                ]
+            };
+
+            // 如果没有对应的步骤，返回通用步骤
+            return stepsMap[foodName] || [
+                '把食材洗干净，按照需要切成合适的大小',
+                '在锅里放些油，加热后放入主料翻炒',
+                '根据自己的口味加入调味料',
+                '继续翻炒到食材熟透',
+                '关火，把做好的菜盛到盘子里就可以了'
+            ];
+        }
+
+        // 生成小贴士
+        function generateTips(foodName) {
+            // 根据菜品名称生成相应的小贴士
+            const tipsMap = {
+                '红烧肉': [
+                    '炖煮时间要足够长，这样肉才会软烂入味',
+                    '收汁时要不停翻炒，避免糊锅',
+                    '可以加入少量八角、桂皮等香料增加香味'
+                ],
+                '宫保鸡丁': [
+                    '花生要最后加入，保持酥脆的口感',
+                    '可以根据个人口味调整辣椒的用量',
+                    '翻炒时要快，避免鸡肉变老'
+                ],
+                '鱼香肉丝': [
+                    '肉丝要切得均匀，这样受热均匀',
+                    '可以加入少量豆瓣酱增加风味',
+                    '翻炒时要快，避免食材出水'
+                ],
+                '糖醋排骨': [
+                    '排骨焯水可以去除血水和杂质',
+                    '醋和糖的比例要适中，酸甜可口',
+                    '炖煮时间要足够长，这样排骨才会软烂'
+                ],
+                '麻婆豆腐': [
+                    '豆腐焯水可以去除豆腥味',
+                    '可以加入少量花椒油增加风味',
+                    '炖煮时间不宜过长，避免豆腐破碎'
+                ],
+                '清蒸鱼': [
+                    '鱼要新鲜，这样口感才好',
+                    '蒸的时间要控制好，避免蒸老',
+                    '可以在鱼身上放一些柠檬片增加香味'
+                ],
+                '水煮肉片': [
+                    '肉片要切得薄，这样容易煮熟',
+                    '可以根据个人口味调整辣椒的用量',
+                    '蔬菜可以根据个人喜好选择'
+                ],
+                '可乐鸡翅': [
+                    '鸡翅要提前焯水，去除血水和杂质',
+                    '可乐的量要适中，没过鸡翅即可',
+                    '收汁时要不停翻炒，避免糊锅'
+                ],
+                '酸辣土豆丝': [
+                    '土豆丝要切得均匀，这样受热均匀',
+                    '醋要最后加入，保持酸味',
+                    '翻炒时要快，避免土豆丝出水'
+                ],
+                '蒜蓉西兰花': [
+                    '西兰花焯水时间不宜过长，保持翠绿',
+                    '蒜末要爆香，这样香味更浓郁',
+                    '可以加入少量鸡精增加鲜味'
+                ]
+            };
+
+            // 如果没有对应的小贴士，返回通用小贴士
+            return tipsMap[foodName] || [
+                '烹饪过程中要注意火候的控制',
+                '可以根据个人口味调整调味料的用量',
+                '建议搭配米饭或其他主食一起食用',
+                '剩余的菜品可以放入冰箱保存，下次加热后食用'
+            ];
         }
 
         // ========== 随机点餐功能 ==========
@@ -5938,66 +6092,49 @@
     
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
-<!-- 营养师AI模态框 -->
-    <div class="nutrition-ai-modal" id="nutrition-ai-modal">
+<!-- 详细菜谱模态框 -->
+    <div class="recipe-modal" id="recipe-modal">
         <!-- 顶部导航栏 -->
-        <div class="nutrition-ai-header">
-            <div class="nutrition-ai-back-btn" id="nutrition-ai-back-btn">
+        <div class="recipe-header">
+            <div class="recipe-back-btn" id="recipe-back-btn">
                 <i class="fas fa-arrow-left"></i>
             </div>
-            <div class="nutrition-ai-header-title">大馋丫头</div>
-            <div class="nutrition-ai-header-actions">
-                <div class="nutrition-ai-action-btn" id="nutrition-ai-history-btn">
-                    <i class="fas fa-history"></i>
-                </div>
-                <div class="nutrition-ai-action-btn" id="nutrition-ai-export-btn">
-                    <i class="fas fa-download"></i>
-                </div>
-                <div class="nutrition-ai-action-btn" id="nutrition-ai-new-chat-btn">
-                    <i class="fas fa-plus"></i>
+            <div class="recipe-header-title">详细菜品</div>
+            <div class="recipe-header-actions">
+                <div class="recipe-search-container">
+                    <input type="text" class="recipe-search-input" id="recipe-search-input" placeholder="搜索菜品...">
+                    <button class="recipe-search-btn" id="recipe-search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- 聊天容器 -->
-        <div class="nutrition-ai-chat-container" id="nutrition-ai-chat-container">
-            <!-- 初始问候语 -->
-            <div class="nutrition-ai-message-with-avatar">
-                <div class="nutrition-ai-avatar">馋</div>
-                <div class="nutrition-ai-ai-message">
-                    <div class="nutrition-ai-message-content">
-                        你好呀！我是大馋丫头，你的专属营养顾问～有什么关于点餐、营养搭配、减脂饮食的问题都可以问我哦！我会像贴心男友一样为你提供最温暖的建议～😊
-                    </div>
-                    <div class="nutrition-ai-message-time">刚刚</div>
+        <!-- 菜谱列表容器 -->
+        <div class="recipe-list-container" id="recipe-list-container">
+            <div class="recipe-list" id="recipe-list">
+                <!-- 菜谱列表会动态添加 -->
+            </div>
+        </div>
+
+        <!-- 菜谱详情容器 -->
+        <div class="recipe-detail-container" id="recipe-detail-container">
+            <!-- 标题区域 -->
+            <div class="recipe-detail-header">
+                <div class="recipe-detail-back" id="recipe-detail-back">
+                    <i class="fas fa-arrow-left" style="transition: all 0.3s ease;"></i> 返回列表
                 </div>
             </div>
-        </div>
 
-        <!-- 输入区域 -->
-        <div class="nutrition-ai-input-container">
-            <textarea class="nutrition-ai-message-input" id="nutrition-ai-message-input" placeholder="输入你的问题..." rows="1"></textarea>
-            <div class="nutrition-ai-send-btn" id="nutrition-ai-send-btn">
-                <i class="fas fa-paper-plane"></i>
+            <div class="recipe-detail-title-container">
+                <h2 class="recipe-detail-title" id="recipe-detail-title"></h2>
+                <p class="recipe-detail-category" id="recipe-detail-category"></p>
             </div>
-        </div>
 
-        <!-- 历史记录页面 -->
-        <div class="nutrition-ai-history-container" id="nutrition-ai-history-container">
-            <div class="nutrition-ai-history-title">历史对话</div>
-            <div class="nutrition-ai-history-list" id="nutrition-ai-history-list">
-                <!-- 历史记录会动态添加 -->
-            </div>
-        </div>
-
-        <!-- 确认模态框 -->
-        <div class="nutrition-ai-confirm-modal" id="nutrition-ai-confirm-modal">
-            <div class="nutrition-ai-modal-content">
-                <div class="nutrition-ai-modal-title" id="nutrition-ai-modal-title">确认操作</div>
-                <div class="nutrition-ai-modal-body" id="nutrition-ai-modal-body">确定要执行此操作吗？</div>
-                <div class="nutrition-ai-modal-buttons">
-                    <button class="nutrition-ai-modal-btn nutrition-ai-btn-cancel" id="nutrition-ai-modal-cancel">取消</button>
-                    <button class="nutrition-ai-modal-btn nutrition-ai-btn-confirm" id="nutrition-ai-modal-confirm">确认</button>
-                </div>
+            <!-- 制作步骤区域 -->
+            <div class="recipe-section">
+                <h3 class="recipe-section-title"><i class="fas fa-utensils" style="animation: pulse 2s infinite;"></i> 制作步骤</h3>
+                <div class="recipe-section-content" id="recipe-steps"></div>
             </div>
         </div>
     </div>
