@@ -2175,6 +2175,9 @@
             <div class="dropdown-item" id="nutrition-ai-btn" style="padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px; display: flex; align-items: center; gap: 8px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
                 <i class="fas fa-utensils" style="font-size: 16px; color: #81c784; animation: pulse 2s infinite;"></i> 详细菜品
             </div>
+            <div class="dropdown-item" id="random-decision-btn" style="padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; font-size: 14px; display: flex; align-items: center; gap: 8px; font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;">
+                <i class="fas fa-random" style="font-size: 16px; color: #81c784; animation: pulse 2s infinite;"></i> 随机决定
+            </div>
         </div>
     </div>
 
@@ -4862,6 +4865,13 @@
             // 详细菜谱按钮点击事件 - 跳转到详细菜品页面
             nutritionAiBtn.addEventListener('click', () => {
                 window.location.href = 'xiangxicaipu.html';
+            });
+
+            // 随机决定按钮点击事件 - 预留链接位置
+            const randomDecisionBtn = document.getElementById('random-decision-btn');
+            randomDecisionBtn.addEventListener('click', () => {
+                // 后期导入链接网站时，将下方链接替换为实际网站地址
+                window.location.href = 'https://example.com/random-decision'; // 预留链接位置
             });
 
             // 详细菜谱相关事件绑定

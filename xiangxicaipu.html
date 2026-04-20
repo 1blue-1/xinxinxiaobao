@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>详细食谱</title>
+    <title>心心小宝详细食谱</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
@@ -15,6 +15,30 @@
                         secondary: '#FFB6C1',
                         accent: '#FFA07A',
                         warm: '#FFF8DC',
+                        blue: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        purple: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
                     },
                     fontFamily: {
                         cute: ['"Comic Sans MS"', '"Microsoft YaHei"', 'sans-serif'],
@@ -23,6 +47,7 @@
                         'float': 'float 3s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'tech-glow': 'techGlow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         float: {
@@ -32,6 +57,10 @@
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        techGlow: {
+                            '0%': { boxShadow: '0 0 20px rgba(135, 206, 235, 0.5)' },
+                            '100%': { boxShadow: '0 0 30px rgba(135, 206, 235, 0.8)' },
                         }
                     }
                 }
@@ -43,6 +72,9 @@
             .gradient-bg {
                 background: linear-gradient(135deg, #87CEEB 0%, #FFB6C1 33%, #FFA07A 66%, #FFF8DC 100%);
             }
+            .gradient-blue-purple {
+                background: linear-gradient(135deg, #87CEEB 0%, #9333EA 100%);
+            }
             .card-hover {
                 transition: all 0.3s ease;
             }
@@ -51,7 +83,7 @@
                 box-shadow: 0 12px 20px rgba(0,0,0,0.1);
             }
             .search-glow:focus {
-                box-shadow: 0 0 15px rgba(255,182,193,0.6);
+                box-shadow: 0 0 15px rgba(135, 206, 235, 0.6);
             }
             .btn-bounce {
                 transition: transform 0.2s ease;
@@ -62,63 +94,183 @@
             .text-shadow {
                 text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
             }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(135deg, #87CEEB 0%, #9333EA 100%);
+            }
             .scroll-smooth {
                 scroll-behavior: smooth;
+            }
+            .backdrop-blur {
+                backdrop-filter: blur(8px);
+            }
+            .backdrop-blur-md {
+                backdrop-filter: blur(12px);
+            }
+            .backdrop-blur-lg {
+                backdrop-filter: blur(16px);
+            }
+            .tech-glow {
+                box-shadow: 0 0 20px rgba(135, 206, 235, 0.5);
+            }
+            .tech-glow:hover {
+                box-shadow: 0 0 30px rgba(135, 206, 235, 0.8);
             }
         }
     </style>
 </head>
 <body class="min-h-screen bg-white font-cute scroll-smooth relative">
-    <!-- 动态背景圆圈 -->
+    <!-- 动态科技背景 -->
     <div class="fixed inset-0 -z-10 overflow-hidden">
-        <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-blue-100 opacity-50 animate-pulse"></div>
-        <div class="absolute top-40 right-20 w-80 h-80 rounded-full bg-blue-50 opacity-70 animate-pulse" style="animation-delay: 1s"></div>
-        <div class="absolute bottom-20 left-1/3 w-72 h-72 rounded-full bg-blue-100 opacity-40 animate-pulse" style="animation-delay: 2s"></div>
-        <div class="absolute bottom-40 right-1/4 w-56 h-56 rounded-full bg-blue-50 opacity-60 animate-pulse" style="animation-delay: 1.5s"></div>
+        <!-- 渐变背景 -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"></div>
+        
+        <!-- 科技粒子效果 -->
+        <div class="absolute inset-0" id="particles-js"></div>
+        
+        <!-- 动态光斑 -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-200 opacity-20 blur-3xl animate-pulse"></div>
+        <div class="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-pink-200 opacity-20 blur-3xl animate-pulse" style="animation-delay: 1.5s"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-72 h-72 rounded-full bg-purple-200 opacity-20 blur-3xl animate-pulse" style="animation-delay: 0.8s"></div>
     </div>
-    <!-- 置顶返回按钮 -->
-    <div class="fixed top-0 left-0 w-full z-50 px-4 py-3 bg-white/80 backdrop-blur-md shadow-md flex justify-between items-center">
+    
+    <!-- 粒子效果脚本 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#87CEEB'
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#87CEEB',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+    <!-- 科技感导航栏 -->
+    <div class="fixed top-0 left-0 w-full z-50 px-4 py-3 bg-white/90 backdrop-blur-lg shadow-lg flex justify-between items-center border-b border-blue-100">
         <button onclick="window.location.href='index.html'" 
-                class="bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-full flex items-center gap-2 btn-bounce shadow-lg animate-pulse-slow">
+                class="bg-gradient-to-r from-blue-300/50 to-pink-300/50 hover:from-blue-400/60 hover:to-pink-400/60 text-white px-4 py-2 rounded-full flex items-center gap-2 btn-bounce shadow-lg transition-all duration-300 hover:shadow-xl animate-pulse-slow">
             <i class="fa fa-arrow-left"></i>
             <span>返回主页</span>
         </button>
-        <h1 class="text-lg md:text-xl font-bold text-accent text-shadow animate-float">🍳 心心小宝小菜谱</h1>
+        <h1 class="text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-300 animate-float font-cute">心心小宝小菜谱</h1>
         <div class="w-10"></div>
     </div>
 
-    <!-- 搜索区域 -->
-    <div class="pt-20 px-4 md:px-8 max-w-7xl mx-auto mb-8">
+    <!-- 科技感搜索区域 -->
+    <div class="pt-16 px-4 md:px-8 max-w-4xl mx-auto mb-8">
         <div class="relative animate-fade-in">
-            <input id="searchInput" type="text" placeholder="🔍 搜索菜品名称，快速找到美食..." 
-                    class="w-full py-3 px-5 pr-20 rounded-full border-2 border-secondary/50 search-glow outline-none text-lg bg-white/90 transition-all"/>
-            <button onclick="document.getElementById('searchInput').value = ''; searchFood();" 
-                    class="absolute right-12 top-1/2 -translate-y-1/2 text-xl text-gray-400 hover:text-gray-600 transition-colors">
-                ✕
-            </button>
-            <button onclick="searchFood()" 
-                    class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-secondary hover:text-accent transition-colors btn-bounce">
-                <i class="fa fa-search"></i>
-            </button>
+            <input id="searchInput" type="text" placeholder="🧁搜索..." 
+                    class="w-full py-3 px-6 pr-44 rounded-full border-2 border-blue-100 search-glow outline-none text-lg bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-300 focus:border-blue-300 focus:shadow-xl"/>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                <div class="h-6 w-px bg-gray-200 mx-2"></div>
+                <button onclick="document.getElementById('searchInput').value = ''; searchFood();" 
+                        class="px-2 py-1 text-gray-400 hover:text-gray-600 transition-colors btn-bounce -translate-y-4">
+                    ✕
+                </button>
+                <div class="h-6 w-px bg-gray-200 mx-2"></div>
+                <button onclick="searchFood()" 
+                        class="px-3 py-1 bg-gradient-to-r from-blue-300/50 to-pink-300/50 hover:from-blue-400/60 hover:to-pink-400/60 text-white rounded-full transition-all duration-300 btn-bounce -translate-y-4">
+                    搜索
+                </button>
+            </div>
+            <p class="mt-2 text-sm text-gray-500 text-center">输入菜品点击查找，需点击两下</p>
         </div>
     </div>
 
-    <!-- 菜谱列表容器 -->
+    <!-- 科技感菜谱列表容器 -->
     <div class="px-4 md:px-8 max-w-7xl mx-auto pb-20">
-        <div class="bg-white rounded-2xl p-6 shadow-lg animate-fade-in">
-            <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-                <i class="fa fa-cutlery text-primary"></i> 食谱步骤
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <!-- 家常菜 -->
-                <div class="category-section">
-                    <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                        <i class="fa fa-home text-primary"></i> 家常菜
-                    </h3>
+        <div class="bg-transparent rounded-2xl p-6 animate-fade-in">
+
+            <div class="grid grid-cols-1 gap-4">
+                <!-- 所有菜品 -->
+                <div class="bg-transparent rounded-xl p-4 shadow-lg">
                     <ul class="space-y-2">
-                        <li><button onclick="openRecipe('fish-fragrant-pork')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                        <style>
+                            ul button span:not(.text-2xl) {
+                                flex: 1;
+                            }
+                        </style>
+                        <li><button onclick="openRecipe('fish-fragrant-pork')" class="text-left w-full p-3 rounded-lg hover:bg-blue-50 flex items-center gap-3 transition-all duration-300 hover:shadow-md btn-bounce">
                             <span class="text-2xl">🐟</span>
-                            <span>鱼香肉丝</span>
+                            <span class="dish-item">鱼香肉丝</span>
                         </button></li>
                         <li><button onclick="openRecipe('kung-pao-chicken')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
                             <span class="text-2xl">🍗</span>
@@ -284,15 +436,6 @@
                             <span class="text-2xl">🥩</span>
                             <span>香干炒肉</span>
                         </button></li>
-                    </ul>
-                </div>
-                
-                <!-- 特色小吃 -->
-                <div class="category-section">
-                    <h3 class="text-xl font-bold text-accent mb-3 flex items-center gap-2">
-                        <i class="fa fa-coffee text-accent"></i> 特色小吃
-                    </h3>
-                    <ul class="space-y-2">
                         <li><button onclick="openRecipe('sour-spicy-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
                             <span class="text-2xl">🍜</span>
                             <span>酸辣粉</span>
@@ -377,15 +520,6 @@
                             <span class="text-2xl">🥔</span>
                             <span>锅巴土豆</span>
                         </button></li>
-                    </ul>
-                </div>
-                
-                <!-- 甜品点心 -->
-                <div class="category-section">
-                    <h3 class="text-xl font-bold text-warm mb-3 flex items-center gap-2">
-                        <i class="fa fa-birthday-cake text-warm"></i> 甜品点心
-                    </h3>
-                    <ul class="space-y-2">
                         <li><button onclick="openRecipe('egg-tart')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
                             <span class="text-2xl">🥧</span>
                             <span>蛋挞</span>
@@ -482,15 +616,6 @@
                             <span class="text-2xl">🥞</span>
                             <span>松饼</span>
                         </button></li>
-                    </ul>
-                </div>
-                
-                <!-- 饮品 -->
-                <div class="category-section">
-                    <h3 class="text-xl font-bold text-primary mb-3 flex items-center gap-2">
-                        <i class="fa fa-glass text-primary"></i> 饮品
-                    </h3>
-                    <ul class="space-y-2">
                         <li><button onclick="openRecipe('bubble-tea')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
                             <span class="text-2xl">🧋</span>
                             <span>珍珠奶茶</span>
@@ -599,15 +724,246 @@
                             <span class="text-2xl">☕</span>
                             <span>拿铁咖啡</span>
                         </button></li>
-                    </ul>
-                </div>
-                
-                <!-- 主食 -->
-                <div class="category-section">
-                    <h3 class="text-xl font-bold text-secondary mb-3 flex items-center gap-2">
-                        <i class="fa fa-motorcycle text-secondary"></i> 主食
-                    </h3>
-                    <ul class="space-y-2">
+                        <li><button onclick="openRecipe('steamed-sea-bass')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>清蒸鲈鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-fish')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧带鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-prawns')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>椒盐皮皮虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-scallop')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉扇贝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('boiled-shrimp')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>白灼基围虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒花蛤</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-crab')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦀</span>
+                            <span>清蒸大闸蟹</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-abalone')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>红烧鲍鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-oyster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉生蚝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-lobster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦞</span>
+                            <span>椒盐龙虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-grouper')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>清蒸石斑鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-conch')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>红烧海螺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-razor-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒蛏子</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-urchin')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦔</span>
+                            <span>清蒸海胆</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-octopus')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐙</span>
+                            <span>红烧章鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-squid')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>椒盐鱿鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-lobster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦞</span>
+                            <span>蒜蓉龙虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-crab')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦀</span>
+                            <span>清蒸螃蟹</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-shark-fin')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧鱼翅</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sour-spicy-squid')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>酸辣鱿鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-shrimp')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>蒜蓉蒸虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-sea-cucumber')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥒</span>
+                            <span>红烧海参</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-lobster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦞</span>
+                            <span>辣炒龙虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-pomfret')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>清蒸鲳鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-eel')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐍</span>
+                            <span>红烧鳗鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-shrimp')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>椒盐虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-scallop')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉蒸扇贝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-swimming-crab')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦀</span>
+                            <span>清蒸梭子蟹</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-grouper')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧石斑鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒蛤蜊</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-oyster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉蒸生蚝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-fish')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧带鱼段</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-sea-bass')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>清蒸鲈鱼片</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-abalone')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>红烧鲍鱼仔</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-squid-tentacles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>辣炒鱿鱼须</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-fish-belly')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧鱼肚</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sour-spicy-fish-skin')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>酸辣鱼皮</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('boiled-shrimp')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>白灼虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-scallop')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>清蒸扇贝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-razor-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒蛏子</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-shrimp')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>蒜蓉蒸虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-conch')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>红烧海螺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-squid')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>椒盐鱿鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒花蛤</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-oyster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉生蚝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-lobster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦞</span>
+                            <span>椒盐龙虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-crab')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦀</span>
+                            <span>清蒸大闸蟹</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-sea-cucumber')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥒</span>
+                            <span>红烧海参</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sour-spicy-squid')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>酸辣鱿鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-scallop')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉蒸扇贝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-swimming-crab')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦀</span>
+                            <span>清蒸梭子蟹</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-grouper')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧石斑鱼</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-clam')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>辣炒蛤蜊</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-steamed-oyster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦪</span>
+                            <span>蒜蓉蒸生蚝</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-fish')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>红烧带鱼段</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('salt-and-pepper-prawns')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦐</span>
+                            <span>椒盐皮皮虾</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('steamed-sea-bass')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐟</span>
+                            <span>清蒸鲈鱼片</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('braised-abalone')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🐚</span>
+                            <span>红烧鲍鱼仔</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('spicy-squid-tentacles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦑</span>
+                            <span>辣炒鱿鱼须</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('garlic-lobster')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🦞</span>
+                            <span>蒜蓉蒸龙虾</span>
+                        </button></li>
                         <li><button onclick="openRecipe('egg-fried-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
                             <span class="text-2xl">🍚</span>
                             <span>蛋炒饭</span>
@@ -672,28 +1028,175 @@
                             <span class="text-2xl">🥟</span>
                             <span>水饺</span>
                         </button></li>
+                        <li><button onclick="openRecipe('steamed-dumplings')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥟</span>
+                            <span>蒸饺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('wonton-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥟</span>
+                            <span>馄饨面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('pasta')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍝</span>
+                            <span>意面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sushi')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍣</span>
+                            <span>寿司</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('rice-ball')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍙</span>
+                            <span>饭团</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('black-pepper-beef-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥩</span>
+                            <span>黑椒牛柳饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('teriyaki-chicken-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍗</span>
+                            <span>照烧鸡排饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('orlando-chicken-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍗</span>
+                            <span>奥尔良鸡腿饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('korean-bibimbap')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍲</span>
+                            <span>韩式拌饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('stone-pot-bibimbap')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍲</span>
+                            <span>石锅拌饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sauteed-sauce-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍝</span>
+                            <span>杂酱面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('oil-splash-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍜</span>
+                            <span>油泼面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('daoxiao-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍜</span>
+                            <span>刀削面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('udon-noodles')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍜</span>
+                            <span>乌冬面</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('pork-cabbage-dumplings')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥟</span>
+                            <span>猪肉白菜水饺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('pork-leek-dumplings')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥟</span>
+                            <span>猪肉韭菜水饺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('vegetable-dumplings')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🥟</span>
+                            <span>素三鲜水饺</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('zongzi')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍙</span>
+                            <span>粽子</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('ham-fried-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍚</span>
+                            <span>火腿炒饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('sausage-fried-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍚</span>
+                            <span>香肠炒饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('tomato-egg-fried-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍚</span>
+                            <span>西红柿蛋炒饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('pork-fried-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍚</span>
+                            <span>肉丝炒饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('curry-beef-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍛</span>
+                            <span>咖喱牛肉饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('fish-fragrant-eggplant-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍆</span>
+                            <span>鱼香茄子饭</span>
+                        </button></li>
+                        <li><button onclick="openRecipe('kungpao-chicken-rice')" class="text-left w-full p-2 rounded-lg hover:bg-blue-50 flex items-center gap-2 transition-all btn-bounce">
+                            <span class="text-2xl">🍗</span>
+                            <span>宫保鸡丁饭</span>
+                        </button></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 菜谱详情弹窗 -->
+    <!-- 科技感菜谱详情弹窗 -->
     <div id="recipeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modalTitle" class="text-2xl font-bold text-primary"></h3>
-                <button onclick="closeRecipe()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        <div class="relative">
+            <!-- 渐变边框效果 -->
+            <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-300 to-pink-300 p-0.5"></div>
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in relative">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modalTitle" class="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-300 font-cute animate-float"></h3>
+                <button onclick="closeRecipe()" class="text-gray-500 hover:text-pink-500 text-2xl bg-white/80 p-3 rounded-full shadow-lg transition-all duration-300 btn-bounce hover:shadow-xl hover:bg-white/90">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-            <div id="modalContent" class="text-gray-700 space-y-4"></div>
+            <div id="modalContent" class="text-gray-700 space-y-6">
+                <style>
+                    #modalContent h4 {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        color: #87CEEB;
+                        margin-bottom: 0.75rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    }
+                    
+                    #modalContent h4::before {
+                        content: "🎀";
+                        font-size: 1.1rem;
+                    }
+                    
+                    #modalContent p {
+                        line-height: 1.6;
+                        padding-left: 2rem;
+                        position: relative;
+                    }
+                    
+                    #modalContent p::before {
+                        content: "•";
+                        color: #FFB6C1;
+                        font-size: 1.2rem;
+                        position: absolute;
+                        left: 1rem;
+                        top: 0.2rem;
+                    }
+                    
+                    #modalContent div {
+                        padding: 1rem;
+                        background: linear-gradient(135deg, rgba(135, 206, 235, 0.1) 0%, rgba(255, 182, 193, 0.1) 100%);
+                        border-radius: 1rem;
+                        border: 1px solid rgba(135, 206, 235, 0.3);
+                        transition: all 0.3s ease;
+                    }
+                    
+                    #modalContent div:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 16px rgba(135, 206, 235, 0.2);
+                    }
+                </style>
+            </div>
+            </div>
         </div>
     </div>
 
-    <!-- 回到顶部按钮 -->
-    <button onclick="window.scrollTo(0,0)" 
-            class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-accent/90 text-white flex items-center justify-center shadow-xl btn-bounce animate-pulse-slow">
-        <i class="fa fa-arrow-up"></i>
-    </button>
+
 
     <script>
         // 菜谱数据
@@ -3428,6 +3931,1203 @@
                     </div>
                 `
             },
+            'steamed-dumplings': {
+                title: '🥟 蒸饺',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>饺子皮（市售或自制）；猪肉馅（新鲜无异味，肥瘦相间）；白菜、韭菜（可选）；姜、葱；食用油、生抽、料酒、盐、胡椒粉、香油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>猪肉馅中加入姜蒜末、葱花、少许生抽、料酒、盐、胡椒粉、食用油、香油，搅拌均匀；白菜、韭菜（可选）洗净，切碎，挤干水分，加入肉馅中，搅拌均匀制成饺子馅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取一张饺子皮，放入适量饺子馅，对折，捏出褶子，制成蒸饺生胚；将蒸饺生胚放入蒸笼，蒸锅加水，大火烧开后，放入蒸笼，中火蒸10-15分钟，蒸至饺子熟透；关火，稍等片刻，取出即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒸饺口感软糯，馅料鲜香，比水煮饺子更加清香，可蘸醋、辣椒油食用，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'wonton-noodles': {
+                title: '🥟 馄饨面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>馄饨皮（市售或自制）；猪肉馅（新鲜无异味，肥瘦相间）；面条（新鲜无霉变）；紫菜、虾皮、葱花；生抽、盐、胡椒粉、香油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>猪肉馅中加入姜末、葱花、少许生抽、盐、胡椒粉、香油，搅拌均匀，制成馄饨馅；馄饨皮准备好，取适量馅料放在馄饨皮上，卷起，捏紧两端，制成馄饨。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加水，大火烧开，先下馄饨煮至浮起，再下面条煮至面条熟透；碗中放入紫菜、虾皮、葱花，加入少许生抽、盐、香油；将煮好的馄饨和面条捞出，放入碗中，加入适量面汤，搅拌均匀即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>馄饨面汤鲜味美，馄饨皮薄馅大，面条爽滑筋道，是经典主食，适合各类人群，作为早餐、午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'pasta': {
+                title: '🍝 意面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>意大利面（无霉变、无异味）；番茄（新鲜无腐烂）；洋葱、大蒜；牛肉馅（可选）；番茄酱、食用油、盐、黑胡椒粉、帕玛森奶酪（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>番茄洗净，底部划十字，用开水烫一下，去皮，切成小块；洋葱切碎，大蒜切末；牛肉馅（可选）洗净备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加水，大火烧开，放入意大利面，加少许盐，煮至面熟（按包装说明时间煮），捞出沥干；另起锅，倒入适量食用油，烧至六成热，放入蒜末、洋葱碎，翻炒出香味；放入牛肉馅（可选），翻炒至变色；放入番茄块，翻炒出汁，加入番茄酱，搅拌均匀，小火煮5分钟；放入煮好的意大利面，翻炒均匀，使酱汁充分裹满面条；根据口味加入盐、黑胡椒粉调味；装盘，撒上帕玛森奶酪（可选）即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>意面色泽诱人，酱汁浓郁，面条筋道有嚼劲，口感丰富，是经典西式主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'sushi': {
+                title: '🍣 寿司',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>寿司米（无霉变、颗粒饱满）；寿司醋（无变质）；海苔片（无霉变）；黄瓜、牛油果（三文鱼、虾、金枪鱼等可选）；酱油、芥末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>寿司米洗净，加水煮熟（或用电饭煲煮），煮熟后加入寿司醋，搅拌均匀，放凉；黄瓜洗净，切成细条；牛油果去皮去核，切成薄片；三文鱼（可选）等海鲜切成细条，用少许酱油腌制片刻。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>寿司帘铺在案板上，放上一张海苔片；将寿司米均匀铺在海苔片上，边缘留出一点空隙；在一端放上黄瓜条、牛油果片、海鲜条（可选）；用寿司帘慢慢卷起，卷紧，切成小段即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>寿司口感丰富，米饭软糯，海苔香脆，馅料新鲜清爽，可蘸酱油和芥末食用，是经典日式主食，适合各类人群，作为午餐、晚餐、野餐均可。</p>
+                    </div>
+                `
+            },
+            'rice-ball': {
+                title: '🍙 饭团',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；海苔片（无霉变）；金枪鱼罐头、肉松、火腿（可选）；盐、酱油、醋、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好，趁热加入少许盐、酱油、醋、糖（可选），搅拌均匀，放凉；金枪鱼罐头沥干水分；火腿切成小丁。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取适量米饭放在手掌上，按扁，放入金枪鱼、肉松、火腿丁（可选）等馅料；将米饭包住馅料，捏紧，揉成三角形或圆形；用海苔片包住饭团底部（约1/3处）；依次做好所有饭团。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>饭团口感软糯，馅料丰富，海苔香脆，是经典主食，方便携带，适合各类人群，作为早餐、野餐、便当均可。</p>
+                    </div>
+                `
+            },
+            'black-pepper-beef-rice': {
+                title: '🥩 黑椒牛柳饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；牛里脊肉（新鲜无异味、无筋膜）；青椒、红椒（可选）；洋葱；黑胡椒粉、蚝油、生抽、料酒、淀粉、食用油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；牛里脊肉洗净，切成细条，加入少许生抽、料酒、淀粉，腌制片刻；青椒、红椒、洋葱洗净，切成细条备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入腌制好的牛柳，大火快速翻炒至变色，捞出沥干油分；锅中留少许底油，放入洋葱丝，翻炒出香味；放入青椒丝、红椒丝（可选），翻炒至断生；放入炒好的牛柳，加入蚝油、生抽、黑胡椒粉，大火快速翻炒均匀；将煮好的米饭盛入碗中，将炒好的黑椒牛柳浇在米饭上即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>黑椒牛柳饭米饭松软，牛柳鲜嫩，黑胡椒香味浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'teriyaki-chicken-rice': {
+                title: '🍗 照烧鸡排饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；鸡腿肉（新鲜无异味、无皮）；生抽、老抽、料酒、糖、蜂蜜；姜、蒜；白芝麻（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；鸡腿肉洗净，用刀背拍松，使其更易入味；姜切片，蒜切末；生抽、老抽、料酒、糖、蜂蜜按1:1:1:1:1比例调成照烧汁。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入鸡腿肉，小火煎至两面金黄；放入姜片、蒜末，翻炒出香味；倒入调好的照烧汁，小火慢煮，期间不断翻面，使鸡肉均匀吸收照烧汁；煮至汤汁浓稠，鸡肉熟透；将煮好的米饭盛入碗中，将照烧鸡排切块，摆在米饭上，淋上剩余的照烧汁，撒上白芝麻（可选）即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>照烧鸡排饭米饭松软，鸡腿肉鲜嫩多汁，照烧汁香甜浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'orlando-chicken-rice': {
+                title: '🍗 奥尔良鸡腿饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；鸡腿肉（新鲜无异味、无皮）；奥尔良腌料（无变质）；蜂蜜（可选）、生抽。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；鸡腿肉洗净，切成小块，加入奥尔良腌料，按照说明比例添加，搅拌均匀，腌制2-4小时（或过夜更佳）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>烤箱预热至200°C；将腌制好的鸡腿肉块放在烤盘上，送入烤箱，烤约20-25分钟，烤至鸡肉表面金黄、熟透（中途可翻面）；若喜欢更焦香的口感，可在烤制后期刷一层蜂蜜；将煮好的米饭盛入碗中，将烤好的奥尔良鸡腿摆在米饭上即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>奥尔良鸡腿饭米饭松软，鸡肉鲜嫩奥尔良风味浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'korean-bibimbap': {
+                title: '🍲 韩式拌饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；牛肉片（可选）；菠菜、豆芽、香菇、胡萝卜（可根据喜好选择）；韩式辣酱、酱油、糖、醋、蒜泥、香油；鸡蛋（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；牛肉片（可选）洗净，用少许酱油、糖腌制片刻；菠菜洗净，用开水焯熟，挤干水分；豆芽洗净，用开水焯熟；香菇洗净，切片，用酱油、糖腌制；胡萝卜洗净，切丝；鸡蛋（可选）煎成荷包蛋备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>将煮好的米饭盛入大碗中；将准备好的菠菜、豆芽、香菇、胡萝卜丝（可炒或不炒）依次摆在米饭上；中间放上煎好的荷包蛋（可选）；韩式辣酱、酱油、糖、醋、蒜泥、香油调成拌饭酱；食用前，将拌饭酱倒在饭上，搅拌均匀即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>韩式拌饭色彩丰富，蔬菜清爽，肉类鲜香，拌饭酱微辣甜香，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'stone-pot-bibimbap': {
+                title: '🍲 石锅拌饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；牛肉片（可选）；菠菜、豆芽、香菇、金针菇、胡萝卜（可根据喜好选择）；韩式辣酱、酱油、糖、醋、蒜泥、香油；鸡蛋（可选）；石锅（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；牛肉片（可选）洗净，用少许酱油、糖腌制片刻；菠菜洗净，用开水焯熟，挤干水分；豆芽洗净，用开水焯熟；香菇、金针菇洗净切片，用酱油、糖腌制；胡萝卜洗净，切丝。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>石锅（或砂锅）内壁刷一层香油；将煮好的米饭放入石锅中，压实；将准备好的菠菜、豆芽、香菇、金针菇、胡萝卜丝依次摆在米饭上；中间放上煎好的荷包蛋（可选）；将石锅放在火上，小火加热，听到滋滋声、米饭微焦即可（约5-10分钟）；韩式辣酱、酱油、糖、醋、蒜泥、香油调成拌饭酱；食用前，将拌饭酱倒在饭上，搅拌均匀即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>石锅拌饭米饭带有锅巴，蔬菜清爽，肉类鲜香，拌饭酱微辣甜香，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'sauteed-sauce-noodles': {
+                title: '🍝 杂酱面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>面条（新鲜无霉变）；猪肉馅（新鲜无异味，肥瘦相间）；黄酱、甜面酱；豆芽、黄瓜丝（可选）；葱花、姜末、蒜末；食用油、料酒、生抽。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>面条煮好，过凉水，沥干水分备用；猪肉馅洗净；黄酱、甜面酱按2:1比例混合，加入少许清水调成酱汁；豆芽洗净，用开水焯熟；黄瓜切丝备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入葱花、姜末、蒜末，翻炒出香味；放入猪肉馅，大火快速翻炒，加入少许料酒、生抽，翻炒至肉馅变色；倒入调好的酱汁，小火慢煮，不断搅拌，煮至酱汁浓稠；将煮好的面条盛入碗中，舀上杂酱，放上豆芽、黄瓜丝（可选），撒上葱花，搅拌均匀即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>杂酱面面条筋道，杂酱香浓，咸香可口，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'oil-splash-noodles': {
+                title: '🍜 油泼面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>面条（新鲜无霉变，宽面或窄面均可）；青菜（可用油菜、菠菜等）；豆芽（可选）；葱花、蒜末、辣椒粉；生抽、醋、盐；热油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>面条煮好，过凉水，沥干水分备用；青菜洗净，用开水焯熟；豆芽（可选）洗净，用开水焯熟。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>将煮好的面条盛入碗中，放上焯好的青菜、豆芽（可选）；在面条上撒上葱花、蒜末、辣椒粉；淋上生抽、醋、盐；锅中烧热油（烧至冒烟），将热油淋在葱花、蒜末、辣椒粉上，激发出香味；搅拌均匀即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>油泼面面条筋道，辣椒油香辣，葱蒜味浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'daoxiao-noodles': {
+                title: '🍜 刀削面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>面粉（无霉变、无杂质）；猪肉（五花肉或瘦肉）；土豆、番茄、白菜叶（可选）；葱花、姜末、蒜末；生抽、老抽、料酒、盐、食用油；八角、花椒（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>面粉加水和成硬面团，醒发30分钟；猪肉洗净，切成小块或薄片；土豆去皮，切成小块；番茄洗净，切成小块；白菜叶洗净，切成大块。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加水，烧开后，用手将面团削成薄片（可用刀削或用勺子刮）；将削好的面片下入锅中，煮至面片浮起、熟透，捞出过凉水备用；另起锅，倒入适量食用油，烧至六成热，放入葱花、姜末、蒜末、八角、花椒（可选），翻炒出香味；放入猪肉块，翻炒至变色，加入少许料酒、生抽、老抽，翻炒均匀；加入土豆块、番茄块，翻炒片刻；加入适量清水，大火烧开后转小火，慢炖至土豆软烂；放入白菜叶，根据口味加入盐调味；将煮好的刀削面盛入碗中，浇上臊子和汤汁，搅拌均匀即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>刀削面面条筋道，臊子鲜香，汤汁浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'udon-noodles': {
+                title: '🍜 乌冬面',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>乌冬面（新鲜或干乌冬面均可）；牛肉片、鸡肉片、海鲜（可选）；洋葱、胡萝卜、香菇（可选）；日式酱油、味醂、清酒；葱花。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>乌冬面按照包装说明煮好，捞出过凉水，沥干水分备用；牛肉片、鸡肉片（可选）洗净；洋葱、胡萝卜切片；香菇切片。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加水，放入日式酱油、味醂、清酒（按2:1:1比例），大火烧开；放入洋葱片、胡萝卜片、香菇片（可选），煮至软烂；放入牛肉片、鸡肉片或海鲜（可选），煮至熟透；放入煮好的乌冬面，小火煮2-3分钟，使其充分吸收汤汁；根据口味调整盐味；装碗，撒上葱花即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>乌冬面面条粗圆筋道，汤汁鲜美，配料丰富，是经典日式主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'pork-cabbage-dumplings': {
+                title: '🥟 猪肉白菜水饺',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>饺子皮（市售或自制）；猪肉馅（新鲜无异味，肥瘦相间）；白菜（新鲜无腐烂）；姜、葱；食用油、生抽、料酒、盐、胡椒粉、香油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>猪肉馅中加入姜末、葱花、少许生抽、料酒、盐、胡椒粉、食用油、香油，搅拌均匀；白菜洗净，切碎，用盐腌制片刻，挤干水分，加入肉馅中，搅拌均匀制成饺子馅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取一张饺子皮，放入适量饺子馅，对折，捏紧边缘，制成饺子生胚；锅中加入适量清水，大火烧开，放入饺子生胚，煮至饺子浮起、熟透；捞出沥干水分，即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>猪肉白菜水饺口感鲜美，白菜清爽，猪肉鲜嫩，是经典主食，可蘸醋、辣椒油食用，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'pork-leek-dumplings': {
+                title: '🥟 猪肉韭菜水饺',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>饺子皮（市售或自制）；猪肉馅（新鲜无异味，肥瘦相间）；韭菜（新鲜无腐烂）；姜、葱；食用油、生抽、料酒、盐、胡椒粉、香油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>猪肉馅中加入姜末、葱花、少许生抽、料酒、盐、胡椒粉、食用油、香油，搅拌均匀；韭菜洗净，切碎，加入肉馅中，搅拌均匀制成饺子馅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取一张饺子皮，放入适量饺子馅，对折，捏紧边缘，制成饺子生胚；锅中加入适量清水，大火烧开，放入饺子生胚，煮至饺子浮起、熟透；捞出沥干水分，即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>猪肉韭菜水饺口感鲜美，韭菜清香，猪肉鲜嫩，是经典主食，可蘸醋、辣椒油食用，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'vegetable-dumplings': {
+                title: '🥟 素三鲜水饺',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>饺子皮（市售或自制）；鸡蛋（新鲜无变质）；韭菜、虾皮（可选）；粉丝、木耳（可选）；姜、葱；食用油、盐、胡椒粉、香油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鸡蛋打入碗中，搅拌均匀，炒成蛋碎备用；韭菜洗净，切碎；粉丝、木耳（可选）提前泡发，切碎；虾皮（可选）洗净备用。将所有食材放入碗中，加入姜末、葱花、食用油、盐、胡椒粉、香油，搅拌均匀制成饺子馅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取一张饺子皮，放入适量饺子馅，对折，捏紧边缘，制成饺子生胚；锅中加入适量清水，大火烧开，放入饺子生胚，煮至饺子浮起、熟透；捞出沥干水分，即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>素三鲜水饺口感清爽，鸡蛋鲜香，韭菜清香，是经典素食主食，可蘸醋、辣椒油食用，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'zongzi': {
+                title: '🍙 粽子',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>糯米（无霉变、颗粒饱满）；粽叶（无霉变、无破损）；五花肉（可选）；咸蛋黄（可选）；红豆沙（可选）；盐、生抽、老抽、料酒、白糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>糯米提前浸泡4-6小时，捞出沥干，加入少许盐、生抽、老抽、白糖，搅拌均匀；粽叶提前浸泡，洗净，用开水焯一下，备用；五花肉（可选）洗净，切成小块，用盐、料酒腌制；咸蛋黄（可选）切成两半；红豆沙（可选）分成小团。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>取两片粽叶，叠在一起，折成漏斗形；先放入一层糯米，再放入五花肉块、咸蛋黄或红豆沙（可选），最后再盖上一层糯米；将粽叶包紧，用绳子扎紧；将包好的粽子放入锅中，加水没过粽子，大火烧开后转小火，慢煮2-4小时（根据粽子大小调整时间）；关火后焖片刻，捞出即可食用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>粽子糯米软糯，馅料丰富（可选肉的咸香、蛋黄的咸鲜、豆沙的香甜），是经典传统主食，适合各类人群，作为早餐、端午节必备佳品。</p>
+                    </div>
+                `
+            },
+            'ham-fried-rice': {
+                title: '🍚 火腿炒饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭，最好是隔夜饭）；火腿（无变质、无异味）；鸡蛋（新鲜无变质）；葱花；食用油、盐、胡椒粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好，晾凉备用（最好用隔夜饭，炒出来更颗粒分明）；火腿切成小丁；鸡蛋打入碗中，搅拌均匀备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，倒入鸡蛋液，快速翻炒至鸡蛋凝固、碎成小块，盛出备用；锅中留少许底油，放入火腿丁，小火翻炒出香味；放入米饭，大火快速翻炒，使米饭颗粒分明；放入炒好的鸡蛋，加入少许盐、胡椒粉，翻炒均匀；撒上葱花，翻炒均匀即可出锅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>火腿炒饭米饭粒粒分明，火腿咸香，鸡蛋鲜嫩，是经典主食，适合各类人群，作为早餐、午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'sausage-fried-rice': {
+                title: '🍚 香肠炒饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭，最好是隔夜饭）；香肠（无变质、无异味）；鸡蛋（新鲜无变质）；葱花；食用油、盐、胡椒粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好，晾凉备用（最好用隔夜饭，炒出来更颗粒分明）；香肠切成小丁或薄片；鸡蛋打入碗中，搅拌均匀备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入香肠丁，小火翻炒出香味；倒入鸡蛋液，快速翻炒至鸡蛋凝固、碎成小块，盛出备用；锅中留少许底油，放入米饭，大火快速翻炒，使米饭颗粒分明；放入炒好的鸡蛋和香肠，加入少许盐、胡椒粉，翻炒均匀；撒上葱花，翻炒均匀即可出锅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>香肠炒饭米饭粒粒分明，香肠油润，鸡蛋鲜嫩，是经典主食，适合各类人群，作为早餐、午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'tomato-egg-fried-rice': {
+                title: '🍚 西红柿蛋炒饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭，最好是隔夜饭）；番茄（新鲜无腐烂）；鸡蛋（新鲜无变质）；葱花；食用油、盐、白糖（可选）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好，晾凉备用（最好用隔夜饭，炒出来更颗粒分明）；番茄洗净，底部划十字，用开水烫一下，去皮，切成小块；鸡蛋打入碗中，搅拌均匀备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，倒入鸡蛋液，快速翻炒至鸡蛋凝固、碎成小块，盛出备用；锅中留少许底油，放入番茄块，翻炒出汁，可加入少许白糖提鲜；放入米饭，大火快速翻炒，使米饭均匀裹上番茄汁；放入炒好的鸡蛋，加入少许盐，翻炒均匀；撒上葱花，翻炒均匀即可出锅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>西红柿蛋炒饭米饭粒粒分明，番茄酸甜，鸡蛋鲜嫩，色彩诱人，是经典主食，适合各类人群，作为早餐、午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'pork-fried-rice': {
+                title: '🍚 肉丝炒饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭，最好是隔夜饭）；猪肉（新鲜无异味，里脊肉或瘦肉）；鸡蛋（新鲜无变质）；葱花、姜丝（可选）；食用油、盐、生抽、料酒、淀粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好，晾凉备用（最好用隔夜饭，炒出来更颗粒分明）；猪肉洗净，切成细丝，加入少许生抽、料酒、淀粉，腌制片刻；鸡蛋打入碗中，搅拌均匀备用。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入腌制好的肉丝，大火快速翻炒至变色，盛出备用；锅中留少许底油，倒入鸡蛋液，快速翻炒至鸡蛋凝固、碎成小块；放入米饭，大火快速翻炒，使米饭颗粒分明；放入炒好的肉丝，加入少许盐，翻炒均匀；撒上葱花，翻炒均匀即可出锅。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>肉丝炒饭米饭粒粒分明，肉丝鲜嫩，鸡蛋香浓，是经典主食，适合各类人群，作为早餐、午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'curry-beef-rice': {
+                title: '🍛 咖喱牛肉饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；牛肉（新鲜无异味，推荐牛腩或牛里脊）；土豆、胡萝卜；咖喱块；食用油、盐、料酒、淀粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；牛肉洗净，切成小块，加入少许盐、料酒、淀粉，腌制片刻；土豆、胡萝卜去皮，切成小块。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入腌制好的牛肉块，翻炒至变色；放入土豆块、胡萝卜块，翻炒均匀；加入适量清水，大火烧开后转小火，慢炖至土豆、胡萝卜变软；加入咖喱块，搅拌均匀，煮至咖喱块融化、汤汁浓稠；根据口味加少许盐调味；将煮好的米饭盛入碗中，将咖喱牛肉浇在米饭上即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>咖喱牛肉饭米饭松软，牛肉软烂，土豆、胡萝卜软糯，咖喱味浓郁，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'fish-fragrant-eggplant-rice': {
+                title: '🍆 鱼香茄子饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；茄子（新鲜无腐烂）；猪瘦肉末（可选）；木耳（可选）、竹笋（可选）；葱花、姜末、蒜末；豆瓣酱、酱油、醋、糖、淀粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；茄子洗净，切成条状，用盐水浸泡片刻，捞出沥干；猪瘦肉末（可选）洗净备用；木耳、竹笋（可选）提前泡发，切碎。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入茄子条，小火煎至变软、金黄，盛出备用；锅中留少许底油，放入葱花、姜末、蒜末，翻炒出香味；放入猪瘦肉末（可选），翻炒至变色；放入木耳、竹笋（可选），翻炒均匀；加入豆瓣酱、酱油、醋、糖（按1:1:1:1比例），翻炒均匀；放入煎好的茄子条，翻炒均匀，使茄子均匀裹上鱼香汁；用水淀粉勾芡，大火收汁；将煮好的米饭盛入碗中，将鱼香茄子浇在米饭上即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>鱼香茄子饭米饭松软，茄子软糯，鱼香味浓，酸甜微辣，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'kungpao-chicken-rice': {
+                title: '🍗 宫保鸡丁饭',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>米饭（新鲜煮好的米饭）；鸡胸肉（新鲜无异味）；花生米（或腰果）；干辣椒、花椒（可选）；葱花、姜末、蒜末；生抽、醋、糖、淀粉、料酒。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>米饭煮好备用；鸡胸肉洗净，切成丁状，加入少许生抽、料酒、淀粉，腌制片刻；花生米提前炸好，或用烤箱烤熟；干辣椒剪成小段，花椒（可选）备用；生抽、醋、糖、淀粉按1:1:1:1比例调成宫保汁。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入鸡丁，小火滑炒至变色，捞出沥干油分；锅中留少许底油，放入干辣椒段、花椒（可选），小火翻炒出香味；放入葱花、姜末、蒜末，翻炒出香味；放入炒好的鸡丁，大火快速翻炒；倒入调好的宫保汁，翻炒均匀，使鸡丁均匀裹上宫保汁；放入炸好的花生米，翻炒均匀；将煮好的米饭盛入碗中，将宫保鸡丁浇在米饭上即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>宫保鸡丁饭米饭松软，鸡丁鲜嫩，花生米香脆，宫保汁酸甜微辣，是经典主食，适合各类人群，作为午餐、晚餐均可。</p>
+                    </div>
+                `
+            },
+            'steamed-sea-bass': {
+                title: '🐟 清蒸鲈鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鲈鱼（新鲜鲜活，无异味、鱼眼明亮、鳞片完整）；姜、葱、料酒、盐、蒸鱼豉油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鲈鱼洗净，去鳞、去内脏，在鱼身两侧划几刀，便于入味；姜切片，葱切丝；用盐、料酒均匀涂抹鱼身，腌制15分钟。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在鱼盘底部铺上姜片，放上鲈鱼，在鱼身上放几片姜和葱丝；将鱼盘放入蒸锅，大火蒸8-10分钟（根据鱼的大小调整时间）；蒸好后取出，倒掉盘中的汤汁，撒上新鲜的葱丝；锅中烧热油，浇在葱丝上，激发出香味；最后淋上蒸鱼豉油即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸鲈鱼鱼肉鲜嫩，汤汁鲜美，原汁原味，是经典海鲜菜品，适合各类人群，作为宴客或家庭聚餐的佳品。</p>
+                    </div>
+                `
+            },
+            'salt-and-pepper-prawns': {
+                title: '🦐 椒盐皮皮虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>皮皮虾（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、干辣椒、花椒；椒盐粉、盐、料酒。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>皮皮虾洗净，用厨房纸擦干水分；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至七成热，放入皮皮虾，炸至外壳酥脆、虾肉熟透，捞出沥干油分；锅中留少许底油，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入炸好的皮皮虾，大火快速翻炒，撒上椒盐粉和少许盐，翻炒均匀，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>椒盐皮皮虾外壳酥脆，虾肉鲜嫩，椒盐味浓郁，是经典海鲜小吃，适合下酒或作为零食。</p>
+                    </div>
+                `
+            },
+            'garlic-scallop': {
+                title: '🦪 蒜蓉扇贝',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>扇贝（新鲜鲜活，无异味、贝壳完整）；大蒜、粉丝、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>扇贝洗净，撬开贝壳，去除内脏，保留贝肉；大蒜切末，粉丝提前泡发；将粉丝铺在贝壳上，放上贝肉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将蒜蓉酱汁均匀淋在贝肉上；蒸锅加水，大火烧开，放入扇贝，蒸5-6分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉扇贝肉质鲜嫩，蒜蓉香味浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'boiled-shrimp': {
+                title: '🦐 白灼基围虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>基围虾（新鲜鲜活，无异味、虾壳完整）；姜、葱、料酒、盐、蘸料（生抽、醋、姜末）。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>基围虾洗净，剪去虾须和虾脚；姜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加入适量清水，放入姜片、葱段、料酒和少许盐，大火烧开；放入基围虾，煮至虾壳变红、虾肉熟透（约2-3分钟）；捞出沥干水分，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>白灼基围虾虾肉鲜嫩，原汁原味，可蘸生抽、醋和姜末食用，是经典海鲜菜品，适合各类人群。</p>
+                    </div>
+                `
+            },
+            'spicy-clam': {
+                title: '🐚 辣炒花蛤',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>花蛤（新鲜鲜活，无异味、贝壳完整）；姜、蒜、葱、干辣椒、花椒；生抽、料酒、盐、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>花蛤放入清水中，加入少许盐，浸泡2小时，让其吐净泥沙；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入花蛤，大火快速翻炒，加入料酒、生抽、少许盐和糖，翻炒均匀；炒至花蛤全部开口，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>辣炒花蛤肉质鲜嫩，香辣可口，是经典海鲜小吃，适合下酒或作为家常菜。</p>
+                    </div>
+                `
+            },
+            'steamed-crab': {
+                title: '🦀 清蒸大闸蟹',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>大闸蟹（新鲜鲜活，无异味、蟹壳完整）；姜、葱、料酒、醋、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>大闸蟹洗净，用绳子绑好；姜切片，葱切段；准备蘸料：姜末、醋、少许糖搅拌均匀。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在蒸笼底部铺上姜片和葱段，放上大闸蟹，撒上少许料酒；盖上锅盖，大火蒸15-20分钟（根据蟹的大小调整时间）；蒸好后取出，解开绳子，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸大闸蟹蟹黄饱满，蟹肉鲜嫩，原汁原味，可蘸姜醋汁食用，是秋季的经典海鲜美食。</p>
+                    </div>
+                `
+            },
+            'braised-abalone': {
+                title: '🐚 红烧鲍鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鲍鱼（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鲍鱼洗净，去除内脏，在表面划十字花刀；姜、蒜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜片、蒜片、葱段，煸炒出香味；放入鲍鱼，翻炒均匀，加入料酒、生抽、老抽、糖、蚝油和适量清水；大火烧开后转小火，慢炖15-20分钟，至鲍鱼熟透、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧鲍鱼肉质鲜嫩，汤汁浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'garlic-oyster': {
+                title: '🦪 蒜蓉生蚝',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>生蚝（新鲜鲜活，无异味、外壳完整）；大蒜、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>生蚝洗净，撬开外壳，去除内脏，保留蚝肉；大蒜切末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将蒜蓉酱汁均匀淋在蚝肉上；烤箱预热至200°C，放入生蚝，烤5-6分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉生蚝肉质鲜嫩，蒜蓉香味浓郁，是经典海鲜菜品，适合烧烤或餐厅食用。</p>
+                    </div>
+                `
+            },
+            'salt-and-pepper-lobster': {
+                title: '🦞 椒盐龙虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>龙虾（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、干辣椒、花椒；椒盐粉、盐、料酒。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>龙虾洗净，切块，用厨房纸擦干水分；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至七成热，放入龙虾块，炸至外壳酥脆、虾肉熟透，捞出沥干油分；锅中留少许底油，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入炸好的龙虾块，大火快速翻炒，撒上椒盐粉和少许盐，翻炒均匀，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>椒盐龙虾外壳酥脆，虾肉鲜嫩，椒盐味浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'steamed-grouper': {
+                title: '🐟 清蒸石斑鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>石斑鱼（新鲜鲜活，无异味、鱼眼明亮、鳞片完整）；姜、葱、料酒、盐、蒸鱼豉油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>石斑鱼洗净，去鳞、去内脏，在鱼身两侧划几刀，便于入味；姜切片，葱切丝；用盐、料酒均匀涂抹鱼身，腌制15分钟。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在鱼盘底部铺上姜片，放上石斑鱼，在鱼身上放几片姜和葱丝；将鱼盘放入蒸锅，大火蒸8-10分钟（根据鱼的大小调整时间）；蒸好后取出，倒掉盘中的汤汁，撒上新鲜的葱丝；锅中烧热油，浇在葱丝上，激发出香味；最后淋上蒸鱼豉油即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸石斑鱼鱼肉鲜嫩，汤汁鲜美，原汁原味，是高档海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'braised-conch': {
+                title: '🐚 红烧海螺',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>海螺（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>海螺洗净，放入开水中焯水2-3分钟，捞出，用牙签挑出螺肉，去除内脏，切片；姜、蒜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜片、蒜片、葱段，煸炒出香味；放入海螺片，翻炒均匀，加入料酒、生抽、老抽、糖、蚝油和适量清水；大火烧开后转小火，慢炖10-15分钟，至海螺熟透、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧海螺肉质鲜嫩，汤汁浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'spicy-razor-clam': {
+                title: '🐚 辣炒蛏子',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>蛏子（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、干辣椒、花椒；生抽、料酒、盐、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>蛏子放入清水中，加入少许盐，浸泡2小时，让其吐净泥沙；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入蛏子，大火快速翻炒，加入料酒、生抽、少许盐和糖，翻炒均匀；炒至蛏子全部开口，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>辣炒蛏子肉质鲜嫩，香辣可口，是经典海鲜小吃，适合下酒或作为家常菜。</p>
+                    </div>
+                `
+            },
+            'steamed-urchin': {
+                title: '🦔 清蒸海胆',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>海胆（新鲜鲜活，无异味、外壳完整）；柠檬、酱油、芥末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>海胆洗净，用剪刀在顶部剪开一个口，去除内脏，保留海胆黄；准备蘸料：酱油、芥末、柠檬汁搅拌均匀。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；将海胆放入蒸锅，大火蒸3-5分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸海胆海胆黄鲜嫩，味道鲜美，可蘸酱油芥末汁食用，是高档海鲜菜品，适合生食或蒸食。</p>
+                    </div>
+                `
+            },
+            'braised-octopus': {
+                title: '🐙 红烧章鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>章鱼（新鲜鲜活，无异味、触手完整）；姜、蒜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>章鱼洗净，切块，用开水焯水2-3分钟，捞出沥干；姜、蒜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜片、蒜片、葱段，煸炒出香味；放入章鱼块，翻炒均匀，加入料酒、生抽、老抽、糖、蚝油和适量清水；大火烧开后转小火，慢炖20-25分钟，至章鱼熟透、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧章鱼肉质鲜嫩，汤汁浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'salt-and-pepper-squid': {
+                title: '🦑 椒盐鱿鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱿鱼（新鲜鲜活，无异味、肉质紧实）；姜、蒜、葱、干辣椒、花椒；椒盐粉、盐、料酒、淀粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鱿鱼洗净，去除内脏和软骨，切花刀，切成小块；用盐、料酒腌制15分钟，裹上淀粉；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至七成热，放入鱿鱼块，炸至表面金黄、熟透，捞出沥干油分；锅中留少许底油，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入炸好的鱿鱼块，大火快速翻炒，撒上椒盐粉和少许盐，翻炒均匀，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>椒盐鱿鱼外酥内嫩，椒盐味浓郁，是经典海鲜小吃，适合下酒或作为零食。</p>
+                    </div>
+                `
+            },
+            'garlic-lobster': {
+                title: '🦞 蒜蓉龙虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>龙虾（新鲜鲜活，无异味、外壳完整）；大蒜、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>龙虾洗净，切块，保留虾钳；大蒜切末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将龙虾块摆盘，淋上蒜蓉酱汁；蒸锅加水，大火烧开，放入龙虾，蒸8-10分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉龙虾肉质鲜嫩，蒜蓉香味浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'braised-shark-fin': {
+                title: '🐟 红烧鱼翅',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱼翅（干鱼翅需提前泡发）；鸡骨架、猪骨、火腿、姜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>干鱼翅提前泡发，去除杂质；鸡骨架、猪骨焯水，火腿切片；姜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加入鸡骨架、猪骨、火腿、姜片、葱段，加入适量清水，大火烧开后转小火，慢炖4-6小时，制成高汤；将泡发好的鱼翅放入高汤中，加入料酒、生抽、老抽、糖、蚝油，小火慢炖2-3小时，至鱼翅软烂、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧鱼翅口感软糯，汤汁浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'sour-spicy-squid': {
+                title: '🦑 酸辣鱿鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱿鱼（新鲜鲜活，无异味、肉质紧实）；姜、蒜、葱、干辣椒、花椒；生抽、醋、糖、盐、料酒。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鱿鱼洗净，去除内脏和软骨，切花刀，切成小块；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入鱿鱼块，大火快速翻炒，加入料酒、生抽、醋、糖、少许盐，翻炒均匀；炒至鱿鱼熟透，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>酸辣鱿鱼肉质鲜嫩，酸辣可口，是经典海鲜菜品，适合下饭或下酒。</p>
+                    </div>
+                `
+            },
+            'garlic-steamed-shrimp': {
+                title: '🦐 蒜蓉蒸虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>虾（新鲜鲜活，无异味、虾壳完整）；大蒜、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>虾洗净，剪去虾须和虾脚，开背去除虾线；大蒜切末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将虾摆盘，淋上蒜蓉酱汁；蒸锅加水，大火烧开，放入虾，蒸5-6分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉蒸虾虾肉鲜嫩，蒜蓉香味浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'braised-sea-cucumber': {
+                title: '🥒 红烧海参',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>海参（干海参需提前泡发）；鸡骨架、猪骨、火腿、姜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>干海参提前泡发，去除杂质；鸡骨架、猪骨焯水，火腿切片；姜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加入鸡骨架、猪骨、火腿、姜片、葱段，加入适量清水，大火烧开后转小火，慢炖4-6小时，制成高汤；将泡发好的海参放入高汤中，加入料酒、生抽、老抽、糖、蚝油，小火慢炖1-2小时，至海参软烂、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧海参口感软糯，汤汁浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'spicy-lobster': {
+                title: '🦞 辣炒龙虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>龙虾（新鲜鲜活，无异味、外壳完整）；姜、蒜、葱、干辣椒、花椒、火锅底料；生抽、料酒、盐、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>龙虾洗净，切块，用厨房纸擦干水分；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入火锅底料，炒至融化；放入龙虾块，大火快速翻炒，加入料酒、生抽、少许盐和糖，翻炒均匀；加入适量清水，大火烧开后转小火，慢炖10-15分钟，至龙虾熟透、汤汁浓稠；大火收汁，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>辣炒龙虾肉质鲜嫩，香辣可口，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'steamed-pomfret': {
+                title: '🐟 清蒸鲳鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鲳鱼（新鲜鲜活，无异味、鱼眼明亮、鳞片完整）；姜、葱、料酒、盐、蒸鱼豉油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鲳鱼洗净，去鳞、去内脏，在鱼身两侧划几刀，便于入味；姜切片，葱切丝；用盐、料酒均匀涂抹鱼身，腌制15分钟。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在鱼盘底部铺上姜片，放上鲳鱼，在鱼身上放几片姜和葱丝；将鱼盘放入蒸锅，大火蒸8-10分钟（根据鱼的大小调整时间）；蒸好后取出，倒掉盘中的汤汁，撒上新鲜的葱丝；锅中烧热油，浇在葱丝上，激发出香味；最后淋上蒸鱼豉油即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸鲳鱼鱼肉鲜嫩，汤汁鲜美，原汁原味，是经典海鲜菜品，适合各类人群。</p>
+                    </div>
+                `
+            },
+            'braised-eel': {
+                title: '🐍 红烧鳗鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鳗鱼（新鲜鲜活，无异味、表皮完整）；姜、蒜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鳗鱼洗净，去除内脏，切段；姜、蒜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜片、蒜片、葱段，煸炒出香味；放入鳗鱼段，翻炒均匀，加入料酒、生抽、老抽、糖、蚝油和适量清水；大火烧开后转小火，慢炖20-25分钟，至鳗鱼熟透、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧鳗鱼肉质鲜嫩，汤汁浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'salt-and-pepper-shrimp': {
+                title: '🦐 椒盐虾',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>虾（新鲜鲜活，无异味、虾壳完整）；姜、蒜、葱、干辣椒、花椒；椒盐粉、盐、料酒、淀粉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>虾洗净，剪去虾须和虾脚，用盐、料酒腌制15分钟，裹上淀粉；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至七成热，放入虾，炸至表面金黄、熟透，捞出沥干油分；锅中留少许底油，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入炸好的虾，大火快速翻炒，撒上椒盐粉和少许盐，翻炒均匀，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>椒盐虾外酥内嫩，椒盐味浓郁，是经典海鲜小吃，适合下酒或作为零食。</p>
+                    </div>
+                `
+            },
+            'garlic-steamed-scallop': {
+                title: '🦪 蒜蓉蒸扇贝',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>扇贝（新鲜鲜活，无异味、贝壳完整）；大蒜、粉丝、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>扇贝洗净，撬开贝壳，去除内脏，保留贝肉；大蒜切末，粉丝提前泡发；将粉丝铺在贝壳上，放上贝肉。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将蒜蓉酱汁均匀淋在贝肉上；蒸锅加水，大火烧开，放入扇贝，蒸5-6分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉蒸扇贝肉质鲜嫩，蒜蓉香味浓郁，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'steamed-swimming-crab': {
+                title: '🦀 清蒸梭子蟹',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>梭子蟹（新鲜鲜活，无异味、蟹壳完整）；姜、葱、料酒、醋、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>梭子蟹洗净，用绳子绑好；姜切片，葱切段；准备蘸料：姜末、醋、少许糖搅拌均匀。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在蒸笼底部铺上姜片和葱段，放上梭子蟹，撒上少许料酒；盖上锅盖，大火蒸15-20分钟（根据蟹的大小调整时间）；蒸好后取出，解开绳子，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸梭子蟹蟹黄饱满，蟹肉鲜嫩，原汁原味，可蘸姜醋汁食用，是经典海鲜美食。</p>
+                    </div>
+                `
+            },
+            'braised-grouper': {
+                title: '🐟 红烧石斑鱼',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>石斑鱼（新鲜鲜活，无异味、鱼眼明亮、鳞片完整）；姜、蒜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>石斑鱼洗净，去鳞、去内脏，在鱼身两侧划几刀，便于入味；姜、蒜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入石斑鱼，煎至两面金黄；放入姜片、蒜片、葱段，煸炒出香味；加入料酒、生抽、老抽、糖、蚝油和适量清水；大火烧开后转小火，慢炖15-20分钟，至鱼熟透、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧石斑鱼鱼肉鲜嫩，汤汁浓郁，是高档海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'garlic-steamed-oyster': {
+                title: '🦪 蒜蓉蒸生蚝',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>生蚝（新鲜鲜活，无异味、外壳完整）；大蒜、生抽、蚝油、食用油、盐。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>生蚝洗净，撬开外壳，去除内脏，保留蚝肉；大蒜切末。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入蒜末，小火煸炒至金黄；加入生抽、蚝油、少许盐，搅拌均匀，制成蒜蓉酱汁；将蒜蓉酱汁均匀淋在蚝肉上；蒸锅加水，大火烧开，放入生蚝，蒸3-5分钟即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>蒜蓉蒸生蚝肉质鲜嫩，蒜蓉香味浓郁，是经典海鲜菜品，适合烧烤或餐厅食用。</p>
+                    </div>
+                `
+            },
+            'braised-fish-belly': {
+                title: '🐟 红烧鱼肚',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱼肚（干鱼肚需提前泡发）；鸡骨架、猪骨、火腿、姜、葱、料酒、生抽、老抽、糖、蚝油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>干鱼肚提前泡发，去除杂质；鸡骨架、猪骨焯水，火腿切片；姜切片，葱切段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中加入鸡骨架、猪骨、火腿、姜片、葱段，加入适量清水，大火烧开后转小火，慢炖4-6小时，制成高汤；将泡发好的鱼肚放入高汤中，加入料酒、生抽、老抽、糖、蚝油，小火慢炖1-2小时，至鱼肚软烂、汤汁浓稠；大火收汁，装盘即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>红烧鱼肚口感软糯，汤汁浓郁，是高档海鲜菜品，适合宴客或特殊场合。</p>
+                    </div>
+                `
+            },
+            'sour-spicy-fish-skin': {
+                title: '🐟 酸辣鱼皮',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱼皮（新鲜或干鱼皮需提前泡发）；姜、蒜、葱、干辣椒、花椒；生抽、醋、糖、盐、料酒。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鱼皮洗净，用开水焯水2-3分钟，捞出沥干，切成丝；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入鱼皮丝，大火快速翻炒，加入料酒、生抽、醋、糖、少许盐，翻炒均匀；炒至鱼皮熟透，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>酸辣鱼皮口感爽脆，酸辣可口，是经典海鲜小吃，适合下酒或作为凉菜。</p>
+                    </div>
+                `
+            },
+            'steamed-scallop': {
+                title: '🦪 清蒸扇贝',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>扇贝（新鲜鲜活，无异味、贝壳完整）；姜、葱、料酒、盐、蒸鱼豉油。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>扇贝洗净，撬开贝壳，去除内脏，保留贝肉；姜切片，葱切丝。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>蒸锅加水，大火烧开；在贝壳上放上贝肉，撒上姜片和葱丝，淋上少许料酒；将扇贝放入蒸锅，大火蒸5-6分钟；蒸好后取出，倒掉盘中的汤汁，撒上新鲜的葱丝；锅中烧热油，浇在葱丝上，激发出香味；最后淋上蒸鱼豉油即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>清蒸扇贝肉质鲜嫩，原汁原味，是经典海鲜菜品，适合宴客或家庭聚餐。</p>
+                    </div>
+                `
+            },
+            'spicy-squid-tentacles': {
+                title: '🦑 辣炒鱿鱼须',
+                content: `
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">1. 选料挑选</h4>
+                        <p>鱿鱼须（新鲜鲜活，无异味、触手完整）；姜、蒜、葱、干辣椒、花椒；生抽、料酒、盐、糖。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">2. 食材处理</h4>
+                        <p>鱿鱼须洗净，切段；姜、蒜切末，葱切段，干辣椒剪成小段。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">3. 制作步骤</h4>
+                        <p>锅中倒入适量食用油，烧至六成热，放入姜末、蒜末、干辣椒段、花椒，小火煸炒出香味；放入鱿鱼须，大火快速翻炒，加入料酒、生抽、少许盐和糖，翻炒均匀；炒至鱿鱼须熟透，撒上葱段，关火即可。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-accent mb-2">4. 出盘食用</h4>
+                        <p>辣炒鱿鱼须肉质鲜嫩，香辣可口，是经典海鲜小吃，适合下酒或作为家常菜。</p>
+                    </div>
+                `
+            },
         };
 
         // 打开菜谱详情
@@ -3444,6 +5144,7 @@
                 document.getElementById('modalContent').innerHTML = recipe.content;
                 document.getElementById('recipeModal').classList.remove('hidden');
                 document.getElementById('recipeModal').classList.add('flex');
+                document.getElementById('floatingButtons').classList.add('hidden');
             }
         }
 
@@ -3451,6 +5152,7 @@
         function closeRecipe() {
             document.getElementById('recipeModal').classList.add('hidden');
             document.getElementById('recipeModal').classList.remove('flex');
+            document.getElementById('floatingButtons').classList.remove('hidden');
         }
 
         // 搜索功能
@@ -3519,15 +5221,15 @@
     </script>
     
     <!-- 回到顶部和搜索按钮 -->
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <div id="floatingButtons" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <button onclick="document.getElementById('searchInput').focus()" 
-                class="bg-accent hover:bg-accent/90 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg btn-bounce animate-float">
-            <i class="fa fa-search text-xl"></i>
+                class="bg-gradient-to-r from-blue-300/50 to-pink-300/50 hover:from-blue-400/60 hover:to-pink-400/60 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg btn-bounce animate-float">
+            🎀
         </button>
-        <a href="index.html" 
-                class="bg-primary hover:bg-primary/90 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg btn-bounce animate-float">
-            <i class="fa fa-home text-xl"></i>
-        </a>
+        <button onclick="window.scrollTo(0,0)" 
+                class="bg-gradient-to-r from-blue-300/50 to-pink-300/50 hover:from-blue-400/60 hover:to-pink-400/60 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg btn-bounce animate-float">
+            ↑
+        </button>
     </div>
 </body>
 </html>
