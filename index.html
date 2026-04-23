@@ -4653,7 +4653,7 @@
         });
 
         // 保存到相册功能
-        saveBtn.addEventListener('click', async () => {
+        saveBtn.addEventListener('click', function() {
             if (cart.length === 0) {
                 alert('暂无已选菜品，无法保存～');
                 return;
@@ -4666,24 +4666,24 @@
                 renderPrintTemplate();
                 
                 // 延迟确保模板渲染完成
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // 检查html2canvas是否加载
-                if (typeof html2canvas === 'undefined') {
-                    // 动态加载html2canvas
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-                    script.onload = async () => {
-                        await saveToAlbum();
-                    };
-                    script.onerror = () => {
-                        hideLoading();
-                        alert('加载必要的库失败，请稍后重试');
-                    };
-                    document.head.appendChild(script);
-                } else {
-                    await saveToAlbum();
-                }
+                setTimeout(function() {
+                    // 检查html2canvas是否加载
+                    if (typeof html2canvas === 'undefined') {
+                        // 动态加载html2canvas
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                        script.onload = function() {
+                            saveToAlbum();
+                        };
+                        script.onerror = function() {
+                            hideLoading();
+                            alert('加载必要的库失败，请稍后重试');
+                        };
+                        document.head.appendChild(script);
+                    } else {
+                        saveToAlbum();
+                    }
+                }, 500);
             } catch (error) {
                 hideLoading();
                 alert('保存失败，请稍后重试');
@@ -4692,35 +4692,37 @@
         });
 
         // 保存到相册的具体实现
-        async function saveToAlbum() {
+        function saveToAlbum() {
             try {
                 const printElement = document.getElementById('print-template');
                 printElement.style.display = 'block';
                 
                 // 使用html2canvas将打印模板转换为图片
-                const canvas = await html2canvas(printElement, {
+                html2canvas(printElement, {
                     scale: 2, // 提高清晰度
                     useCORS: true, // 允许跨域图片
                     logging: false
+                }).then(function(canvas) {
+                    // 转换为图片URL
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // 创建下载链接
+                    const link = document.createElement('a');
+                    link.href = imgData;
+                    link.download = `点餐清单_${formatDateTime().replace(/[:/]/g, '-')}.png`;
+                    link.click();
+                    
+                    // 关闭弹窗
+                    selectedModal.classList.remove('show');
+                    showToast('保存成功，请在相册中查看');
+                }).catch(function(error) {
+                    throw error;
+                }).finally(function() {
+                    hideLoading();
+                    document.getElementById('print-template').style.display = 'none';
                 });
-                
-                // 转换为图片URL
-                const imgData = canvas.toDataURL('image/png');
-                
-                // 创建下载链接
-                const link = document.createElement('a');
-                link.href = imgData;
-                link.download = `点餐清单_${formatDateTime().replace(/[:/]/g, '-')}.png`;
-                link.click();
-                
-                // 关闭弹窗
-                selectedModal.classList.remove('show');
-                showToast('保存成功，请在相册中查看');
             } catch (error) {
                 throw error;
-            } finally {
-                hideLoading();
-                document.getElementById('print-template').style.display = 'none';
             }
         }
 
